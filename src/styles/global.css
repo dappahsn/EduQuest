@@ -1,0 +1,258 @@
+@import './variables.css';
+
+/* CSS Reset & Base */
+*, *::before, *::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+  -webkit-tap-highlight-color: transparent;
+}
+
+html, body {
+  width: 100%;
+  min-height: 100%;
+  font-family: var(--font-main);
+  background-color: var(--color-canvas);
+  color: var(--color-text-main);
+  overscroll-behavior: none;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+body {
+  display: flex;
+  flex-direction: column;
+  line-height: 1.5;
+}
+
+#root {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+  width: 100%;
+  position: relative;
+}
+
+/* Material Symbols alignment helper */
+.material-symbols-outlined {
+  font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+  vertical-align: middle;
+  line-height: 1;
+  user-select: none;
+}
+
+.material-symbols-fill {
+  font-variation-settings: 'FILL' 1, 'wght' 600, 'GRAD' 0, 'opsz' 24;
+}
+
+/* Safe Area Insets for Mobile/Tablet */
+.pt-safe {
+  padding-top: env(safe-area-inset-top, 0px);
+}
+
+.pb-safe {
+  padding-bottom: env(safe-area-inset-bottom, 0px);
+}
+
+/* Scrollbar styling (gentle / hidden like Stitch) */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--color-outline-subtle);
+  border-radius: var(--radius-full);
+}
+
+/* Links & Buttons reset */
+a {
+  color: inherit;
+  text-decoration: none;
+}
+
+button {
+  border: none;
+  background: none;
+  font-family: inherit;
+  cursor: pointer;
+}
+
+button:disabled {
+  cursor: not-allowed;
+  opacity: 0.6;
+}
+
+/* Accessible focus visible ring (friendly cyan glow) */
+:focus-visible {
+  outline: 3px solid var(--color-primary-highlight);
+  outline-offset: 2px;
+  border-radius: inherit;
+}
+
+/* Tactile Click & Hover Micro-Interactions */
+button:not(:disabled), a.btn, [role="button"]:not(:disabled) {
+  transition: transform 0.16s cubic-bezier(0.34, 1.56, 0.64, 1), box-shadow 0.16s, filter 0.16s;
+}
+
+button:not(:disabled):hover, [role="button"]:not(:disabled):hover {
+  filter: brightness(1.04);
+  transform: translateY(-2px);
+}
+
+button:not(:disabled):active, [role="button"]:not(:disabled):active {
+  transform: translateY(2px) scale(0.96);
+  filter: brightness(0.95);
+  transition: transform 0.05s ease;
+}
+
+/* Utility Animations (GPU Accelerated) */
+@keyframes spin {
+  0% { transform: rotate(0deg) translateZ(0); }
+  100% { transform: rotate(360deg) translateZ(0); }
+}
+
+@keyframes bounceSoft {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-4px); }
+}
+
+@keyframes pulseGlow {
+  0%, 100% { opacity: 0.6; transform: scale(1); }
+  50% { opacity: 0.9; transform: scale(1.05); }
+}
+
+@keyframes popIn {
+  0% { transform: scale(0.8); opacity: 0; }
+  70% { transform: scale(1.04); opacity: 1; }
+  100% { transform: scale(1); opacity: 1; }
+}
+
+@keyframes celebratePop {
+  0% { transform: scale(0.5) rotate(-6deg); opacity: 0; }
+  60% { transform: scale(1.12) rotate(3deg); opacity: 1; }
+  100% { transform: scale(1) rotate(0deg); opacity: 1; }
+}
+
+@keyframes shakeError {
+  0%, 100% { transform: translateX(0); }
+  20%, 60% { transform: translateX(-6px); }
+  40%, 80% { transform: translateX(6px); }
+}
+
+@keyframes chestWobble {
+  0%, 100% { transform: rotate(0deg) scale(1); }
+  20% { transform: rotate(-8deg) scale(1.08); }
+  40% { transform: rotate(8deg) scale(1.08); }
+  60% { transform: rotate(-5deg) scale(1.05); }
+  80% { transform: rotate(5deg) scale(1.05); }
+}
+
+@keyframes sparkleSpin {
+  0% { transform: rotate(0deg) scale(0.92); opacity: 0.6; }
+  50% { transform: rotate(180deg) scale(1.08); opacity: 0.9; }
+  100% { transform: rotate(360deg) scale(0.92); opacity: 0.6; }
+}
+
+@keyframes floatGentle {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-6px); }
+}
+
+.animate-spin {
+  animation: spin 1s linear infinite;
+  will-change: transform;
+}
+
+.animate-bounce-soft {
+  animation: bounceSoft 2s ease-in-out infinite;
+  will-change: transform;
+}
+
+.animate-pulse-glow {
+  animation: pulseGlow 3s ease-in-out infinite;
+  will-change: transform, opacity;
+}
+
+.animate-pop-in {
+  animation: popIn 0.35s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+  will-change: transform, opacity;
+}
+
+.animate-celebrate-pop {
+  animation: celebratePop 0.5s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+  will-change: transform, opacity;
+}
+
+.animate-shake {
+  animation: shakeError 0.4s ease-in-out;
+  will-change: transform;
+}
+
+.animate-chest-wobble {
+  animation: chestWobble 1.5s ease-in-out infinite;
+  will-change: transform;
+}
+
+.animate-sparkle {
+  animation: sparkleSpin 6s linear infinite;
+  will-change: transform, opacity;
+}
+
+.animate-float {
+  animation: floatGentle 3s ease-in-out infinite;
+  will-change: transform;
+}
+
+/* Tactile Interactive Card Micro-interactions */
+.interactive-card {
+  transition: transform 0.2s cubic-bezier(0.34, 1.56, 0.64, 1), box-shadow 0.2s ease, border-color 0.2s ease;
+  will-change: transform;
+}
+
+.interactive-card:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 10px 24px rgba(18, 26, 52, 0.12);
+}
+
+.interactive-card:active {
+  transform: translateY(1px) scale(0.98);
+}
+
+@keyframes shimmer {
+  0% { background-position: -200% 0; }
+  100% { background-position: 200% 0; }
+}
+
+.skeleton-loading {
+  background: linear-gradient(90deg, var(--color-surface-container) 25%, var(--color-surface-container-high) 50%, var(--color-surface-container) 75%);
+  background-size: 200% 100%;
+  animation: shimmer 1.5s infinite;
+}
+
+/* Touch Targets for Child-Friendly Accessibility */
+button, a, [role="button"] {
+  min-height: 44px;
+  min-width: 44px;
+}
+
+/* Responsive Media Queries */
+@media (max-width: 480px) {
+  :root {
+    --space-md: 0.85rem;
+    --space-lg: 1.25rem;
+  }
+}
+
+@media (min-width: 1024px) {
+  body {
+    background-color: #f3f3ff;
+  }
+  #root {
+    box-shadow: 0 0 40px rgba(18, 26, 52, 0.06);
+  }
+}

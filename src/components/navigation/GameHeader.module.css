@@ -1,0 +1,160 @@
+.header {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 50;
+  background-color: rgba(250, 248, 255, 0.92);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  box-shadow: var(--shadow-hud);
+}
+
+.inner {
+  height: 68px;
+  max-width: var(--max-width-canvas);
+  margin: 0 auto;
+  padding: 0 var(--space-md);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-xs);
+}
+
+.leftGroup {
+  display: flex;
+  align-items: center;
+  gap: var(--space-xs);
+}
+
+.brandBadge {
+  width: 38px;
+  height: 38px;
+  border-radius: var(--radius-full);
+  background-color: var(--color-surface-card);
+  box-shadow: var(--shadow-card);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: transform 0.1s ease;
+}
+
+.brandBadge:active {
+  transform: scale(0.95);
+}
+
+.profileCapsule {
+  display: flex;
+  align-items: center;
+  gap: var(--space-xs);
+  padding: 4px var(--space-sm) 4px 4px;
+  background-color: var(--color-surface-card);
+  border-radius: var(--radius-full);
+  box-shadow: var(--shadow-card);
+  transition: transform 0.1s ease;
+}
+
+.profileCapsule:active {
+  transform: scale(0.97);
+}
+
+.avatarWrapper {
+  position: relative;
+}
+
+.avatarCircle {
+  width: 34px;
+  height: 34px;
+  border-radius: var(--radius-full);
+  background-color: var(--color-primary-fixed);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+}
+
+.levelBadge {
+  position: absolute;
+  bottom: -4px;
+  right: -4px;
+  background-color: var(--color-tertiary-container);
+  color: var(--color-on-tertiary-container);
+  font-size: 10px;
+  font-weight: 800;
+  padding: 0 4px;
+  border-radius: var(--radius-full);
+  border: 1.5px solid var(--color-surface-card);
+}
+
+.nameAndXp {
+  display: flex;
+  flex-direction: column;
+}
+
+.nameRow {
+  display: flex;
+  align-items: center;
+  gap: var(--space-xxs);
+}
+
+.username {
+  font-size: 13px;
+  font-weight: 800;
+  color: var(--color-text-main);
+}
+
+.realmTag {
+  font-size: 10px;
+  font-weight: 800;
+  color: var(--color-primary);
+  text-transform: uppercase;
+}
+
+.xpRow {
+  display: flex;
+  align-items: center;
+  gap: var(--space-xxs);
+}
+
+.xpBarTrack {
+  width: 56px;
+  height: 6px;
+  background-color: var(--color-surface-dim);
+  border-radius: var(--radius-full);
+  overflow: hidden;
+}
+
+.xpBarFill {
+  height: 100%;
+  background-color: var(--color-secondary);
+  border-radius: var(--radius-full);
+}
+
+.xpText {
+  font-size: 10px;
+  font-weight: 700;
+  color: var(--color-text-muted);
+}
+
+.vitalsGroup {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.vitalPill {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  background-color: var(--color-surface-high);
+  padding: 5px var(--space-xs);
+  border-radius: var(--radius-full);
+  min-height: 32px;
+  box-shadow: 0 1px 3px rgba(18, 26, 52, 0.05);
+}
+
+.vitalText {
+  font-size: 13px;
+  font-weight: 800;
+  color: var(--color-text-main);
+}
