@@ -1,6 +1,6 @@
 import React, { createContext, useContext, useState, useEffect, useRef, useMemo, useCallback } from 'react';
 import { useAuth } from '../hooks/useAuth';
-import { supabase } from '../lib/supabase';
+import { supabase, isDatabaseActive } from '../lib/supabase';
 import { getLevelFromXp } from '../lib/progression';
 import { generateDailyQuests, checkDailyReset, getTodayDateString, isAllDailyQuestsCompleted } from '../lib/dailyQuests';
 import { INITIAL_ACHIEVEMENTS } from '../lib/achievements';
@@ -120,8 +120,7 @@ export function GameProvider({ children }) {
     if (!user) return;
     async function loadFromDb() {
       try {
-        const isPlaceholder = !import.meta.env.VITE_SUPABASE_URL || import.meta.env.VITE_SUPABASE_URL.includes('placeholder');
-        if (isPlaceholder) return;
+        if (!isDatabaseActive) return;
 
         // Fetch profile and quest progress in parallel to eliminate network waterfall
         const [profileRes, questsRes] = await Promise.all([
@@ -173,10 +172,9 @@ export function GameProvider({ children }) {
   // Complete a quest with level up detection and secure reward calculation
   async function completeQuest(questId, score = 100, earnedXp = 150, earnedCoins = 40, droppedCardId = null, droppedItemId = null, droppedPetId = null) {
     const sanitizedScore = Math.max(0, Math.min(100, Number(score) || 0));
-    const isPlaceholder = !import.meta.env.VITE_SUPABASE_URL || import.meta.env.VITE_SUPABASE_URL.includes('placeholder');
 
-    // Secure Server-Side RPC execution if connected to Supabase
-    if (user && !isPlaceholder) {
+    // Secure Server-Side RPC execution if connected to Database (Neon / Supabase)
+    if (user && isDatabaseActive) {
       try {
         const { data, error } = await supabase.rpc('complete_quest_secure', {
           p_quest_id: questId,
@@ -351,8 +349,7 @@ export function GameProvider({ children }) {
       }
     }));
 
-    const isPlaceholder = !import.meta.env.VITE_SUPABASE_URL || import.meta.env.VITE_SUPABASE_URL.includes('placeholder');
-    if (user && !isPlaceholder) {
+    if (user && isDatabaseActive) {
       try {
         await supabase.from('profiles').update({
           avatar_id: sanitized.avatar || 'raka_classic',
@@ -431,8 +428,7 @@ export function GameProvider({ children }) {
     const ach = INITIAL_ACHIEVEMENTS.find((a) => a.id === achId);
     if (!ach || gameState.claimedAchievements.includes(achId)) return;
 
-    const isPlaceholder = !import.meta.env.VITE_SUPABASE_URL || import.meta.env.VITE_SUPABASE_URL.includes('placeholder');
-    if (user && !isPlaceholder) {
+    if (user && isDatabaseActive) {
       try {
         await supabase.rpc('claim_achievement_secure', { p_achievement_id: achId });
       } catch (e) {
@@ -455,8 +451,7 @@ export function GameProvider({ children }) {
 
   async function unlockPet(petId) {
     if (!gameState.petsState[petId]) return;
-    const isPlaceholder = !import.meta.env.VITE_SUPABASE_URL || import.meta.env.VITE_SUPABASE_URL.includes('placeholder');
-    if (user && !isPlaceholder) {
+    if (user && isDatabaseActive) {
       try {
         await supabase.rpc('unlock_pet_secure', { p_pet_id: petId });
       } catch (e) {
@@ -485,8 +480,7 @@ export function GameProvider({ children }) {
       return;
     }
 
-    const isPlaceholder = !import.meta.env.VITE_SUPABASE_URL || import.meta.env.VITE_SUPABASE_URL.includes('placeholder');
-    if (user && !isPlaceholder) {
+    if (user && isDatabaseActive) {
       try {
         await supabase.rpc('unlock_item_secure', { p_item_id: itemId });
       } catch (e) {

@@ -1,6 +1,8 @@
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { useAuth } from '../../hooks/useAuth';
+import { useLanguage } from '../../context/LanguageContext';
+import { ForgotTravelerIllustration } from '../../components/auth/AuthIllustrations';
 import styles from './Auth.module.css';
 
 export default function ForgotPassword() {
@@ -9,6 +11,9 @@ export default function ForgotPassword() {
   const [submitted, setSubmitted] = useState(false);
   const [errorMessage, setErrorMessage] = useState('');
   const { resetPassword } = useAuth();
+  const { language } = useLanguage();
+
+  const isId = language === 'id';
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -19,75 +24,97 @@ export default function ForgotPassword() {
       await resetPassword(email);
       setSubmitted(true);
     } catch (err) {
-      setErrorMessage('Gagal mengirim tautan pemulihan. Pastikan email terdaftar.');
+      setErrorMessage(
+        isId
+          ? 'Gagal mengirim tautan pemulihan. Pastikan email terdaftar.'
+          : 'Failed to send recovery link. Please verify your email.'
+      );
     } finally {
       setLoading(false);
     }
   };
 
   return (
-    <div className={styles.authContainer}>
-      <Link to="/auth/login" className={styles.topBackBtn} aria-label="Kembali ke Masuk">
-        <span className="material-symbols-outlined" style={{ fontSize: '18px' }}>arrow_back</span>
-        <span>Masuk</span>
-      </Link>
-
+    <div className={styles.authPageWrapper}>
       <div className={styles.authCard}>
-        <div className={styles.header}>
-          <div className={styles.emblemBadge}>
-            <span className="material-symbols-outlined" style={{ fontSize: '30px', color: 'var(--color-gold)' }}>
-              lock_reset
-            </span>
-          </div>
-          <h1 className={styles.title}>Lupa Kata Sandi?</h1>
-          <p className={styles.subtitle}>Masukkan email terdaftar untuk menerima tautan pemulihan sandi</p>
+        {/* Circular Floating Back Button */}
+        <Link to="/auth/login" className={styles.circularBackBtn} aria-label={isId ? 'Kembali' : 'Back'}>
+          <span className="material-symbols-outlined" style={{ fontSize: '20px' }}>
+            arrow_back
+          </span>
+        </Link>
+
+        {/* Clean Vector Header Illustration */}
+        <div className={styles.illustrationContainer}>
+          <ForgotTravelerIllustration />
         </div>
 
-        {submitted ? (
-          <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--space-md)' }}>
-            <div className={styles.successBox}>
-              ✨ Tautan pemulihan kata sandi telah dikirim ke email orang tuamu! Silakan periksa kotak masuk email.
-            </div>
-            <Link to="/auth/login" className={styles.submitBtn}>
-              Kembali ke Halaman Masuk
-            </Link>
+        {/* Form Body with Smooth Curved Overlap */}
+        <div className={styles.formBody}>
+          <div className={styles.titleBlock}>
+            <h1 className={styles.titleLine1}>
+              {isId ? 'Lupa Kata Sandi? Reset' : 'Forgot Password? Reset'}
+            </h1>
+            <h2 className={styles.titleLine2}>
+              {isId ? 'Akses Akunmu di Sini' : 'Your Access Here'}
+            </h2>
           </div>
-        ) : (
-          <form onSubmit={handleSubmit} className={styles.form}>
-            {errorMessage && (
-              <div className={styles.errorBanner}>
-                <span className="material-symbols-outlined">info</span>
-                <span>{errorMessage}</span>
+
+          {submitted ? (
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '16px', marginTop: '8px' }}>
+              <div className={styles.successBox}>
+                {isId
+                  ? '✨ Tautan pemulihan kata sandi telah dikirim ke email terdaftar! Silakan periksa kotak masuk atau spam.'
+                  : '✨ A password reset link has been sent to your email! Please check your inbox or spam.'}
               </div>
-            )}
-
-            <div className={styles.inputGroup}>
-              <label className={styles.label}>Email Petualang / Orang Tua</label>
-              <input
-                type="email"
-                required
-                className={styles.input}
-                placeholder="nama@email.com"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                autoComplete="email"
-              />
-            </div>
-
-            <button type="submit" disabled={loading} className={styles.submitBtn}>
-              <span className="material-symbols-outlined">send</span>
-              <span>{loading ? 'Mengirim...' : 'Kirim Tautan Pemulihan'}</span>
-            </button>
-
-            <p className={styles.footerText}>
-              Ingat kata sandi?{' '}
-              <Link to="/auth/login" className={styles.link}>
-                Masuk di sini
+              <Link to="/auth/login" className={styles.primaryPillBtn} style={{ textDecoration: 'none' }}>
+                <span>{isId ? 'Kembali ke Masuk' : 'Back to Login'}</span>
               </Link>
-            </p>
-          </form>
-        )}
+            </div>
+          ) : (
+            <form onSubmit={handleSubmit} className={styles.form}>
+              {errorMessage && (
+                <div className={styles.errorBanner}>
+                  <span className="material-symbols-outlined" style={{ fontSize: '18px' }}>error</span>
+                  <span>{errorMessage}</span>
+                </div>
+              )}
+
+              {/* Email Input */}
+              <div className={styles.pillInputWrapper}>
+                <span className={`material-symbols-outlined ${styles.inputIcon}`}>mail</span>
+                <input
+                  type="email"
+                  required
+                  className={styles.pillInput}
+                  placeholder={isId ? 'Masukkan email Anda' : 'Enter your email'}
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  autoComplete="email"
+                />
+              </div>
+
+              {/* Submit Button */}
+              <button type="submit" disabled={loading} className={styles.primaryPillBtn}>
+                {loading ? (
+                  <span>{isId ? 'Mengirim...' : 'Submitting...'}</span>
+                ) : (
+                  <span>{isId ? 'Kirim Tautan' : 'Submit'}</span>
+                )}
+              </button>
+
+              {/* Footer Back to Login */}
+              <p className={styles.footerText}>
+                {isId ? 'Ingat kata sandi? ' : 'Remember your password? '}
+                <Link to="/auth/login" className={styles.footerLink}>
+                  {isId ? 'Masuk' : 'Login'}
+                </Link>
+              </p>
+            </form>
+          )}
+        </div>
       </div>
     </div>
   );
 }
+

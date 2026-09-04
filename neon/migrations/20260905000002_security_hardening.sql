@@ -1,23 +1,21 @@
 -- ==============================================================================
--- EDUQUEST SECURITY HARDENING & INTEGRITY MIGRATION
--- File: 20260904000002_security_hardening.sql
+-- EDUQUEST SECURITY HARDENING & INTEGRITY MIGRATION FOR NEON POSTGRES
+-- File: 20260905000002_security_hardening.sql
 -- Objectives:
 -- 1. Eliminate Direct XP, Coin & Level Manipulation on Profiles
 -- 2. Restrict Direct Client Insertion on Items, Pets & Quest Progress
 -- 3. Atomic Server-Side Stored Procedures (SECURITY DEFINER)
--- 4. User Data Isolation Enforcement (auth.uid() = user_id)
+-- 4. User Data Isolation Enforcement (auth.user_id() = user_id)
 -- ==============================================================================
 
 -- ------------------------------------------------------------------------------
 -- 1. PREVENT DIRECT CLIENT ECONOMY TAMPERING ON PROFILES
 -- ------------------------------------------------------------------------------
 
--- Fungsi trigger untuk mendeteksi apakah update dilakukan oleh client 'authenticated'
--- secara langsung terhadap kolom ekonomi (xp, coins, level, lives, streak)
 CREATE OR REPLACE FUNCTION public.check_profile_economy_tampering()
 RETURNS TRIGGER AS $$
 BEGIN
-    -- Jika dieksekusi oleh context authenticated client (bukan security definer internal atau service_role)
+    -- Jika dieksekusi oleh context authenticated client (bukan security definer internal)
     IF (auth.role() = 'authenticated') AND (current_setting('eduquest.internal_op', true) IS NULL OR current_setting('eduquest.internal_op', true) != 'true') THEN
         -- Larang perubahan langsung pada xp, coins, level, lives, streak
         IF (NEW.xp IS DISTINCT FROM OLD.xp) OR
@@ -53,17 +51,14 @@ DROP POLICY IF EXISTS "Users can update own quest progress" ON public.quest_prog
 -- A. USER ITEMS: Hanya boleh SELECT miliknya, dan UPDATE is_equipped miliknya
 CREATE POLICY "Users can update own item equip status"
     ON public.user_items FOR UPDATE
-    USING (auth.uid() = user_id)
-    WITH CHECK (auth.uid() = user_id);
+    USING (auth.user_id() = user_id)
+    WITH CHECK (auth.user_id() = user_id);
 
 -- B. USER PETS: Hanya boleh SELECT miliknya, dan UPDATE status aktif/kebahagiaan
 CREATE POLICY "Users can update own pet status"
     ON public.user_pets FOR UPDATE
-    USING (auth.uid() = user_id)
-    WITH CHECK (auth.uid() = user_id);
-
--- C. QUEST PROGRESS: Client hanya diizinkan SELECT, modifikasi melalui RPC aman
--- (Policy "Users can view own quest progress" tetap aktif)
+    USING (auth.user_id() = user_id)
+    WITH CHECK (auth.user_id() = user_id);
 
 -- ------------------------------------------------------------------------------
 -- 3. SECURE RPC: COMPLETE QUEST (ATOMIC & VALIDATED)
@@ -76,7 +71,7 @@ CREATE OR REPLACE FUNCTION public.complete_quest_secure(
 )
 RETURNS JSONB AS $$
 DECLARE
-    v_user_id UUID;
+    v_user_id TEXT;
     v_quest RECORD;
     v_profile RECORD;
     v_region RECORD;
@@ -88,8 +83,8 @@ DECLARE
     v_new_level INTEGER;
     v_level_up BOOLEAN := false;
 BEGIN
-    v_user_id := auth.uid();
-    IF v_user_id IS NULL THEN
+    v_user_id := auth.user_id();
+    IF v_user_id IS NULL OR v_user_id = '' THEN
         RAISE EXCEPTION 'Akses ditolak: pengguna belum diautentikasi.';
     END IF;
 
@@ -139,7 +134,6 @@ BEGIN
     v_new_coins := v_profile.coins + v_awarded_coins;
 
     -- Hitung formula level kuadratis: L(xp)
-    -- xp threshold: L=1: 0, L=2: 200, L=3: 500, L=4: 900, L=5: 1400, dst.
     -- xp(L) = 150 * (L - 1) + 50 * (L - 1)^2
     v_new_level := v_profile.level;
     WHILE v_new_xp >= (150 * (v_new_level) + 50 * (v_new_level * v_new_level)) LOOP
@@ -204,12 +198,12 @@ CREATE OR REPLACE FUNCTION public.unlock_item_secure(
 )
 RETURNS JSONB AS $$
 DECLARE
-    v_user_id UUID;
+    v_user_id TEXT;
     v_item RECORD;
     v_profile RECORD;
 BEGIN
-    v_user_id := auth.uid();
-    IF v_user_id IS NULL THEN
+    v_user_id := auth.user_id();
+    IF v_user_id IS NULL OR v_user_id = '' THEN
         RAISE EXCEPTION 'Akses ditolak: pengguna belum diautentikasi.';
     END IF;
 
@@ -266,12 +260,12 @@ CREATE OR REPLACE FUNCTION public.unlock_pet_secure(
 )
 RETURNS JSONB AS $$
 DECLARE
-    v_user_id UUID;
+    v_user_id TEXT;
     v_pet RECORD;
     v_profile RECORD;
 BEGIN
-    v_user_id := auth.uid();
-    IF v_user_id IS NULL THEN
+    v_user_id := auth.user_id();
+    IF v_user_id IS NULL OR v_user_id = '' THEN
         RAISE EXCEPTION 'Akses ditolak: pengguna belum diautentikasi.';
     END IF;
 
@@ -312,12 +306,12 @@ CREATE OR REPLACE FUNCTION public.claim_achievement_secure(
 )
 RETURNS JSONB AS $$
 DECLARE
-    v_user_id UUID;
+    v_user_id TEXT;
     v_ach RECORD;
     v_profile RECORD;
 BEGIN
-    v_user_id := auth.uid();
-    IF v_user_id IS NULL THEN
+    v_user_id := auth.user_id();
+    IF v_user_id IS NULL OR v_user_id = '' THEN
         RAISE EXCEPTION 'Akses ditolak: pengguna belum diautentikasi.';
     END IF;
 

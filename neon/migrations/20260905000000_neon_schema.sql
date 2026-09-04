@@ -1,17 +1,57 @@
 -- ==============================================================================
--- EDUQUEST DATABASE FOUNDATION MIGRATION
--- Single Source of Truth: DATABASE.md
--- Target: Supabase PostgreSQL
+-- EDUQUEST DATABASE FOUNDATION MIGRATION FOR NEON POSTGRES
+-- Single Source of Truth: DATABASE.md & Neon Data API / Neon Auth
+-- Target: Neon Serverless PostgreSQL
 -- ==============================================================================
 
--- Aktifkan ekstensi pgcrypto untuk gen_random_uuid() jika belum aktif
+-- Aktifkan ekstensi pgcrypto untuk fungsi kriptografi jika belum aktif
 CREATE EXTENSION IF NOT EXISTS "pgcrypto";
 
 -- ==============================================================================
--- 1. PROFILES (Terhubung 1:1 dengan Supabase auth.users)
+-- 0. NEON AUTH & JWT RLS HELPER FUNCTIONS
+-- Menyediakan kompatibilitas penuh auth.user_id(), auth.uid(), dan auth.role()
+-- ==============================================================================
+CREATE SCHEMA IF NOT EXISTS auth;
+
+CREATE OR REPLACE FUNCTION auth.user_id() 
+RETURNS text 
+LANGUAGE sql STABLE 
+AS $$
+  SELECT COALESCE(
+    nullif(current_setting('request.jwt.claim.sub', true), ''),
+    (nullif(current_setting('request.jwt.claims', true), '')::jsonb ->> 'sub'),
+    nullif(current_setting('eduquest.current_user_id', true), '')
+  );
+$$;
+
+CREATE OR REPLACE FUNCTION auth.uid() 
+RETURNS uuid 
+LANGUAGE sql STABLE 
+AS $$
+  SELECT CASE 
+    WHEN auth.user_id() ~* '^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$' 
+    THEN auth.user_id()::uuid 
+    ELSE NULL 
+  END;
+$$;
+
+CREATE OR REPLACE FUNCTION auth.role() 
+RETURNS text 
+LANGUAGE sql STABLE 
+AS $$
+  SELECT COALESCE(
+    nullif(current_setting('request.jwt.claim.role', true), ''),
+    (nullif(current_setting('request.jwt.claims', true), '')::jsonb ->> 'role'),
+    'authenticated'
+  );
+$$;
+
+-- ==============================================================================
+-- 1. PROFILES (Profil Pemain EduQuest)
+-- Mendukung ID teks fleksibel (Neon Auth / Better Auth user ID maupun UUID)
 -- ==============================================================================
 CREATE TABLE IF NOT EXISTS public.profiles (
-    id UUID PRIMARY KEY REFERENCES auth.users(id) ON DELETE CASCADE,
+    id TEXT PRIMARY KEY,
     username TEXT NOT NULL,
     avatar_id TEXT DEFAULT 'raka_classic',
     level INTEGER NOT NULL DEFAULT 1 CHECK (level >= 1),
@@ -73,7 +113,7 @@ CREATE TABLE IF NOT EXISTS public.quests (
 -- ==============================================================================
 CREATE TABLE IF NOT EXISTS public.quest_progress (
     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-    user_id UUID NOT NULL REFERENCES public.profiles(id) ON DELETE CASCADE,
+    user_id TEXT NOT NULL REFERENCES public.profiles(id) ON DELETE CASCADE,
     quest_id TEXT NOT NULL REFERENCES public.quests(id) ON DELETE CASCADE,
     status TEXT NOT NULL DEFAULT 'completed' CHECK (status IN ('started', 'completed')),
     score INTEGER NOT NULL DEFAULT 0 CHECK (score >= 0),
@@ -87,7 +127,7 @@ CREATE TABLE IF NOT EXISTS public.quest_progress (
 -- ==============================================================================
 CREATE TABLE IF NOT EXISTS public.game_progress (
     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-    user_id UUID NOT NULL REFERENCES public.profiles(id) ON DELETE CASCADE,
+    user_id TEXT NOT NULL REFERENCES public.profiles(id) ON DELETE CASCADE,
     game_id TEXT NOT NULL REFERENCES public.games(id) ON DELETE CASCADE,
     best_score INTEGER NOT NULL DEFAULT 0 CHECK (best_score >= 0),
     times_played INTEGER NOT NULL DEFAULT 1 CHECK (times_played >= 1),
@@ -113,7 +153,7 @@ CREATE TABLE IF NOT EXISTS public.achievements (
 -- ==============================================================================
 CREATE TABLE IF NOT EXISTS public.user_achievements (
     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-    user_id UUID NOT NULL REFERENCES public.profiles(id) ON DELETE CASCADE,
+    user_id TEXT NOT NULL REFERENCES public.profiles(id) ON DELETE CASCADE,
     achievement_id TEXT NOT NULL REFERENCES public.achievements(id) ON DELETE CASCADE,
     unlocked_at TIMESTAMPTZ DEFAULT timezone('utc'::text, now()) NOT NULL,
     UNIQUE(user_id, achievement_id)
@@ -138,7 +178,7 @@ CREATE TABLE IF NOT EXISTS public.items (
 -- ==============================================================================
 CREATE TABLE IF NOT EXISTS public.user_items (
     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-    user_id UUID NOT NULL REFERENCES public.profiles(id) ON DELETE CASCADE,
+    user_id TEXT NOT NULL REFERENCES public.profiles(id) ON DELETE CASCADE,
     item_id TEXT NOT NULL REFERENCES public.items(id) ON DELETE CASCADE,
     is_equipped BOOLEAN NOT NULL DEFAULT false,
     acquired_at TIMESTAMPTZ DEFAULT timezone('utc'::text, now()) NOT NULL,
@@ -164,7 +204,7 @@ CREATE TABLE IF NOT EXISTS public.pets (
 -- ==============================================================================
 CREATE TABLE IF NOT EXISTS public.user_pets (
     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-    user_id UUID NOT NULL REFERENCES public.profiles(id) ON DELETE CASCADE,
+    user_id TEXT NOT NULL REFERENCES public.profiles(id) ON DELETE CASCADE,
     pet_id TEXT NOT NULL REFERENCES public.pets(id) ON DELETE CASCADE,
     level INTEGER NOT NULL DEFAULT 1 CHECK (level >= 1),
     xp INTEGER NOT NULL DEFAULT 0 CHECK (xp >= 0),
@@ -192,7 +232,7 @@ CREATE TABLE IF NOT EXISTS public.knowledge_cards (
 -- ==============================================================================
 CREATE TABLE IF NOT EXISTS public.user_knowledge_cards (
     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-    user_id UUID NOT NULL REFERENCES public.profiles(id) ON DELETE CASCADE,
+    user_id TEXT NOT NULL REFERENCES public.profiles(id) ON DELETE CASCADE,
     card_id TEXT NOT NULL REFERENCES public.knowledge_cards(id) ON DELETE CASCADE,
     unlocked_at TIMESTAMPTZ DEFAULT timezone('utc'::text, now()) NOT NULL,
     UNIQUE(user_id, card_id)
@@ -216,7 +256,7 @@ CREATE TABLE IF NOT EXISTS public.daily_quests (
 -- ==============================================================================
 CREATE TABLE IF NOT EXISTS public.daily_quest_progress (
     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-    user_id UUID NOT NULL REFERENCES public.profiles(id) ON DELETE CASCADE,
+    user_id TEXT NOT NULL REFERENCES public.profiles(id) ON DELETE CASCADE,
     daily_quest_id TEXT NOT NULL REFERENCES public.daily_quests(id) ON DELETE CASCADE,
     current_count INTEGER NOT NULL DEFAULT 0 CHECK (current_count >= 0),
     is_completed BOOLEAN NOT NULL DEFAULT false,
@@ -258,7 +298,7 @@ ALTER TABLE public.daily_quests ENABLE ROW LEVEL SECURITY;
 ALTER TABLE public.daily_quest_progress ENABLE ROW LEVEL SECURITY;
 
 -- ==============================================================================
--- RLS POLICIES: PUBLIC CATALOGS (Read-Only to Authenticated / Anons)
+-- RLS POLICIES: PUBLIC CATALOGS (Read-Only to All)
 -- ==============================================================================
 CREATE POLICY "Public catalogs viewable: regions" ON public.regions FOR SELECT USING (true);
 CREATE POLICY "Public catalogs viewable: games" ON public.games FOR SELECT USING (true);
@@ -270,124 +310,112 @@ CREATE POLICY "Public catalogs viewable: knowledge_cards" ON public.knowledge_ca
 CREATE POLICY "Public catalogs viewable: daily_quests" ON public.daily_quests FOR SELECT USING (true);
 
 -- ==============================================================================
--- RLS POLICIES: USER OWNED DATA (Strict Isolation by auth.uid())
+-- RLS POLICIES: USER OWNED DATA (Strict Isolation by auth.user_id())
 -- ==============================================================================
 
 -- 1. Profiles
 CREATE POLICY "Users can view own profile" 
     ON public.profiles FOR SELECT 
-    USING (auth.uid() = id);
+    USING (auth.user_id() = id);
 
 CREATE POLICY "Users can insert own profile" 
     ON public.profiles FOR INSERT 
-    WITH CHECK (auth.uid() = id);
+    WITH CHECK (auth.user_id() = id);
 
 CREATE POLICY "Users can update own profile" 
     ON public.profiles FOR UPDATE 
-    USING (auth.uid() = id);
+    USING (auth.user_id() = id);
 
 -- 2. Quest Progress
 CREATE POLICY "Users can view own quest progress" 
     ON public.quest_progress FOR SELECT 
-    USING (auth.uid() = user_id);
+    USING (auth.user_id() = user_id);
 
 CREATE POLICY "Users can insert own quest progress" 
     ON public.quest_progress FOR INSERT 
-    WITH CHECK (auth.uid() = user_id);
+    WITH CHECK (auth.user_id() = user_id);
 
 CREATE POLICY "Users can update own quest progress" 
     ON public.quest_progress FOR UPDATE 
-    USING (auth.uid() = user_id);
+    USING (auth.user_id() = user_id);
 
 -- 3. Game Progress
 CREATE POLICY "Users can view own game progress" 
     ON public.game_progress FOR SELECT 
-    USING (auth.uid() = user_id);
+    USING (auth.user_id() = user_id);
 
 CREATE POLICY "Users can manage own game progress" 
     ON public.game_progress FOR ALL 
-    USING (auth.uid() = user_id);
+    USING (auth.user_id() = user_id);
 
 -- 4. User Achievements
 CREATE POLICY "Users can view own achievements" 
     ON public.user_achievements FOR SELECT 
-    USING (auth.uid() = user_id);
+    USING (auth.user_id() = user_id);
 
 CREATE POLICY "Users can unlock own achievements" 
     ON public.user_achievements FOR INSERT 
-    WITH CHECK (auth.uid() = user_id);
+    WITH CHECK (auth.user_id() = user_id);
 
 -- 5. User Items
 CREATE POLICY "Users can view own items" 
     ON public.user_items FOR SELECT 
-    USING (auth.uid() = user_id);
+    USING (auth.user_id() = user_id);
 
 CREATE POLICY "Users can manage own items" 
     ON public.user_items FOR ALL 
-    USING (auth.uid() = user_id);
+    USING (auth.user_id() = user_id);
 
 -- 6. User Pets
 CREATE POLICY "Users can view own pets" 
     ON public.user_pets FOR SELECT 
-    USING (auth.uid() = user_id);
+    USING (auth.user_id() = user_id);
 
 CREATE POLICY "Users can manage own pets" 
     ON public.user_pets FOR ALL 
-    USING (auth.uid() = user_id);
+    USING (auth.user_id() = user_id);
 
 -- 7. User Knowledge Cards
 CREATE POLICY "Users can view own knowledge cards" 
     ON public.user_knowledge_cards FOR SELECT 
-    USING (auth.uid() = user_id);
+    USING (auth.user_id() = user_id);
 
 CREATE POLICY "Users can collect own knowledge cards" 
     ON public.user_knowledge_cards FOR INSERT 
-    WITH CHECK (auth.uid() = user_id);
+    WITH CHECK (auth.user_id() = user_id);
 
 -- 8. Daily Quest Progress
 CREATE POLICY "Users can view own daily quest progress" 
     ON public.daily_quest_progress FOR SELECT 
-    USING (auth.uid() = user_id);
+    USING (auth.user_id() = user_id);
 
 CREATE POLICY "Users can manage own daily quest progress" 
     ON public.daily_quest_progress FOR ALL 
-    USING (auth.uid() = user_id);
+    USING (auth.user_id() = user_id);
 
 -- ==============================================================================
--- AUTOMATIC PROFILE CREATION TRIGGER (auth.users -> public.profiles)
+-- AUTOMATIC PROFILE INITIALIZER HELPER
+-- Berfungsi saat profil baru dibuat
 -- ==============================================================================
-CREATE OR REPLACE FUNCTION public.handle_new_user()
+CREATE OR REPLACE FUNCTION public.handle_profile_init()
 RETURNS trigger AS $$
 BEGIN
-  INSERT INTO public.profiles (id, username, avatar_id, level, xp, coins, lives, streak)
-  VALUES (
-    new.id,
-    COALESCE(new.raw_user_meta_data->>'username', 'Petualang Cilik'),
-    'raka_classic',
-    1,
-    0,
-    100,
-    3,
-    1
-  );
-
   -- Berikan busana awal dan hewan sahabat perdana secara otomatis
   INSERT INTO public.user_items (user_id, item_id, is_equipped)
   VALUES 
-    (new.id, 'topi-safari-klasik', true),
-    (new.id, 'kostum-penjelajah-biru', true)
+    (NEW.id, 'topi-safari-klasik', true),
+    (NEW.id, 'kostum-penjelajah-biru', true)
   ON CONFLICT DO NOTHING;
 
   INSERT INTO public.user_pets (user_id, pet_id, is_active)
-  VALUES (new.id, 'lumi-fox', true)
+  VALUES (NEW.id, 'lumi-fox', true)
   ON CONFLICT DO NOTHING;
 
-  RETURN new;
+  RETURN NEW;
 END;
 $$ LANGUAGE plpgsql SECURITY DEFINER;
 
--- Pasang trigger setelah insert pada auth.users
-DROP TRIGGER IF EXISTS on_auth_user_created ON auth.users;
-CREATE TRIGGER on_auth_user_created
-  AFTER INSERT ON auth.users
-  FOR EACH ROW EXECUTE FUNCTION public.handle_new_user();
+DROP TRIGGER IF EXISTS on_profile_created ON public.profiles;
+CREATE TRIGGER on_profile_created
+  AFTER INSERT ON public.profiles
+  FOR EACH ROW EXECUTE FUNCTION public.handle_profile_init();

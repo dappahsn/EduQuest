@@ -11,32 +11,36 @@ export function AuthProvider({ children }) {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
-  // Periksa apakah kredensial Supabase aktif atau menggunakan placeholder
-  const isPlaceholderUrl = !import.meta.env.VITE_SUPABASE_URL || import.meta.env.VITE_SUPABASE_URL.includes('placeholder');
+  // Periksa apakah kredensial database (Supabase atau Neon) aktif atau menggunakan placeholder
+  const isPlaceholderUrl = 
+    (!import.meta.env.VITE_SUPABASE_URL || import.meta.env.VITE_SUPABASE_URL.includes('placeholder')) &&
+    (!import.meta.env.VITE_NEON_DATABASE_URL || import.meta.env.VITE_NEON_DATABASE_URL.includes('placeholder'));
 
   useEffect(() => {
     let mounted = true;
 
     async function initSession() {
       try {
-        // 1. Coba ambil session dari Supabase Auth
-        const { data, error } = await supabase.auth.getSession();
-        if (error) {
-          console.warn('[EduQuest Auth] Notice getting Supabase session:', error.message);
-        }
+        // 1. Coba ambil session dari Auth client (Supabase atau Neon)
+        if (supabase?.auth?.getSession) {
+          const { data, error } = await supabase.auth.getSession();
+          if (error) {
+            console.warn('[EduQuest Auth] Notice getting auth session:', error.message);
+          }
 
-        if (mounted && data?.session) {
-          setSession(data.session);
-          setUser(data.session.user);
-          setLoading(false);
-          return;
+          if (mounted && data?.session) {
+            setSession(data.session);
+            setUser(data.session.user);
+            setLoading(false);
+            return;
+          }
         }
       } catch (err) {
-        console.warn('[EduQuest Auth] Supabase client init notice:', err.message);
+        console.warn('[EduQuest Auth] Auth client init notice:', err.message);
       }
 
-      // 2. Jika dalam mode demo/placeholder dan ada sesi tersimpan lokal
-      if (mounted && isPlaceholderUrl) {
+      // 2. Jika belum ada sesi cloud, periksa sesi lokal
+      if (mounted) {
         try {
           const savedDevSession = localStorage.getItem(DEV_SESSION_KEY);
           if (savedDevSession) {
@@ -56,18 +60,47 @@ export function AuthProvider({ children }) {
 
     initSession();
 
-    // 3. Listener resmi Supabase onAuthStateChange
-    const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, newSession) => {
-      if (mounted) {
-        setSession(newSession);
-        setUser(newSession?.user ?? null);
-        setLoading(false);
+    // 3. Listener onAuthStateChange (aman untuk Supabase synchronous maupun Neon async Promise)
+    let unsubscribeFn = null;
+    try {
+      if (supabase?.auth?.onAuthStateChange) {
+        const listenerResult = supabase.auth.onAuthStateChange((_event, newSession) => {
+          if (mounted) {
+            setSession(newSession);
+            setUser(newSession?.user ?? null);
+            setLoading(false);
+          }
+        });
+
+        if (listenerResult) {
+          if (typeof listenerResult === 'function') {
+            unsubscribeFn = listenerResult;
+          } else if (typeof listenerResult.then === 'function') {
+            listenerResult
+              .then((res) => {
+                unsubscribeFn = res?.data?.subscription?.unsubscribe || res?.unsubscribe || null;
+              })
+              .catch((err) => {
+                console.warn('[EduQuest Auth] onAuthStateChange notice:', err?.message || err);
+              });
+          } else if (listenerResult?.data?.subscription?.unsubscribe) {
+            unsubscribeFn = listenerResult.data.subscription.unsubscribe;
+          }
+        }
       }
-    });
+    } catch (err) {
+      console.warn('[EduQuest Auth] onAuthStateChange caught:', err?.message || err);
+    }
 
     return () => {
       mounted = false;
-      subscription?.unsubscribe();
+      if (typeof unsubscribeFn === 'function') {
+        try {
+          unsubscribeFn();
+        } catch (e) {
+          // ignore
+        }
+      }
     };
   }, [isPlaceholderUrl]);
 

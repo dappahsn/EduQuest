@@ -1,5 +1,5 @@
 -- ==============================================================================
--- EDUQUEST SEED CATALOG MIGRATION
+-- EDUQUEST SEED CATALOG MIGRATION FOR NEON POSTGRES
 -- Educational Content Pre-seeding
 -- ==============================================================================
 

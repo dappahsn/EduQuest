@@ -20,6 +20,9 @@ export default defineConfig({
             if (id.includes('@supabase')) {
               return 'vendor-supabase';
             }
+            if (id.includes('@neondatabase') || id.includes('better-auth')) {
+              return 'vendor-neon';
+            }
             return 'vendor-common';
           }
         }
