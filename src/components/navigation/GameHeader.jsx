@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom';
 import { useGame } from '../../context/GameContext';
 import { useLanguage } from '../../context/LanguageContext';
 import { useAudio } from '../../context/AudioContext';
+import { getLevelProgress } from '../../lib/progression';
 import CharacterAvatar from '../character/CharacterAvatar';
 import styles from './GameHeader.module.css';
 
@@ -17,13 +18,16 @@ function GameHeader(props) {
     game = null;
   }
 
-  const level = props.level ?? game?.level ?? 12;
-  const username = props.username ?? game?.playerName ?? 'Raka';
-  const xp = props.xp ?? game?.xp ?? 2450;
+  const level = props.level ?? game?.level ?? 1;
+  const username = props.username ?? game?.playerName ?? 'Petualang Cilik';
+  const xp = props.xp ?? game?.xp ?? 0;
   const lives = props.lives ?? game?.energy ?? 3;
-  const streak = props.streak ?? game?.streakDays ?? 7;
-  const coins = props.coins ?? game?.coins ?? 840;
+  const streak = props.streak ?? game?.streakDays ?? 1;
+  const coins = props.coins ?? game?.coins ?? 0;
   const characterConfig = game?.characterConfig || {};
+
+  const xpProgress = getLevelProgress(xp);
+  const xpFillWidth = `${xpProgress.percentage}%`;
 
   return (
     <header className={styles.header}>
@@ -49,7 +53,7 @@ function GameHeader(props) {
               </div>
               <div className={styles.xpRow}>
                 <div className={styles.xpBarTrack}>
-                  <div className={styles.xpBarFill} style={{ width: '65%' }}></div>
+                  <div className={styles.xpBarFill} style={{ width: xpFillWidth }}></div>
                 </div>
                 <span className={styles.xpText}>{xp.toLocaleString()} XP</span>
               </div>

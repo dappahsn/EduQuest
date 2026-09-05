@@ -1,0 +1,27 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" width="64" height="64">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#0284c7" />
+      <stop offset="100%" stop-color="#0f172a" />
+    </linearGradient>
+    <linearGradient id="needle" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#38bdf8" />
+      <stop offset="100%" stop-color="#0284c7" />
+    </linearGradient>
+  </defs>
+  <!-- Background Circle -->
+  <circle cx="32" cy="32" r="30" fill="url(#bg)" />
+  <!-- Inner Ring -->
+  <circle cx="32" cy="32" r="24" fill="#ffffff" />
+  <circle cx="32" cy="32" r="21" fill="#f8fafc" stroke="#e2e8f0" stroke-width="1.5" />
+  <!-- Compass Needle Points -->
+  <!-- North (Cyan / Sky) -->
+  <polygon points="32,15 37,32 32,29" fill="url(#needle)" />
+  <polygon points="32,15 27,32 32,29" fill="#0369a1" />
+  <!-- South (Navy / Slate) -->
+  <polygon points="32,49 37,32 32,35" fill="#94a3b8" />
+  <polygon points="32,49 27,32 32,35" fill="#64748b" />
+  <!-- Center Pivot -->
+  <circle cx="32" cy="32" r="4.5" fill="#0f172a" />
+  <circle cx="32" cy="32" r="2" fill="#ffffff" />
+</svg>

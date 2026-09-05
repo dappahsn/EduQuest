@@ -5,6 +5,7 @@ import BottomNavDock from '../../components/navigation/BottomNavDock';
 import CharacterAvatar from '../../components/character/CharacterAvatar';
 import { useGame } from '../../context/GameContext';
 import { audioManager } from '../../lib/audioManager';
+import { QUESTS } from '../../data/seedData';
 
 const REGION_DATA = {
   angka: {
@@ -12,12 +13,12 @@ const REGION_DATA = {
     title: 'Lembah Angka',
     subtitle: 'Matematika & Geometri Ajaib',
     icon: 'calculate',
-    tier: 'Tingkat 4',
-    progress: 80,
+    tier: 'Tingkat 1',
+    progress: 0,
     locked: false,
     level: 1,
-    nextQuest: 'Jembatan Perkalian Misterius',
-    xp: '+150',
+    nextQuest: 'Jembatan Perkalian Kilat',
+    xp: '+120 XP',
     color: 'var(--color-primary)'
   },
   sains: {
@@ -25,12 +26,12 @@ const REGION_DATA = {
     title: 'Hutan Sains',
     subtitle: 'Ekosistem & Flora Misterius',
     icon: 'biotech',
-    tier: 'Tingkat 2',
-    progress: 45,
-    locked: false,
+    tier: 'Tingkat 3',
+    progress: 0,
+    locked: true,
     level: 3,
-    nextQuest: 'Misteri Fotosintesis Cahaya',
-    xp: '+120',
+    nextQuest: 'Misteri Fotosintesis Daun',
+    xp: '+120 XP',
     color: 'var(--color-secondary)'
   },
   cerita: {
@@ -38,12 +39,12 @@ const REGION_DATA = {
     title: 'Negeri Cerita',
     subtitle: 'Literasi & Dongeng Nusantara',
     icon: 'auto_stories',
-    tier: 'Tingkat 1',
-    progress: 20,
-    locked: false,
+    tier: 'Tingkat 6',
+    progress: 0,
+    locked: true,
     level: 6,
-    nextQuest: 'Dongeng Nusantara: Timun Mas',
-    xp: '+100',
+    nextQuest: 'Rantai Kata Pertama',
+    xp: '+100 XP',
     color: 'var(--color-tertiary)'
   },
   tekateki: {
@@ -56,7 +57,7 @@ const REGION_DATA = {
     locked: true,
     level: 14,
     nextQuest: 'Kode Algoritma Roda Gigi',
-    xp: '+200',
+    xp: '+180 XP',
     color: 'var(--color-outline)'
   },
   angkasa: {
@@ -68,25 +69,84 @@ const REGION_DATA = {
     progress: 0,
     locked: true,
     level: 16,
-    nextQuest: 'Peluncuran Stasiun Antariksa',
-    xp: '+250',
+    nextQuest: 'Pusat Tata Surya',
+    xp: '+200 XP',
     color: 'var(--color-outline)'
   }
 };
 
 export default function WorldMap() {
   const navigate = useNavigate();
-  const { characterConfig, claimDailyChest, setRewardModal, level } = useGame();
+  const { characterConfig, claimDailyChest, setRewardModal, level, completedQuestIds = [] } = useGame();
   const [selectedRegionKey, setSelectedRegionKey] = useState('angka');
 
   const currentLevel = level || 1;
-  const regions = useMemo(() => ({
-    angka: { ...REGION_DATA.angka, locked: currentLevel < REGION_DATA.angka.level },
-    sains: { ...REGION_DATA.sains, locked: currentLevel < REGION_DATA.sains.level },
-    cerita: { ...REGION_DATA.cerita, locked: currentLevel < REGION_DATA.cerita.level },
-    tekateki: { ...REGION_DATA.tekateki, locked: currentLevel < REGION_DATA.tekateki.level },
-    angkasa: { ...REGION_DATA.angkasa, locked: currentLevel < REGION_DATA.angkasa.level },
-  }), [currentLevel]);
+
+  const getRegionProgress = (regionId) => {
+    const list = QUESTS.filter((q) => q.regionId === regionId);
+    if (!list.length) return 0;
+    const done = list.filter((q) => (completedQuestIds || []).includes(q.id)).length;
+    return Math.round((done / list.length) * 100);
+  };
+
+  const getNextQuestInfo = (regionId) => {
+    const list = QUESTS.filter((q) => q.regionId === regionId).sort((a, b) => a.orderIndex - b.orderIndex);
+    const next = list.find((q) => !(completedQuestIds || []).includes(q.id));
+    if (next) {
+      return { title: next.title, xp: `+${next.xpReward} XP`, id: next.id };
+    }
+    return { title: 'Semua Misi Selesai!', xp: '⭐⭐⭐', id: null };
+  };
+
+  const regions = useMemo(() => {
+    const isSainsLocked = currentLevel < 3 || !(completedQuestIds || []).includes('angka-01');
+    const isCeritaLocked = currentLevel < 6 || !(completedQuestIds || []).includes('sains-01');
+    const isTekatekiLocked = currentLevel < 14 || !(completedQuestIds || []).includes('cerita-03');
+    const isAngkasaLocked = currentLevel < 16 || !(completedQuestIds || []).includes('tekateki-03');
+
+    return {
+      angka: {
+        ...REGION_DATA.angka,
+        progress: getRegionProgress('lembah-angka'),
+        locked: false,
+        tier: 'Tingkat 1',
+        nextQuest: getNextQuestInfo('lembah-angka').title,
+        xp: getNextQuestInfo('lembah-angka').xp
+      },
+      sains: {
+        ...REGION_DATA.sains,
+        progress: getRegionProgress('hutan-sains'),
+        locked: isSainsLocked,
+        tier: 'Tingkat 3',
+        nextQuest: getNextQuestInfo('hutan-sains').title,
+        xp: getNextQuestInfo('hutan-sains').xp
+      },
+      cerita: {
+        ...REGION_DATA.cerita,
+        progress: getRegionProgress('negeri-cerita'),
+        locked: isCeritaLocked,
+        tier: 'Tingkat 6',
+        nextQuest: getNextQuestInfo('negeri-cerita').title,
+        xp: getNextQuestInfo('negeri-cerita').xp
+      },
+      tekateki: {
+        ...REGION_DATA.tekateki,
+        progress: getRegionProgress('gunung-teka-teki'),
+        locked: isTekatekiLocked,
+        tier: 'Tingkat 14',
+        nextQuest: getNextQuestInfo('gunung-teka-teki').title,
+        xp: getNextQuestInfo('gunung-teka-teki').xp
+      },
+      angkasa: {
+        ...REGION_DATA.angkasa,
+        progress: getRegionProgress('angkasa-pengetahuan'),
+        locked: isAngkasaLocked,
+        tier: 'Tingkat 16',
+        nextQuest: getNextQuestInfo('angkasa-pengetahuan').title,
+        xp: getNextQuestInfo('angkasa-pengetahuan').xp
+      }
+    };
+  }, [currentLevel, completedQuestIds]);
 
   const selectedRegion = regions[selectedRegionKey] || regions.angka;
 
@@ -333,18 +393,21 @@ export default function WorldMap() {
             </div>
           </div>
 
-          {/* Wilayah 3: Negeri Cerita (Unlocked 20%) */}
+          {/* Wilayah 3: Negeri Cerita */}
           <div style={{ position: 'relative', zIndex: 10, display: 'flex', flexDirection: 'column', alignItems: 'flex-end', paddingRight: '8px' }}>
             <div
               onClick={() => { setSelectedRegionKey('cerita'); audioManager.playSfx('button-click'); }}
               style={{
                 width: '100%',
                 maxWidth: '300px',
-                backgroundColor: 'var(--color-surface-container-lowest)',
+                backgroundColor: regions.cerita.locked ? 'rgba(255, 255, 255, 0.85)' : 'var(--color-surface-container-lowest)',
+                backdropFilter: 'blur(8px)',
                 borderRadius: 'var(--radius-lg)',
                 padding: 'var(--space-xs)',
                 boxShadow: 'var(--shadow-card)',
-                cursor: 'pointer'
+                cursor: 'pointer',
+                opacity: regions.cerita.locked ? 0.7 : 1,
+                border: selectedRegionKey === 'cerita' ? '2px solid var(--color-tertiary)' : '2px solid transparent'
               }}
             >
               <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
@@ -352,44 +415,53 @@ export default function WorldMap() {
                   width: '52px',
                   height: '52px',
                   borderRadius: 'var(--radius-md)',
-                  backgroundColor: 'var(--color-tertiary-fixed)',
+                  backgroundColor: regions.cerita.locked ? 'var(--color-surface-variant)' : 'var(--color-tertiary-fixed)',
                   display: 'flex',
                   alignItems: 'center',
                   justifyContent: 'center',
                   flexShrink: 0
                 }}>
-                  <span className="material-symbols-outlined" style={{ fontSize: '26px', color: 'var(--color-tertiary)' }}>auto_stories</span>
+                  <span className="material-symbols-outlined" style={{ fontSize: '26px', color: regions.cerita.locked ? 'var(--color-outline)' : 'var(--color-tertiary)' }}>auto_stories</span>
                 </div>
                 <div style={{ flex: 1, minWidth: 0 }}>
                   <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                    <span style={{ fontSize: '11px', fontWeight: 800, color: 'var(--color-tertiary)' }}>Wilayah 3</span>
-                    <span style={{ fontSize: '10px', fontWeight: 800, backgroundColor: 'var(--color-tertiary-fixed)', color: 'var(--color-on-tertiary-fixed)', padding: '2px 8px', borderRadius: 'var(--radius-full)' }}>
-                      20%
+                    <span style={{ fontSize: '11px', fontWeight: 800, color: regions.cerita.locked ? 'var(--color-outline)' : 'var(--color-tertiary)' }}>Wilayah 3</span>
+                    <span style={{ fontSize: '10px', fontWeight: 800, backgroundColor: regions.cerita.locked ? 'var(--color-surface-variant)' : 'var(--color-tertiary-fixed)', color: regions.cerita.locked ? 'inherit' : 'var(--color-on-tertiary-fixed)', padding: '2px 8px', borderRadius: 'var(--radius-full)', display: 'flex', alignItems: 'center', gap: '2px' }}>
+                      {regions.cerita.locked ? (
+                        <>
+                          <span className="material-symbols-outlined" style={{ fontSize: '12px' }}>lock</span> Lv. 6
+                        </>
+                      ) : (
+                        `${regions.cerita.progress}%`
+                      )}
                     </span>
                   </div>
                   <h3 style={{ fontSize: '15px', fontWeight: 800, color: 'var(--color-text-main)', margin: '2px 0 0' }}>
                     Negeri Cerita
                   </h3>
                   <div style={{ width: '100%', height: '6px', backgroundColor: 'var(--color-surface-variant)', borderRadius: 'var(--radius-full)', overflow: 'hidden', marginTop: '4px' }}>
-                    <div style={{ width: '20%', height: '100%', backgroundColor: 'var(--color-tertiary)', borderRadius: 'var(--radius-full)' }} />
+                    <div style={{ width: `${regions.cerita.progress}%`, height: '100%', backgroundColor: 'var(--color-tertiary)', borderRadius: 'var(--radius-full)' }} />
                   </div>
                 </div>
               </div>
             </div>
           </div>
 
-          {/* Wilayah 2: Hutan Sains (Unlocked 45%) */}
+          {/* Wilayah 2: Hutan Sains */}
           <div style={{ position: 'relative', zIndex: 10, display: 'flex', flexDirection: 'column', alignItems: 'flex-start', paddingLeft: '8px' }}>
             <div
               onClick={() => { setSelectedRegionKey('sains'); audioManager.playSfx('button-click'); }}
               style={{
                 width: '100%',
                 maxWidth: '300px',
-                backgroundColor: 'var(--color-surface-container-lowest)',
+                backgroundColor: regions.sains.locked ? 'rgba(255, 255, 255, 0.85)' : 'var(--color-surface-container-lowest)',
+                backdropFilter: 'blur(8px)',
                 borderRadius: 'var(--radius-lg)',
                 padding: 'var(--space-xs)',
                 boxShadow: 'var(--shadow-card)',
-                cursor: 'pointer'
+                cursor: 'pointer',
+                opacity: regions.sains.locked ? 0.7 : 1,
+                border: selectedRegionKey === 'sains' ? '2px solid var(--color-secondary)' : '2px solid transparent'
               }}
             >
               <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
@@ -397,26 +469,32 @@ export default function WorldMap() {
                   width: '52px',
                   height: '52px',
                   borderRadius: 'var(--radius-md)',
-                  backgroundColor: 'var(--color-secondary-container)',
+                  backgroundColor: regions.sains.locked ? 'var(--color-surface-variant)' : 'var(--color-secondary-container)',
                   display: 'flex',
                   alignItems: 'center',
                   justifyContent: 'center',
                   flexShrink: 0
                 }}>
-                  <span className="material-symbols-outlined" style={{ fontSize: '26px', color: 'var(--color-secondary)' }}>park</span>
+                  <span className="material-symbols-outlined" style={{ fontSize: '26px', color: regions.sains.locked ? 'var(--color-outline)' : 'var(--color-secondary)' }}>park</span>
                 </div>
                 <div style={{ flex: 1, minWidth: 0 }}>
                   <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                    <span style={{ fontSize: '11px', fontWeight: 800, color: 'var(--color-secondary)' }}>Wilayah 2</span>
-                    <span style={{ fontSize: '10px', fontWeight: 800, backgroundColor: 'var(--color-secondary-container)', color: 'var(--color-on-secondary-container)', padding: '2px 8px', borderRadius: 'var(--radius-full)' }}>
-                      45%
+                    <span style={{ fontSize: '11px', fontWeight: 800, color: regions.sains.locked ? 'var(--color-outline)' : 'var(--color-secondary)' }}>Wilayah 2</span>
+                    <span style={{ fontSize: '10px', fontWeight: 800, backgroundColor: regions.sains.locked ? 'var(--color-surface-variant)' : 'var(--color-secondary-container)', color: regions.sains.locked ? 'inherit' : 'var(--color-on-secondary-container)', padding: '2px 8px', borderRadius: 'var(--radius-full)', display: 'flex', alignItems: 'center', gap: '2px' }}>
+                      {regions.sains.locked ? (
+                        <>
+                          <span className="material-symbols-outlined" style={{ fontSize: '12px' }}>lock</span> Lv. 3
+                        </>
+                      ) : (
+                        `${regions.sains.progress}%`
+                      )}
                     </span>
                   </div>
                   <h3 style={{ fontSize: '15px', fontWeight: 800, color: 'var(--color-text-main)', margin: '2px 0 0' }}>
                     Hutan Sains
                   </h3>
                   <div style={{ width: '100%', height: '6px', backgroundColor: 'var(--color-surface-variant)', borderRadius: 'var(--radius-full)', overflow: 'hidden', marginTop: '4px' }}>
-                    <div style={{ width: '45%', height: '100%', backgroundColor: 'var(--color-secondary-container)', borderRadius: 'var(--radius-full)' }} />
+                    <div style={{ width: `${regions.sains.progress}%`, height: '100%', backgroundColor: 'var(--color-secondary)', borderRadius: 'var(--radius-full)' }} />
                   </div>
                 </div>
               </div>
@@ -436,9 +514,13 @@ export default function WorldMap() {
                 alignItems: 'center',
                 gap: '6px'
               }}>
-                <span className="material-symbols-outlined" style={{ fontSize: '16px', color: 'var(--color-tertiary)' }}>chat</span>
+                <span className="material-symbols-outlined" style={{ fontSize: '16px', color: 'var(--color-primary)' }}>chat</span>
                 <span style={{ fontSize: '12px', fontWeight: 800, color: 'var(--color-text-main)' }}>
-                  Ayo selesaikan Lembah Angka!
+                  {regions.angka.progress === 0 
+                    ? 'Ayo mulai petualangan di Lembah Angka!' 
+                    : regions.angka.progress === 100 
+                    ? 'Lembah Angka tuntas! Hebat!' 
+                    : 'Ayo selesaikan Lembah Angka!'}
                 </span>
               </div>
               <div style={{ width: '10px', height: '10px', backgroundColor: 'var(--color-surface-container-lowest)', transform: 'rotate(45deg)', marginTop: '-5px' }} />
@@ -446,7 +528,7 @@ export default function WorldMap() {
 
             {/* Avatar Pin with Pulsing Flare */}
             <div
-              onClick={() => setSelectedRegionKey('angka')}
+              onClick={() => { setSelectedRegionKey('angka'); audioManager.playSfx('button-click'); }}
               style={{ position: 'relative', display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer' }}
             >
               <div style={{
@@ -474,9 +556,9 @@ export default function WorldMap() {
               </div>
             </div>
 
-            {/* Lembah Angka 80% Card */}
+            {/* Lembah Angka Dynamic Card */}
             <div
-              onClick={() => setSelectedRegionKey('angka')}
+              onClick={() => { setSelectedRegionKey('angka'); audioManager.playSfx('button-click'); }}
               style={{
                 marginTop: '10px',
                 width: '100%',
@@ -485,7 +567,8 @@ export default function WorldMap() {
                 borderRadius: 'var(--radius-lg)',
                 padding: 'var(--space-sm)',
                 boxShadow: 'var(--shadow-card)',
-                cursor: 'pointer'
+                cursor: 'pointer',
+                border: selectedRegionKey === 'angka' ? '2px solid var(--color-primary)' : '2px solid transparent'
               }}
             >
               <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
@@ -504,10 +587,10 @@ export default function WorldMap() {
                 <div style={{ flex: 1, minWidth: 0 }}>
                   <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                     <span style={{ fontSize: '11px', fontWeight: 800, color: 'var(--color-primary)', textTransform: 'uppercase' }}>
-                      Misi Aktif
+                      {regions.angka.progress === 100 ? 'Selesai' : 'Misi Aktif'}
                     </span>
                     <span style={{ fontSize: '10px', fontWeight: 800, backgroundColor: 'var(--color-primary-fixed)', color: 'var(--color-on-primary-fixed)', padding: '2px 8px', borderRadius: 'var(--radius-full)' }}>
-                      80%
+                      {regions.angka.progress}%
                     </span>
                   </div>
                   <h3 style={{ fontSize: '16px', fontWeight: 800, color: 'var(--color-text-main)', margin: '2px 0 0' }}>
@@ -517,7 +600,7 @@ export default function WorldMap() {
                     Matematika & Geometri Ajaib
                   </p>
                   <div style={{ width: '100%', height: '8px', backgroundColor: 'var(--color-surface-variant)', borderRadius: 'var(--radius-full)', overflow: 'hidden', marginTop: '4px' }}>
-                    <div style={{ width: '80%', height: '100%', backgroundColor: 'var(--color-primary-container)', borderRadius: 'var(--radius-full)' }} />
+                    <div style={{ width: `${regions.angka.progress}%`, height: '100%', backgroundColor: 'var(--color-primary)', borderRadius: 'var(--radius-full)' }} />
                   </div>
                 </div>
               </div>

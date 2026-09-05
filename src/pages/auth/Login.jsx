@@ -3,6 +3,7 @@ import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { useAuth } from '../../hooks/useAuth';
 import { useLanguage } from '../../context/LanguageContext';
 import { LoginTravelerIllustration } from '../../components/auth/AuthIllustrations';
+import DesktopAuthShowcase from '../../components/auth/DesktopAuthShowcase';
 import styles from './Auth.module.css';
 
 export default function Login() {
@@ -70,18 +71,38 @@ export default function Login() {
     <div className={styles.authPageWrapper}>
       <div className={styles.authCard}>
         {/* Circular Floating Back Button */}
-        <Link to="/" className={styles.circularBackBtn} aria-label="Kembali">
+        <Link to="/" className={styles.circularBackBtn} aria-label={isId ? 'Kembali' : 'Back'}>
           <span className="material-symbols-outlined" style={{ fontSize: '20px' }}>
             arrow_back
           </span>
         </Link>
 
-        {/* Clean Vector Header Illustration */}
+        {/* Desktop Left Showcase Panel (Visible on desktop >= 960px) */}
+        <DesktopAuthShowcase
+          badge={isId ? '🎒 SELAMAT DATANG KEMBALI' : '🎒 WELCOME BACK'}
+          title={isId ? 'Lanjutkan Perjalanan Petualanganmu!' : 'Continue Your Great Journey!'}
+          description={
+            isId
+              ? 'Masuk untuk membuka tiket perjalanan, memeriksa kemajuan quest harian, dan bermain bersama hewan sahabatmu.'
+              : 'Sign in to access your travel tickets, check daily quest progress, and play with your companion pets.'
+          }
+          features={[
+            { icon: 'rocket_launch', text: isId ? 'Akses Cepat Dunia' : 'Fast World Access' },
+            { icon: 'stars', text: isId ? 'Poin & Hadiah Harian' : 'Daily Rewards & XP' },
+            { icon: 'shield', text: isId ? 'Akun Aman & Terlindungi' : 'Safe & Secure Profile' }
+          ]}
+        />
+
+        {/* Mobile Vector Header Illustration (Visible on mobile < 960px) */}
         <div className={styles.illustrationContainer}>
-          <LoginTravelerIllustration />
+          <img
+            src="/images/auth-traveler.jpg"
+            alt="Petualangan EduQuest"
+            className={styles.mobileHeaderArtwork}
+          />
         </div>
 
-        {/* Form Body with Smooth Curved Overlap */}
+        {/* Form Body */}
         <div className={styles.formBody}>
           <div className={styles.titleBlock}>
             <h1 className={styles.titleLine1}>

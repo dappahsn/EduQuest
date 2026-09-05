@@ -43,6 +43,72 @@ function CharacterAvatar({
     purple: '#272f4a'
   }[outfitColor] || '#006194';
 
+  // Dynamic 3D storybook character mapping based on avatar ID or accessories
+  const getAvatarImage = () => {
+    if (config.avatarImage) return config.avatarImage;
+    if (config.avatar === 'tara_adventurer' || config.avatar === 'girl_tara') {
+      return '/images/tara-avatar.png';
+    }
+    if (config.avatar === 'raka_astronaut' || config.accessories === 'hat-astronaut' || config.outfit === 'outfit-cyber') {
+      return '/images/raka-astronaut.png';
+    }
+    if (config.avatar === 'raka_detective' || config.accessories === 'hat-detective') {
+      return '/images/raka-detective.png';
+    }
+    if (config.avatar === 'raka_nature' || config.accessories === 'hat-forest-crown' || config.outfit === 'outfit-scientist') {
+      return '/images/raka-nature.png';
+    }
+    if (config.avatar === 'raka_casual') {
+      return '/images/raka-casual.png';
+    }
+    if (config.avatar === 'raka_explorer' || config.avatar === 'boy_raka' || config.accessories === 'hat-safari') {
+      return '/images/raka-safari.png';
+    }
+    // Default fallback
+    return '/images/raka-safari.png';
+  };
+
+  const shouldUseImage = !config.forceSvg;
+
+  if (shouldUseImage) {
+    const imgSrc = getAvatarImage();
+    const isHero = size === 'hero';
+
+    return (
+      <div
+        onClick={onClick}
+        className={className}
+        style={{
+          width: `${px}px`,
+          height: `${px}px`,
+          position: 'relative',
+          display: 'inline-flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          cursor: onClick ? 'pointer' : 'default',
+          transform: animate ? 'scale(1.03)' : 'none',
+          transition: 'transform 0.25s cubic-bezier(0.34, 1.56, 0.64, 1)',
+          borderRadius: '50%',
+          boxShadow: isHero ? '0 16px 40px -10px rgba(2, 132, 199, 0.35), 0 0 0 6px rgba(186, 230, 253, 0.6)' : '0 4px 12px rgba(2, 132, 199, 0.18)',
+          border: isHero ? '4px solid #ffffff' : '2px solid rgba(186, 230, 253, 0.9)',
+          overflow: 'hidden',
+          backgroundColor: '#e0f2fe'
+        }}
+      >
+        <img
+          src={imgSrc}
+          alt="Raka Character"
+          style={{
+            width: '100%',
+            height: '100%',
+            objectFit: 'cover',
+            display: 'block'
+          }}
+        />
+      </div>
+    );
+  }
+
   return (
     <div
       onClick={onClick}
@@ -70,15 +136,19 @@ function CharacterAvatar({
             <stop offset="0%" stopColor="#ffffff" stopOpacity="0.4" />
             <stop offset="100%" stopColor="#000000" stopOpacity="0" />
           </radialGradient>
+          <linearGradient id={`skinGrad-${size}`} x1="0%" y1="0%" x2="0%" y2="100%">
+            <stop offset="0%" stopColor={skinTone} />
+            <stop offset="100%" stopColor="#f5be9e" />
+          </linearGradient>
         </defs>
 
         {/* Backdrop circle */}
-        <circle cx="50" cy="50" r="48" fill="#e3e7ff" />
+        <circle cx="50" cy="50" r="48" fill="#e0f2fe" />
 
         {/* Backpack shoulder strap / peek */}
-        {backpack && (
+        {backpack && backpack !== 'none' && (
           <path
-            d="M 24 55 Q 20 70 30 85 L 26 88 Q 16 70 20 55 Z"
+            d="M 22 55 Q 18 70 28 85 L 24 88 Q 14 70 18 55 Z"
             fill="#341100"
             opacity="0.8"
           />
@@ -86,58 +156,77 @@ function CharacterAvatar({
 
         {/* Torso / Outfit */}
         <path
-          d="M 32 72 Q 50 66 68 72 L 72 98 Q 50 100 28 98 Z"
+          d="M 30 70 Q 50 64 70 70 L 74 98 Q 50 100 26 98 Z"
           fill={outfitColorHex}
         />
         {/* Collar / Scout Scarf */}
         <path
-          d="M 42 70 L 50 82 L 58 70 Q 50 68 42 70 Z"
-          fill="#ffdbca"
+          d="M 40 68 L 50 82 L 60 68 Q 50 65 40 68 Z"
+          fill="#f97316"
         />
+        <circle cx="50" cy="74" r="3" fill="#ea580c" />
+
+        {/* Ears */}
+        <circle cx="21" cy="46" r="6" fill={`url(#skinGrad-${size})`} />
+        <circle cx="79" cy="46" r="6" fill={`url(#skinGrad-${size})`} />
+        <circle cx="21" cy="46" r="3" fill="#f5be9e" opacity="0.6" />
+        <circle cx="79" cy="46" r="3" fill="#f5be9e" opacity="0.6" />
 
         {/* Head Base / Skin */}
-        <ellipse cx="50" cy="46" rx="28" ry="30" fill={skinTone} />
+        <ellipse cx="50" cy="46" rx="28" ry="30" fill={`url(#skinGrad-${size})`} />
 
         {/* Cheerful Rosy Cheeks */}
-        <circle cx="34" cy="54" r="5" fill="#ff8a80" opacity="0.45" />
-        <circle cx="66" cy="54" r="5" fill="#ff8a80" opacity="0.45" />
+        <circle cx="33" cy="54" r="6" fill="#ff8a80" opacity="0.5" />
+        <circle cx="67" cy="54" r="6" fill="#ff8a80" opacity="0.5" />
 
-        {/* Eyes */}
-        <ellipse cx="38" cy="46" rx="4" ry="5.5" fill="#121a34" />
-        <ellipse cx="62" cy="46" rx="4" ry="5.5" fill="#121a34" />
+        {/* Expressive Anime/Pixar Eyes */}
+        <ellipse cx="37" cy="46" rx="4.5" ry="6" fill="#1e1b4b" />
+        <ellipse cx="63" cy="46" rx="4.5" ry="6" fill="#1e1b4b" />
+        <circle cx="37" cy="47" r="3.2" fill="#4338ca" />
+        <circle cx="63" cy="47" r="3.2" fill="#4338ca" />
         {/* Eye sparkles */}
-        <circle cx="39.5" cy="44" r="1.8" fill="#ffffff" />
-        <circle cx="63.5" cy="44" r="1.8" fill="#ffffff" />
+        <circle cx="35.5" cy="43.5" r="2" fill="#ffffff" />
+        <circle cx="61.5" cy="43.5" r="2" fill="#ffffff" />
+        <circle cx="38.5" cy="48" r="0.9" fill="#ffffff" />
+        <circle cx="64.5" cy="48" r="0.9" fill="#ffffff" />
 
         {/* Eyebrows */}
         <path
-          d="M 33 39 Q 38 36 43 38"
-          stroke="#121a34"
-          strokeWidth="2"
+          d="M 31 38 Q 37 34 43 37"
+          stroke="#1e1b4b"
+          strokeWidth="2.5"
           strokeLinecap="round"
           fill="none"
         />
         <path
-          d="M 57 38 Q 62 36 67 39"
-          stroke="#121a34"
-          strokeWidth="2"
+          d="M 57 37 Q 63 34 69 38"
+          stroke="#1e1b4b"
+          strokeWidth="2.5"
           strokeLinecap="round"
           fill="none"
         />
 
         {/* Smiling Mouth */}
         <path
-          d="M 43 56 Q 50 63 57 56"
+          d="M 42 55 Q 50 63 58 55"
           stroke="#994100"
           strokeWidth="2.5"
           strokeLinecap="round"
-          fill="#ba1a1a"
+          fill="#ef4444"
+        />
+        {/* Tooth sparkle highlight */}
+        <path
+          d="M 46 56 Q 50 58 54 56"
+          stroke="#ffffff"
+          strokeWidth="1.5"
+          strokeLinecap="round"
+          fill="none"
         />
 
         {/* Hair Styles */}
         {hairstyle === 'short' && (
           <path
-            d="M 22 42 Q 22 20 50 18 Q 78 20 78 42 Q 68 28 50 28 Q 32 28 22 42 Z"
+            d="M 22 42 Q 22 18 50 16 Q 78 18 78 42 Q 68 28 50 28 Q 32 28 22 42 Z"
             fill={hairColor}
           />
         )}
@@ -171,18 +260,27 @@ function CharacterAvatar({
           <g>
             {/* Safari Hat Crown */}
             <path
-              d="M 28 32 Q 50 10 72 32 Z"
-              fill="#c05400"
+              d="M 27 33 Q 50 12 73 33 Z"
+              fill="#e2be8a"
             />
-            {/* Hat Band */}
             <path
-              d="M 27 30 Q 50 22 73 30"
-              stroke="#6cf8bb"
-              strokeWidth="4"
+              d="M 29 33 Q 50 14 71 33 Z"
+              fill="#ebd0a7"
+              opacity="0.6"
+            />
+            {/* Leather Band */}
+            <path
+              d="M 26 33 Q 50 25 74 33"
+              stroke="#5c3a21"
+              strokeWidth="4.5"
               fill="none"
             />
-            {/* Brim */}
-            <ellipse cx="50" cy="32" rx="38" ry="7" fill="#c05400" />
+            {/* Golden Buckle */}
+            <rect x="47" y="27" width="6" height="5" rx="1" fill="#f59e0b" />
+            <rect x="48.5" y="28" width="3" height="3" rx="0.5" fill="#5c3a21" />
+            {/* Brim with curved depth */}
+            <ellipse cx="50" cy="33" rx="38" ry="8" fill="#d4aa72" />
+            <ellipse cx="50" cy="32" rx="36" ry="6.5" fill="#e8c99b" />
           </g>
         )}
 

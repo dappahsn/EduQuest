@@ -2,7 +2,8 @@ import React, { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../../hooks/useAuth';
 import { useLanguage } from '../../context/LanguageContext';
-import { SignUpCloudsIllustration } from '../../components/auth/AuthIllustrations';
+import { SignUpCloudsIllustration, LoginTravelerIllustration } from '../../components/auth/AuthIllustrations';
+import DesktopAuthShowcase from '../../components/auth/DesktopAuthShowcase';
 import styles from './Auth.module.css';
 
 export default function Register() {
@@ -49,9 +50,9 @@ export default function Register() {
       navigate('/world');
     } catch (err) {
       const msg = err.message || '';
-      if (msg.includes('already registered') || msg.includes('User already registered')) {
+      if (msg.includes('already registered') || msg.includes('User already registered') || msg.includes('sudah terdaftar')) {
         setErrorMessage(isId ? 'Email ini sudah terdaftar. Silakan masuk menggunakan akunmu!' : 'This email is already registered. Please login!');
-      } else if (msg.includes('Password should be at least')) {
+      } else if (msg.includes('Password should be at least') || msg.includes('minimal 6')) {
         setErrorMessage(isId ? 'Kata sandi minimal 6 karakter agar akunmu aman!' : 'Password should be at least 6 characters!');
       } else {
         setErrorMessage(isId ? 'Gagal mendaftar. Coba periksa koneksi atau gunakan email lain.' : 'Registration failed. Please check connection or use another email.');
@@ -80,19 +81,39 @@ export default function Register() {
   return (
     <div className={styles.authPageWrapper}>
       <div className={styles.authCard}>
-        {/* Circular Floating Back Button */}
+        {/* Floating Circular Back Button */}
         <Link to="/auth/login" className={styles.circularBackBtn} aria-label={isId ? 'Kembali' : 'Back'}>
           <span className="material-symbols-outlined" style={{ fontSize: '20px' }}>
             arrow_back
           </span>
         </Link>
 
-        {/* Clean Vector Header Illustration */}
+        {/* Desktop Left Showcase Panel (Visible on desktop >= 960px) */}
+        <DesktopAuthShowcase
+          badge={isId ? '✨ PETUALANGAN EDUKASI' : '✨ EXPLORER PORTAL'}
+          title={isId ? 'Mulai Petualangan Belajarmu!' : 'Sign Up to Start Your Journey!'}
+          description={
+            isId
+              ? 'Jelajahi 5 kepulauan ajaib, selesaikan misi harian berhadiah koin emas, dan adopsi hewan sahabat impianmu di EduQuest!'
+              : 'Explore 5 magical islands, complete daily quests for gold coins, and adopt your dream pet companions in EduQuest!'
+          }
+          features={[
+            { icon: 'explore', text: isId ? '5 Kepulauan Unik' : '5 Adventure Worlds' },
+            { icon: 'pets', text: isId ? 'Adopsi Hewan Sahabat' : 'Adopt Pet Companions' },
+            { icon: 'military_tech', text: isId ? 'Koleksi Lencana Emas' : 'Earn Gold Badges' }
+          ]}
+        />
+
+        {/* Mobile Header Illustration (Visible on mobile < 960px) */}
         <div className={styles.illustrationContainer}>
-          <SignUpCloudsIllustration />
+          <img
+            src="/images/auth-traveler.jpg"
+            alt="Petualangan EduQuest"
+            className={styles.mobileHeaderArtwork}
+          />
         </div>
 
-        {/* Form Body with Smooth Curved Overlap */}
+        {/* Form Body */}
         <div className={styles.formBody}>
           <div className={styles.titleBlock}>
             <h1 className={styles.titleLine1}>

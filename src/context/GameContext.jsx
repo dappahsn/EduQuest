@@ -12,13 +12,13 @@ const GameContext = createContext(null);
 // Security & User Isolation: Namespace storage per user ID
 const getStorageKey = (uid) => uid ? `eduquest_save_state_${uid}` : 'eduquest_save_state_guest';
 
-const DEFAULT_GAME_STATE = {
-  playerName: 'Raka',
-  xp: 2450, // Matches Stitch Level 12 preview
-  coins: 840,
+export const DEFAULT_GAME_STATE = {
+  playerName: 'Petualang Cilik',
+  xp: 0, // Level 1 starts at 0 XP
+  coins: 0,
   energy: 3,
   maxEnergy: 5,
-  streakDays: 7,
+  streakDays: 1,
   lastPlayedDate: getTodayDateString(),
   characterConfig: {
     avatar: 'boy_raka',
@@ -27,41 +27,34 @@ const DEFAULT_GAME_STATE = {
     skinTone: '#ffd8be',
     outfit: 'outfit-scout',
     shoes: 'shoes-sneakers',
-    backpack: 'bag-canvas',
-    accessories: 'hat-safari',
+    backpack: 'none',
+    accessories: 'none',
     outfitColor: 'sky',
-    hasCustomized: true
+    hasCustomized: false
   },
-  activePetId: 'fox', // Lumi
+  activePetId: 'fox', // Sahabat mula-mula (Lumi)
   petsState: {
-    fox: { level: 7, xp: 720, happiness: 98, unlocked: true },
-    cat: { level: 5, xp: 50, happiness: 92, unlocked: true },
-    panda: { level: 1, xp: 0, happiness: 85, unlocked: true },
-    dino: { level: 1, xp: 0, happiness: 80, unlocked: false },
-    dragon: { level: 1, xp: 0, happiness: 80, unlocked: false }
+    fox: { level: 1, xp: 0, happiness: 100, unlocked: true },
+    cat: { level: 1, xp: 0, happiness: 100, unlocked: false },
+    panda: { level: 1, xp: 0, happiness: 100, unlocked: false },
+    dino: { level: 1, xp: 0, happiness: 100, unlocked: false },
+    dragon: { level: 1, xp: 0, happiness: 100, unlocked: false }
   },
   dailyQuestsDate: getTodayDateString(),
   dailyQuests: generateDailyQuests(),
   dailyChestClaimed: false,
   unlockedItemIds: [
-    'hat-safari',
-    'hat-astronaut',
-    'hat-detective',
     'outfit-scout',
-    'outfit-scientist',
-    'bag-canvas',
     'shoes-sneakers'
   ],
   equippedItems: {
-    accessories: 'hat-safari',
     outfit: 'outfit-scout',
-    backpack: 'bag-canvas',
     shoes: 'shoes-sneakers'
   },
-  unlockedCardIds: ['card-earth', 'card-sun', 'card-moon'],
-  completedQuestIds: ['quest-la-1', 'quest-la-2'],
-  visitedRegionIds: ['lembah-angka', 'hutan-sains', 'negeri-cerita'],
-  claimedAchievements: ['first_quest']
+  unlockedCardIds: [],
+  completedQuestIds: [],
+  visitedRegionIds: ['lembah-angka'],
+  claimedAchievements: []
 };
 
 function loadInitialState(uid) {
@@ -70,6 +63,23 @@ function loadInitialState(uid) {
     const saved = localStorage.getItem(key);
     if (saved) {
       const parsed = JSON.parse(saved);
+
+      // Migrasi data uji prototipe lama (XP 2450/2460 atau quest uji lama 'quest-la-1')
+      const isLegacyPrototypeState = 
+        parsed.completedQuestIds?.includes('quest-la-1') ||
+        (parsed.xp === 2450 && parsed.coins === 840) ||
+        (parsed.xp === 2460 && parsed.coins === 840);
+
+      if (isLegacyPrototypeState) {
+        console.info('[EduQuest State] Migrasi akun lama ke state awal (0 XP & 0 Koin) untuk:', uid || 'guest');
+        const fresh = {
+          ...DEFAULT_GAME_STATE,
+          playerName: parsed.playerName || DEFAULT_GAME_STATE.playerName
+        };
+        localStorage.setItem(key, JSON.stringify(fresh));
+        return fresh;
+      }
+
       if (checkDailyReset(parsed.dailyQuestsDate)) {
         parsed.dailyQuestsDate = getTodayDateString();
         parsed.dailyQuests = generateDailyQuests();

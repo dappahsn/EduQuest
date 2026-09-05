@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom';
 import { useAuth } from '../../hooks/useAuth';
 import { useLanguage } from '../../context/LanguageContext';
 import { ForgotTravelerIllustration } from '../../components/auth/AuthIllustrations';
+import DesktopAuthShowcase from '../../components/auth/DesktopAuthShowcase';
 import styles from './Auth.module.css';
 
 export default function ForgotPassword() {
@@ -44,12 +45,32 @@ export default function ForgotPassword() {
           </span>
         </Link>
 
-        {/* Clean Vector Header Illustration */}
+        {/* Desktop Left Showcase Panel (Visible on desktop >= 960px) */}
+        <DesktopAuthShowcase
+          badge={isId ? '🛡️ PEMULIHAN AKSES' : '🛡️ ACCOUNT RECOVERY'}
+          title={isId ? 'Akses Akunmu Selalu Terlindungi' : 'Your Account is Always Protected'}
+          description={
+            isId
+              ? 'Jangan cemas petualang, kami siap membantu memulihkan akses ke seluruh pencapaian, koin emas, dan hewan sahabatmu!'
+              : 'Don’t worry explorer, we will help restore access to all your badges, gold coins, and companion pets!'
+          }
+          features={[
+            { icon: 'mark_email_read', text: isId ? 'Kirim Tautan Verifikasi' : 'Instant Email Link' },
+            { icon: 'lock_reset', text: isId ? 'Sandi Baru Mudah' : 'Easy Password Reset' },
+            { icon: 'verified_user', text: isId ? 'Proteksi Data Privasi' : 'Privacy Protection' }
+          ]}
+        />
+
+        {/* Mobile Vector Header Illustration (Visible on mobile < 960px) */}
         <div className={styles.illustrationContainer}>
-          <ForgotTravelerIllustration />
+          <img
+            src="/images/auth-traveler.jpg"
+            alt="Petualangan EduQuest"
+            className={styles.mobileHeaderArtwork}
+          />
         </div>
 
-        {/* Form Body with Smooth Curved Overlap */}
+        {/* Form Body */}
         <div className={styles.formBody}>
           <div className={styles.titleBlock}>
             <h1 className={styles.titleLine1}>

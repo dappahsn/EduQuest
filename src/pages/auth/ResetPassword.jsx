@@ -3,6 +3,7 @@ import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../../hooks/useAuth';
 import { useLanguage } from '../../context/LanguageContext';
 import { ForgotTravelerIllustration } from '../../components/auth/AuthIllustrations';
+import DesktopAuthShowcase from '../../components/auth/DesktopAuthShowcase';
 import styles from './Auth.module.css';
 
 export default function ResetPassword() {
@@ -56,12 +57,32 @@ export default function ResetPassword() {
           </span>
         </Link>
 
-        {/* Clean Vector Header Illustration */}
+        {/* Desktop Left Showcase Panel (Visible on desktop >= 960px) */}
+        <DesktopAuthShowcase
+          badge={isId ? '🔑 KATA SANDI BARU' : '🔑 NEW PASSWORD'}
+          title={isId ? 'Amankan Akun Petualangmu' : 'Secure Your Explorer Account'}
+          description={
+            isId
+              ? 'Buat kata sandi baru yang kuat dan mudah diingat untuk melanjutkan petualangan di 5 kepulauan EduQuest.'
+              : 'Create a strong and memorable new password to continue your adventures across EduQuest islands.'
+          }
+          features={[
+            { icon: 'key', text: isId ? 'Enkripsi Kuat' : 'Strong Encryption' },
+            { icon: 'check_circle', text: isId ? 'Akses Instan' : 'Instant Activation' },
+            { icon: 'sports_esports', text: isId ? 'Siap Bermain Kembali' : 'Ready to Play' }
+          ]}
+        />
+
+        {/* Mobile Vector Header Illustration (Visible on mobile < 960px) */}
         <div className={styles.illustrationContainer}>
-          <ForgotTravelerIllustration />
+          <img
+            src="/images/auth-traveler.jpg"
+            alt="Petualangan EduQuest"
+            className={styles.mobileHeaderArtwork}
+          />
         </div>
 
-        {/* Form Body with Smooth Curved Overlap */}
+        {/* Form Body */}
         <div className={styles.formBody}>
           <div className={styles.titleBlock}>
             <h1 className={styles.titleLine1}>

@@ -48,13 +48,25 @@ export default function CharacterCustomizer() {
 
   function handleSelectOption(item) {
     if (item.slot === 'accessories') {
-      setCurrentConfig((prev) => ({ ...prev, accessories: item.id }));
+      setCurrentConfig((prev) => ({
+        ...prev,
+        accessories: prev.accessories === item.id ? 'none' : item.id
+      }));
     } else if (item.slot === 'outfit') {
-      setCurrentConfig((prev) => ({ ...prev, outfit: item.id }));
+      setCurrentConfig((prev) => ({
+        ...prev,
+        outfit: prev.outfit === item.id ? 'outfit-scout' : item.id
+      }));
     } else if (item.slot === 'backpack') {
-      setCurrentConfig((prev) => ({ ...prev, backpack: item.id }));
+      setCurrentConfig((prev) => ({
+        ...prev,
+        backpack: prev.backpack === item.id ? 'none' : item.id
+      }));
     } else if (item.slot === 'shoes') {
-      setCurrentConfig((prev) => ({ ...prev, shoes: item.id }));
+      setCurrentConfig((prev) => ({
+        ...prev,
+        shoes: prev.shoes === item.id ? 'shoes-sneakers' : item.id
+      }));
     }
   }
 
@@ -452,11 +464,26 @@ export default function CharacterCustomizer() {
                   display: 'flex',
                   alignItems: 'center',
                   justifyContent: 'center',
-                  margin: '4px 0'
+                  margin: '4px 0',
+                  overflow: 'hidden',
+                  position: 'relative'
                 }}>
-                  <span className="material-symbols-outlined" style={{ fontSize: '36px', color: 'var(--color-primary)' }}>
-                    {item.icon}
-                  </span>
+                  {item.previewImage ? (
+                    <img
+                      src={item.previewImage}
+                      alt={item.name}
+                      style={{
+                        width: '100%',
+                        height: '100%',
+                        objectFit: 'cover',
+                        borderRadius: 'var(--radius-sm)'
+                      }}
+                    />
+                  ) : (
+                    <span className="material-symbols-outlined" style={{ fontSize: '36px', color: 'var(--color-primary)' }}>
+                      {item.icon}
+                    </span>
+                  )}
                 </div>
 
                 <div>

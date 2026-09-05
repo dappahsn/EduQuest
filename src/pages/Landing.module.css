@@ -1,115 +1,237 @@
-.landingContainer {
+/* ==============================================================================
+   EDUQUEST LANDING PAGE STYLES
+   - Unified with Travel & Explorer Aesthetics (Navy #0f172a & Sky Blue #0284c7)
+   - Full Responsive Layout (Desktop 2-column hero + Island showcase + Mobile-first)
+   ============================================================================== */
+
+.landingWrapper {
+  min-height: 100vh;
+  width: 100%;
   display: flex;
   flex-direction: column;
-  min-height: 100vh;
-  background: linear-gradient(180deg, var(--color-surface) 0%, var(--color-canvas) 100%);
-  padding: var(--space-md);
+  background: linear-gradient(180deg, #e0f2fe 0%, #f0f9ff 30%, #ffffff 65%);
+  font-family: inherit;
+  box-sizing: border-box;
+  position: relative;
+  overflow-x: hidden;
 }
 
-.topHeader {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
+/* Subtle background atmosphere cloud */
+.landingWrapper::before {
+  content: '';
+  position: absolute;
+  top: -80px;
+  right: -80px;
+  width: 500px;
+  height: 500px;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(186, 230, 253, 0.5) 0%, rgba(255, 255, 255, 0) 70%);
+  pointer-events: none;
+  z-index: 0;
+}
+
+/* ==============================================================================
+   1. TOP NAVIGATION BAR
+   ============================================================================== */
+.topNavbar {
   width: 100%;
-  max-width: var(--max-width-canvas);
+  max-width: 1200px;
   margin: 0 auto;
+  padding: 20px 24px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  box-sizing: border-box;
+  position: relative;
+  z-index: 10;
+}
+
+.brandLink {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  text-decoration: none;
+}
+
+.brandIconCircle {
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  background: #ffffff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 4px 14px rgba(2, 132, 199, 0.15);
+  border: 1px solid #e2e8f0;
+}
+
+.brandText {
+  display: flex;
+  flex-direction: column;
+}
+
+.brandTitle {
+  font-size: 20px;
+  font-weight: 800;
+  color: #0f172a;
+  letter-spacing: -0.02em;
+  line-height: 1.1;
+}
+
+.brandTagline {
+  font-size: 11px;
+  font-weight: 600;
+  color: #0284c7;
+  letter-spacing: 0.02em;
+}
+
+.navActions {
+  display: flex;
+  align-items: center;
+  gap: 10px;
 }
 
 .audioPill, .langPill {
   display: inline-flex;
   align-items: center;
-  gap: var(--space-xxs);
-  background-color: var(--color-surface-card);
-  padding: var(--space-xxs) var(--space-sm);
-  border-radius: var(--radius-full);
-  box-shadow: var(--shadow-card);
+  gap: 6px;
+  background: #ffffff;
+  border: 1.5px solid #e2e8f0;
+  padding: 7px 14px;
+  border-radius: 9999px;
+  font-family: inherit;
   font-size: 13px;
-  font-weight: 700;
-  color: var(--color-primary-deep);
+  font-weight: 600;
+  color: #0f172a;
+  box-shadow: 0 2px 6px rgba(15, 23, 42, 0.04);
+  cursor: pointer;
+  transition: all 0.15s ease;
 }
 
+.audioPill:hover, .langPill:hover {
+  background: #f8fafc;
+  border-color: #cbd5e1;
+  transform: translateY(-1px);
+}
+
+.audioPill:active, .langPill:active {
+  transform: scale(0.97);
+}
+
+.navLoginBtn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background-color: #0f172a;
+  color: #ffffff;
+  padding: 8px 20px;
+  border-radius: 9999px;
+  font-size: 13px;
+  font-weight: 700;
+  text-decoration: none;
+  box-shadow: 0 4px 12px rgba(15, 23, 42, 0.15);
+  transition: all 0.15s ease;
+}
+
+.navLoginBtn:hover {
+  background-color: #1e293b;
+  transform: translateY(-1px);
+}
+
+/* ==============================================================================
+   2. HERO SECTION
+   ============================================================================== */
 .heroSection {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  text-align: center;
   width: 100%;
-  max-width: 520px;
-  margin: var(--space-xl) auto auto;
-  gap: var(--space-md);
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 36px 24px 60px 24px;
+  display: grid;
+  grid-template-columns: 1.15fr 0.95fr;
+  align-items: center;
+  gap: 48px;
+  box-sizing: border-box;
+  position: relative;
+  z-index: 5;
 }
 
-.emblemWrapper {
+.heroContent {
   display: flex;
   flex-direction: column;
+  gap: 20px;
+}
+
+.heroBadgePill {
+  display: inline-flex;
   align-items: center;
-  position: relative;
-  gap: var(--space-xxs);
-}
-
-.emblemCircle {
-  width: 80px;
-  height: 80px;
-  border-radius: var(--radius-full);
-  background-color: var(--color-surface-card);
-  box-shadow: var(--shadow-ambient);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  margin-bottom: var(--space-xs);
-}
-
-.badgePill {
-  background-color: var(--color-primary-container);
-  color: var(--color-on-primary-container);
-  padding: 2px 14px;
-  border-radius: var(--radius-full);
-  font-size: 14px;
-  font-weight: 800;
-}
-
-.tagline {
-  font-size: 13px;
+  gap: 6px;
+  background: rgba(2, 132, 199, 0.12);
+  color: #0284c7;
+  padding: 6px 16px;
+  border-radius: 9999px;
+  font-size: 12px;
   font-weight: 700;
-  color: var(--color-text-muted);
+  letter-spacing: 0.03em;
+  width: fit-content;
 }
 
 .heroTitle {
-  font-size: 28px;
-  font-weight: 800;
-  line-height: 1.25;
-  color: var(--color-text-main);
-  letter-spacing: -0.015em;
+  font-size: 46px;
+  font-weight: 900;
+  line-height: 1.18;
+  color: #0f172a;
+  letter-spacing: -0.025em;
+  margin: 0;
+}
+
+.heroTitleAccent {
+  color: #0284c7;
+  display: block;
 }
 
 .heroSubtitle {
-  font-size: 15px;
+  font-size: 17px;
+  line-height: 1.6;
+  color: #475569;
   font-weight: 500;
-  line-height: 1.5;
-  color: var(--color-text-muted);
+  margin: 0;
+  max-width: 540px;
 }
 
+/* Mascot Speech Card */
 .mascotCard {
   display: flex;
   align-items: center;
-  gap: var(--space-xs);
-  background-color: var(--color-surface-card);
-  padding: var(--space-sm);
-  border-radius: var(--radius-xl);
-  box-shadow: var(--shadow-ambient);
+  gap: 16px;
+  background: #ffffff;
+  padding: 12px 20px;
+  border-radius: 20px;
+  border: 1.5px solid #e2e8f0;
+  box-shadow: 0 8px 24px -6px rgba(2, 132, 199, 0.08);
   width: 100%;
-  text-align: left;
+  max-width: 520px;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
 }
 
-.avatarCircle {
-  width: 48px;
-  height: 48px;
-  border-radius: var(--radius-full);
-  background-color: var(--color-primary-fixed);
-  display: flex;
-  align-items: center;
-  justify-content: center;
+.mascotCard:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 12px 28px -6px rgba(2, 132, 199, 0.14);
+}
+
+.mascotAvatarImg {
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+  object-fit: cover;
   flex-shrink: 0;
+  box-shadow: 0 4px 14px rgba(2, 132, 199, 0.2);
+  border: 2px solid #bae6fd;
+  background-color: #e0f2fe;
+  transition: transform 0.25s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+.mascotCard:hover .mascotAvatarImg {
+  transform: scale(1.1) rotate(4deg);
 }
 
 .speechBubble {
@@ -120,93 +242,492 @@
 .speechHeader {
   display: flex;
   align-items: center;
-  gap: var(--space-xxs);
+  gap: 8px;
 }
 
 .mascotName {
-  font-size: 13px;
+  font-size: 14px;
   font-weight: 800;
-  color: var(--color-primary);
+  color: #0f172a;
 }
 
 .mascotRole {
-  font-size: 10px;
+  font-size: 11px;
   font-weight: 700;
-  background-color: var(--color-tertiary-fixed);
-  color: var(--color-tertiary-deep);
-  padding: 1px 6px;
-  border-radius: var(--radius-full);
+  background-color: #fef3c7;
+  color: #b45309;
+  padding: 2px 8px;
+  border-radius: 9999px;
 }
 
 .speechText {
-  font-size: 13px;
+  font-size: 13.5px;
   font-weight: 500;
-  color: var(--color-text-main);
-  margin-top: 2px;
+  color: #334155;
+  margin: 4px 0 0 0;
+  line-height: 1.45;
 }
 
-.actionCenter {
-  display: flex;
-  flex-direction: column;
-  width: 100%;
-  gap: var(--space-xs);
-  margin-top: var(--space-sm);
-}
-
-.btnPrimary {
+/* Call to Action Buttons */
+.ctaRow {
   display: flex;
   align-items: center;
-  justify-content: center;
-  gap: var(--space-xs);
-  background-color: var(--color-tertiary);
-  color: var(--color-on-tertiary);
+  gap: 14px;
+  margin-top: 6px;
+  flex-wrap: wrap;
+}
+
+.btnPrimaryPill {
+  height: 52px;
+  padding: 0 28px;
+  border-radius: 9999px;
+  background-color: #0f172a;
+  color: #ffffff;
+  text-decoration: none;
   font-size: 16px;
-  font-weight: 800;
-  padding: var(--space-sm) var(--space-lg);
-  border-radius: var(--radius-full);
-  box-shadow: var(--shadow-tactile-tertiary);
-  transition: transform 0.15s ease, box-shadow 0.15s ease;
-}
-
-.btnPrimary:active {
-  transform: translateY(3px);
-  box-shadow: 0 1px 0 #783200;
-}
-
-.secondaryActions {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: var(--space-xs);
-}
-
-.btnSecondary {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: var(--space-xxs);
-  background-color: var(--color-surface-card);
-  color: var(--color-primary-deep);
-  font-size: 14px;
   font-weight: 700;
-  padding: 10px var(--space-xs);
-  border-radius: var(--radius-full);
-  box-shadow: var(--shadow-card);
-  transition: transform 0.1s ease;
-}
-
-.btnSecondary:active {
-  transform: scale(0.97);
-}
-
-.safetyBadge {
   display: inline-flex;
   align-items: center;
-  gap: var(--space-xxs);
-  background-color: var(--color-surface-high);
-  color: var(--color-text-muted);
-  font-size: 12px;
-  font-weight: 700;
-  padding: 6px var(--space-sm);
-  border-radius: var(--radius-full);
-  margin-top: var(--space-xs);
+  justify-content: center;
+  gap: 10px;
+  box-shadow: 0 8px 20px -4px rgba(15, 23, 42, 0.25);
+  transition: all 0.15s ease;
 }
+
+.btnPrimaryPill:hover {
+  background-color: #1e293b;
+  transform: translateY(-2px);
+  box-shadow: 0 12px 24px -4px rgba(15, 23, 42, 0.3);
+}
+
+.btnPrimaryPill:active {
+  transform: scale(0.98);
+}
+
+.btnSecondaryPill {
+  height: 52px;
+  padding: 0 26px;
+  border-radius: 9999px;
+  background-color: #ffffff;
+  border: 1.5px solid #e2e8f0;
+  color: #0f172a;
+  text-decoration: none;
+  font-size: 15px;
+  font-weight: 700;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  transition: all 0.15s ease;
+}
+
+.btnSecondaryPill:hover {
+  background-color: #f8fafc;
+  border-color: #cbd5e1;
+  transform: translateY(-1px);
+}
+
+.safetyPill {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  color: #64748b;
+  font-size: 13px;
+  font-weight: 600;
+  margin-top: 4px;
+}
+
+/* Right Hero Visual Column */
+.heroVisualColumn {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.heroIllustrationCard {
+  width: 100%;
+  background: #ffffff;
+  border-radius: 32px;
+  padding: 14px;
+  box-shadow: 0 24px 55px -12px rgba(2, 132, 199, 0.2), 0 0 1px rgba(15, 23, 42, 0.08);
+  border: 1.5px solid rgba(226, 232, 240, 0.85);
+  position: relative;
+}
+
+.heroArtworkImg {
+  width: 100%;
+  height: auto;
+  aspect-ratio: 16 / 9;
+  object-fit: cover;
+  border-radius: 22px;
+  display: block;
+}
+
+/* Floating Glass Badges */
+.floatingChip1 {
+  position: absolute;
+  top: -14px;
+  left: 20px;
+  background: rgba(255, 255, 255, 0.92);
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(226, 232, 240, 0.9);
+  padding: 8px 16px;
+  border-radius: 9999px;
+  box-shadow: 0 6px 16px rgba(15, 23, 42, 0.08);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 12.5px;
+  font-weight: 700;
+  color: #0f172a;
+  animation: floatSoft 4s ease-in-out infinite;
+}
+
+.floatingChip2 {
+  position: absolute;
+  bottom: -14px;
+  right: 20px;
+  background: rgba(255, 255, 255, 0.92);
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(226, 232, 240, 0.9);
+  padding: 8px 16px;
+  border-radius: 9999px;
+  box-shadow: 0 6px 16px rgba(15, 23, 42, 0.08);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 12.5px;
+  font-weight: 700;
+  color: #0f172a;
+  animation: floatSoft 4s ease-in-out infinite 2s;
+}
+
+@keyframes floatSoft {
+  0%, 100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-6px);
+  }
+}
+
+/* ==============================================================================
+   3. ISLANDS SHOWCASE SECTION
+   ============================================================================== */
+.islandsSection {
+  width: 100%;
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 40px 24px 60px 24px;
+  box-sizing: border-box;
+}
+
+.sectionHeader {
+  text-align: center;
+  margin-bottom: 36px;
+}
+
+.sectionPretitle {
+  font-size: 12px;
+  font-weight: 800;
+  color: #0284c7;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  margin-bottom: 6px;
+}
+
+.sectionTitle {
+  font-size: 32px;
+  font-weight: 800;
+  color: #0f172a;
+  letter-spacing: -0.02em;
+  margin: 0;
+}
+
+.sectionSubtitle {
+  font-size: 15px;
+  color: #64748b;
+  margin-top: 8px;
+  max-width: 600px;
+  margin-left: auto;
+  margin-right: auto;
+  line-height: 1.5;
+}
+
+.islandsGrid {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 16px;
+}
+
+.islandCard {
+  background: #ffffff;
+  border-radius: 24px;
+  padding: 20px 16px;
+  border: 1.5px solid #e2e8f0;
+  box-shadow: 0 4px 14px rgba(15, 23, 42, 0.04);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  gap: 12px;
+  transition: all 0.2s ease;
+  position: relative;
+  overflow: hidden;
+}
+
+.islandCard:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 16px 30px -8px rgba(2, 132, 199, 0.16);
+  border-color: #bae6fd;
+}
+
+.islandIconWrap {
+  width: 52px;
+  height: 52px;
+  border-radius: 16px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: transform 0.2s ease;
+}
+
+.islandCard:hover .islandIconWrap {
+  transform: scale(1.1);
+}
+
+.islandSubjectBadge {
+  font-size: 10.5px;
+  font-weight: 700;
+  padding: 2px 10px;
+  border-radius: 9999px;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.islandName {
+  font-size: 16px;
+  font-weight: 800;
+  color: #0f172a;
+  margin: 0;
+  line-height: 1.25;
+}
+
+.islandDesc {
+  font-size: 12px;
+  color: #64748b;
+  line-height: 1.45;
+  margin: 0;
+}
+
+/* ==============================================================================
+   4. FEATURES PILLARS SECTION
+   ============================================================================== */
+.featuresGrid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 20px;
+  margin-top: 24px;
+}
+
+.featureCard {
+  background: #ffffff;
+  border: 1.5px solid #e2e8f0;
+  border-radius: 24px;
+  padding: 28px 24px;
+  box-shadow: 0 4px 12px rgba(15, 23, 42, 0.04);
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.featureIconCircle {
+  width: 48px;
+  height: 48px;
+  border-radius: 14px;
+  background: rgba(2, 132, 199, 0.1);
+  color: #0284c7;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.featureTitle {
+  font-size: 18px;
+  font-weight: 800;
+  color: #0f172a;
+  margin: 0;
+}
+
+.featureText {
+  font-size: 13.5px;
+  color: #64748b;
+  line-height: 1.55;
+  margin: 0;
+}
+
+/* ==============================================================================
+   5. BOTTOM CTA BANNER & FOOTER
+   ============================================================================== */
+.bottomCtaBanner {
+  width: 100%;
+  max-width: 1200px;
+  margin: 40px auto 60px auto;
+  padding: 0 24px;
+  box-sizing: border-box;
+}
+
+.ctaBannerCard {
+  background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+  border-radius: 32px;
+  padding: 48px 36px;
+  color: #ffffff;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  box-shadow: 0 20px 45px -10px rgba(15, 23, 42, 0.35);
+  box-sizing: border-box;
+}
+
+.ctaBannerLeft {
+  max-width: 600px;
+}
+
+.ctaBannerTitle {
+  font-size: 30px;
+  font-weight: 800;
+  color: #ffffff;
+  margin: 0 0 10px 0;
+  letter-spacing: -0.015em;
+}
+
+.ctaBannerDesc {
+  font-size: 15px;
+  color: #94a3b8;
+  margin: 0;
+  line-height: 1.5;
+}
+
+.ctaBannerBtn {
+  height: 52px;
+  padding: 0 32px;
+  border-radius: 9999px;
+  background-color: #0284c7;
+  color: #ffffff;
+  text-decoration: none;
+  font-size: 16px;
+  font-weight: 700;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  box-shadow: 0 8px 20px rgba(2, 132, 199, 0.4);
+  transition: all 0.15s ease;
+  white-space: nowrap;
+}
+
+.ctaBannerBtn:hover {
+  background-color: #0369a1;
+  transform: translateY(-2px);
+}
+
+.footer {
+  width: 100%;
+  border-top: 1px solid #e2e8f0;
+  background: #ffffff;
+  padding: 24px;
+  box-sizing: border-box;
+  text-align: center;
+  color: #94a3b8;
+  font-size: 13px;
+  font-weight: 500;
+}
+
+/* ==============================================================================
+   6. RESPONSIVE BREAKPOINTS
+   ============================================================================== */
+@media (max-width: 1024px) {
+  .heroSection {
+    gap: 32px;
+  }
+
+  .heroTitle {
+    font-size: 38px;
+  }
+
+  .islandsGrid {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+@media (max-width: 959px) {
+  .heroSection {
+    grid-template-columns: 1fr;
+    text-align: center;
+    padding-top: 16px;
+  }
+
+  .heroContent {
+    align-items: center;
+  }
+
+  .heroBadgePill {
+    margin: 0 auto;
+  }
+
+  .heroTitle {
+    font-size: 32px;
+  }
+
+  .heroSubtitle {
+    font-size: 15px;
+  }
+
+  .mascotCard {
+    text-align: left;
+  }
+
+  .ctaRow {
+    justify-content: center;
+  }
+
+  .islandsGrid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .featuresGrid {
+    grid-template-columns: 1fr;
+  }
+
+  .ctaBannerCard {
+    flex-direction: column;
+    text-align: center;
+    gap: 24px;
+    padding: 36px 24px;
+  }
+}
+
+@media (max-width: 600px) {
+  .topNavbar {
+    padding: 14px 16px;
+  }
+
+  .heroTitle {
+    font-size: 28px;
+  }
+
+  .btnPrimaryPill, .btnSecondaryPill {
+    width: 100%;
+  }
+
+  .ctaRow {
+    flex-direction: column;
+    width: 100%;
+  }
+
+  .islandsGrid {
+    grid-template-columns: 1fr;
+  }
+}
+
