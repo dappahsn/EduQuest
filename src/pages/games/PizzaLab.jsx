@@ -1,8 +1,10 @@
 import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useSearchParams } from 'react-router-dom';
 import { useMiniGameEngine } from '../../hooks/useMiniGameEngine';
 import { useGame } from '../../context/GameContext';
-import CharacterAvatar from '../../components/character/CharacterAvatar';
+import { useAudio } from '../../context/AudioContext';
+import PizzaSlice3D from './PizzaSlice3D';
+import styles from './PizzaLab.module.css';
 
 const FRACTION_TASKS = [
   {
@@ -11,7 +13,7 @@ const FRACTION_TASKS = [
     targetNumerator: 3,
     totalSlices: 4,
     story: 'Koki Milo butuh 3/4 loyang pizza untuk dibagikan ke tim penjelajah!',
-    hint: 'Pilihlah 3 potong pizza dari total 4 potongan yang tersedia di atas loyang.'
+    hint: 'Pilihlah 3 potong pizza dari total 4 potongan yang tersedia di atas loyang panggang.'
   },
   {
     id: 2,
@@ -19,31 +21,34 @@ const FRACTION_TASKS = [
     targetNumerator: 2,
     totalSlices: 4,
     story: 'Bagi pizza sama rata menjadi 1/2 loyang (2 dari 4 potong)!',
-    hint: 'Setengah dari 4 potong pizza adalah 2 potong!'
+    hint: 'Setengah dari 4 potong pizza adalah 2 potong pizza lezat.'
   },
   {
     id: 3,
     targetFractionText: '2/4 (Dua Perempat)',
     targetNumerator: 2,
     totalSlices: 4,
-    story: 'Ambil 2 potong pizza keju dari 4 potong yang ada!',
-    hint: '2 dari 4 potong bernilai sama dengan 1/2 loyang pizza lezat.'
+    story: 'Ambil 2 potong pizza keju dari 4 potong yang ada di loyang!',
+    hint: '2 dari 4 potong bernilai senilai dengan 1/2 loyang pizza.'
   }
 ];
 
-export default function PizzaLab({ onGameComplete = null }) {
+export default function PizzaLab({ onGameComplete = null, questId: propQuestId }) {
   const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
+  const targetQuestId = propQuestId || searchParams.get('questId') || 'quest-la-2';
   const { completeQuest, characterConfig } = useGame();
+  const { playSfx } = useAudio();
   const [selectedSlices, setSelectedSlices] = useState([]);
 
   const engine = useMiniGameEngine({
     totalQuestions: FRACTION_TASKS.length,
     onFinish: ({ finalScore }) => {
-      completeQuest('quest-la-2', finalScore, 140, 35, 'card-moon');
+      completeQuest(targetQuestId, finalScore, 140, 35, 'card-moon');
       if (onGameComplete) {
         onGameComplete();
       } else {
-        navigate('/quest/quest-la-2/result');
+        navigate(`/quest/${targetQuestId}/result`);
       }
     }
   });
@@ -52,6 +57,7 @@ export default function PizzaLab({ onGameComplete = null }) {
 
   function toggleSlice(sliceIndex) {
     if (engine.selectedAnswer !== null) return;
+    if (playSfx) playSfx('button-click');
     if (selectedSlices.includes(sliceIndex)) {
       setSelectedSlices(selectedSlices.filter((i) => i !== sliceIndex));
     } else {
@@ -60,313 +66,239 @@ export default function PizzaLab({ onGameComplete = null }) {
   }
 
   function handleReset() {
+    if (playSfx) playSfx('button-hover');
     setSelectedSlices([]);
     engine.resetGame();
   }
 
   function handleCheck() {
     const isCorrect = selectedSlices.length === currentTask.targetNumerator;
-    engine.setSelectedAnswer(selectedSlices.length);
-    engine.submitAnswer(isCorrect, isCorrect ? '✨ Benar! Potongan fraksimu tepat!' : 'Hitungan potongmu belum cocok, ayo perbaiki!');
+    if (isCorrect) {
+      if (playSfx) playSfx('correct');
+      engine.setSelectedAnswer(selectedSlices.length);
+      engine.submitAnswer(true, '✨ Luar biasa! Potongan 3D pizza fraksimu tepat sekali!');
+    } else {
+      if (playSfx) playSfx('wrong');
+      engine.submitAnswer(false, 'Hitungan potongmu belum cocok, ayo sesuaikan potongan pizza!');
+    }
   }
 
   function handleNext() {
+    if (playSfx) playSfx('button-click');
     setSelectedSlices([]);
     engine.nextQuestion();
   }
 
   return (
-    <div style={{ display: 'flex', flexDirection: 'column', width: '100%', gap: 'var(--space-sm)' }}>
-      {/* Sub-header info bar */}
-      <section style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-        <div style={{
-          display: 'flex',
-          alignItems: 'center',
-          gap: '6px',
-          backgroundColor: 'var(--color-surface-container-high)',
-          padding: '4px 12px',
-          borderRadius: 'var(--radius-full)'
-        }}>
-          <span className="material-symbols-outlined" style={{ color: 'var(--color-primary)', fontSize: '18px' }}>local_pizza</span>
-          <span style={{ fontSize: '12px', fontWeight: 700, color: 'var(--color-text-main)' }}>Laboratorium Pizza Pecahan</span>
-          <span style={{ color: 'var(--color-text-muted)' }}>•</span>
-          <span style={{ fontSize: '12px', fontWeight: 800, color: 'var(--color-primary)' }}>Misi 02</span>
+    <div className={styles.pizzaLabContainer}>
+      {/* 1. Sub-header info bar */}
+      <section className={styles.subHeaderBar}>
+        <div className={styles.missionBadge}>
+          <span className="material-symbols-outlined" style={{ color: '#ea580c', fontSize: '18px' }}>
+            local_pizza
+          </span>
+          <span className={styles.missionBadgeText}>Laboratorium Pizza Pecahan</span>
+          <span style={{ color: '#cbd5e1' }}>•</span>
+          <span className={styles.missionBadgeHighlight}>Misi 02</span>
         </div>
 
-        <div style={{
-          display: 'flex',
-          alignItems: 'center',
-          gap: '6px',
-          backgroundColor: 'var(--color-surface-container-high)',
-          padding: '4px 12px',
-          borderRadius: 'var(--radius-full)'
-        }}>
-          <span className="material-symbols-outlined" style={{ color: 'var(--color-tertiary-container)', fontSize: '18px' }}>local_fire_department</span>
-          <span style={{ fontSize: '12px', fontWeight: 700, color: 'var(--color-text-main)' }}>
-            Skor: <span style={{ color: 'var(--color-tertiary-container)', fontWeight: 800 }}>{engine.score}</span>
+        <div className={styles.scoreBadge}>
+          <span className="material-symbols-outlined" style={{ color: '#ea580c', fontSize: '18px' }}>
+            local_fire_department
+          </span>
+          <span className={styles.scoreBadgeText}>
+            Skor: <span className={styles.scoreValue}>{engine.score}</span>
           </span>
         </div>
       </section>
 
-      {/* Target prompt */}
-      <div style={{
-        backgroundColor: 'var(--color-tertiary-fixed)',
-        color: 'var(--color-on-tertiary-fixed)',
-        padding: 'var(--space-sm)',
-        borderRadius: 'var(--radius-md)',
-        boxShadow: 'var(--shadow-card)',
-        display: 'flex',
-        alignItems: 'center',
-        gap: 'var(--space-sm)'
-      }}>
-        <div style={{
-          width: '44px',
-          height: '44px',
-          borderRadius: '50%',
-          backgroundColor: 'var(--color-surface-container-lowest)',
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'center',
-          fontSize: '24px'
-        }}>
-          🍕
+      {/* 2. Chef Milo's Order Ticket */}
+      <div className={styles.chefOrderCard}>
+        <div className={styles.chefAvatarCircle}>
+          <span>👨‍🍳</span>
+          <span className={styles.chefToqueBadge}>✨</span>
         </div>
-        <div style={{ flex: 1, minWidth: 0 }}>
-          <p style={{ fontSize: '11px', fontWeight: 800, textTransform: 'uppercase', color: 'var(--color-on-tertiary-fixed-variant)', margin: 0 }}>
-            Tantangan Pecahan
-          </p>
-          <h2 style={{ fontSize: '15px', fontWeight: 800, margin: '2px 0 0', color: 'var(--color-on-tertiary-fixed)' }}>
-            {currentTask.story}
-          </h2>
+        <div className={styles.orderContent}>
+          <p className={styles.orderTag}>Pesanan Dapur Pecahan</p>
+          <h2 className={styles.orderTitle}>{currentTask.story}</h2>
         </div>
-        <div style={{
-          backgroundColor: 'rgba(255, 255, 255, 0.9)',
-          padding: '6px 14px',
-          borderRadius: 'var(--radius-full)',
-          fontWeight: 900,
-          fontSize: '18px',
-          color: 'var(--color-tertiary)'
-        }}>
-          {currentTask.targetFractionText}
+        <div className={styles.fractionTargetPlate}>
+          <span className={styles.fractionTargetPlateLabel}>Target Porsi</span>
+          <span className={styles.fractionTargetPlateValue}>
+            {currentTask.targetFractionText}
+          </span>
         </div>
       </div>
 
-      {/* Interactive Pizza Board */}
-      <div style={{
-        backgroundColor: 'var(--color-surface-container-lowest)',
-        borderRadius: 'var(--radius-lg)',
-        padding: 'var(--space-md)',
-        boxShadow: 'var(--shadow-card)',
-        display: 'flex',
-        flexDirection: 'column',
-        alignItems: 'center',
-        gap: 'var(--space-md)'
-      }}>
-        {/* Visual Pizza Slices */}
-        <div style={{
-          width: '240px',
-          height: '240px',
-          borderRadius: '50%',
-          backgroundColor: '#ffdbca',
-          border: '10px solid #c05400',
-          position: 'relative',
-          overflow: 'hidden',
-          boxShadow: '0 8px 24px rgba(192, 84, 0, 0.25)',
-          display: 'grid',
-          gridTemplateColumns: '1fr 1fr',
-          gridTemplateRows: '1fr 1fr',
-          gap: '4px',
-          padding: '4px'
-        }}>
-          {[0, 1, 2, 3].map((idx) => {
-            const isSelected = selectedSlices.includes(idx);
-            return (
-              <button
-                key={idx}
-                onClick={() => toggleSlice(idx)}
-                style={{
-                  backgroundColor: isSelected ? '#ffb690' : '#ffd8be',
-                  border: isSelected ? '4px solid #006c49' : '2px dashed #c05400',
-                  borderRadius: idx === 0 ? '100% 0 0 0' : idx === 1 ? '0 100% 0 0' : idx === 2 ? '0 0 0 100%' : '0 0 100% 0',
-                  cursor: engine.selectedAnswer !== null ? 'default' : 'pointer',
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  transition: 'transform 0.15s, background-color 0.2s',
-                  transform: isSelected ? 'scale(0.96)' : 'scale(1)',
-                  position: 'relative'
-                }}
-              >
-                <span style={{ fontSize: '24px' }}>{isSelected ? '🧀' : '🍅'}</span>
-                {isSelected && (
-                  <span
-                    className="material-symbols-outlined"
-                    style={{
-                      position: 'absolute',
-                      color: '#006c49',
-                      fontSize: '24px',
-                      fontWeight: 800
-                    }}
-                  >
-                    check
-                  </span>
-                )}
-              </button>
-            );
-          })}
+      {/* 3. Authentic 3D Kitchen Table Arena */}
+      <div className={styles.kitchenArena}>
+        {/* Decorative Kitchen Ingredients */}
+        <span className={styles.kitchenDeco1}>🍅</span>
+        <span className={styles.kitchenDeco2}>🌿</span>
+        <span className={styles.kitchenDeco3}>🧀</span>
+        <span className={styles.kitchenDeco4}>🫒</span>
+
+        {/* Rising Hot Oven Steam */}
+        <div className={styles.steamContainer}>
+          <span className={styles.steamParticle1}>♨️</span>
+          <span className={styles.steamParticle2}>♨️</span>
+          <span className={styles.steamParticle3}>♨️</span>
         </div>
 
-        {/* Live fraction counter */}
-        <div style={{
-          display: 'flex',
-          alignItems: 'center',
-          gap: '8px',
-          backgroundColor: 'var(--color-surface-container-high)',
-          padding: '6px 16px',
-          borderRadius: 'var(--radius-full)'
-        }}>
-          <span style={{ fontSize: '13px', fontWeight: 700, color: 'var(--color-text-muted)' }}>
-            Potongan Dipilih:
-          </span>
-          <span style={{ fontSize: '16px', fontWeight: 900, color: 'var(--color-primary)' }}>
-            {selectedSlices.length} / {currentTask.totalSlices} ({selectedSlices.length}/{currentTask.totalSlices})
-          </span>
+        {/* The 3D Wooden Pizza Peel & Baking Pan Stage */}
+        <div className={styles.pizzaStage3DWrap}>
+          {/* Round Wooden Cutting Board (Peel) with 3D Depth */}
+          <div className={styles.woodenPeelBoard}>
+            {/* Wooden Handle Extending Downward */}
+            <div className={styles.peelHandle}>
+              <div className={styles.peelHole} />
+            </div>
+
+            {/* Dark Metal Baking Pan */}
+            <div className={styles.metalBakingPan}>
+              {/* 4 Interactive 3D Pizza Slices */}
+              <div className={styles.pizzaSlicesGrid}>
+                {[0, 1, 2, 3].map((idx) => {
+                  const isSelected = selectedSlices.includes(idx);
+                  return (
+                    <PizzaSlice3D
+                      key={idx}
+                      index={idx}
+                      isSelected={isSelected}
+                      onClick={() => toggleSlice(idx)}
+                      disabled={engine.selectedAnswer !== null}
+                    />
+                  );
+                })}
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* 4. Serving Platter & Live Fraction Status Bar */}
+        <div className={styles.servingPlatterBar}>
+          <div className={styles.servingPlatterLeft}>
+            <span className={styles.servingPlatterIcon}>🍽️</span>
+            <div>
+              <p className={styles.servingPlatterTitle}>Piring Saji Penjelajah</p>
+              <p className={styles.servingPlatterSub}>
+                {selectedSlices.length === currentTask.targetNumerator
+                  ? `✨ Pas! Fraksi ${currentTask.targetFractionText} siap disajikan!`
+                  : selectedSlices.length < currentTask.targetNumerator
+                  ? `Pilih ${currentTask.targetNumerator - selectedSlices.length} potong lagi agar pas!`
+                  : `Kelebihan potong, kurangi potongan pizza!`}
+              </p>
+            </div>
+          </div>
+
+          {/* Visual Mini Slice Slots on Platter */}
+          <div className={styles.miniSlicesSlots}>
+            {[0, 1, 2, 3].map((slotIdx) => {
+              const isFilled = slotIdx < selectedSlices.length;
+              return (
+                <div
+                  key={slotIdx}
+                  className={`${styles.miniSliceSlot} ${isFilled ? styles.miniSliceFilled : styles.miniSliceEmpty}`}
+                  title={`Potongan ${slotIdx + 1}`}
+                >
+                  {isFilled ? '🍕' : slotIdx + 1}
+                </div>
+              );
+            })}
+          </div>
         </div>
 
         {/* Feedback banner if checked */}
         {engine.feedbackMessage && (
           <div
-            className={engine.isAnswerCorrect ? 'animate-celebrate-pop' : 'animate-shake'}
-            style={{
-              backgroundColor: engine.isAnswerCorrect ? 'var(--color-secondary-container)' : 'var(--color-error-container)',
-              color: engine.isAnswerCorrect ? 'var(--color-on-secondary-container)' : 'var(--color-on-error-container)',
-              padding: '8px 16px',
-              borderRadius: 'var(--radius-md)',
-              fontWeight: 800,
-              fontSize: '13px',
-              textAlign: 'center',
-              width: '100%'
-            }}
+            className={`${styles.feedbackMessageBanner} ${
+              engine.isAnswerCorrect ? styles.feedbackCorrect : styles.feedbackWrong
+            }`}
           >
-            {engine.feedbackMessage}
+            <span className="material-symbols-outlined" style={{ fontSize: '20px' }}>
+              {engine.isAnswerCorrect ? 'task_alt' : 'error'}
+            </span>
+            <span>{engine.feedbackMessage}</span>
           </div>
         )}
       </div>
 
-      {/* Hint & Reset Action Buttons */}
-      <section style={{ display: 'flex', gap: 'var(--space-sm)' }}>
+      {/* 5. Utility Action Buttons (Hint, Reset) */}
+      <section className={styles.utilityButtonsRow}>
         <button
-          onClick={() => engine.setShowHint(!engine.showHint)}
-          style={{
-            flex: 1,
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            gap: '6px',
-            backgroundColor: 'var(--color-surface-container-high)',
-            color: 'var(--color-text-main)',
-            padding: '10px',
-            borderRadius: 'var(--radius-full)',
-            border: 'none',
-            fontWeight: 800,
-            fontSize: '13px',
-            cursor: 'pointer'
+          type="button"
+          onClick={() => {
+            if (playSfx) playSfx('hint');
+            engine.setShowHint(!engine.showHint);
           }}
+          className={styles.utilityBtn}
         >
-          <span className="material-symbols-outlined" style={{ color: 'var(--color-tertiary-container)', fontSize: '18px' }}>lightbulb</span>
+          <span className="material-symbols-outlined" style={{ color: '#f59e0b', fontSize: '18px' }}>
+            lightbulb
+          </span>
           <span>Petunjuk</span>
         </button>
 
         <button
+          type="button"
           onClick={handleReset}
-          style={{
-            flex: 1,
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            gap: '6px',
-            backgroundColor: 'var(--color-surface-container-high)',
-            color: 'var(--color-text-main)',
-            padding: '10px',
-            borderRadius: 'var(--radius-full)',
-            border: 'none',
-            fontWeight: 800,
-            fontSize: '13px',
-            cursor: 'pointer'
-          }}
+          className={styles.utilityBtn}
         >
-          <span className="material-symbols-outlined" style={{ color: 'var(--color-primary)', fontSize: '18px' }}>refresh</span>
-          <span>Ulangi</span>
+          <span className="material-symbols-outlined" style={{ color: '#ea580c', fontSize: '18px' }}>
+            refresh
+          </span>
+          <span>Ulangi Loyang</span>
         </button>
       </section>
 
       {/* Hint Accordion */}
       {engine.showHint && (
-        <div style={{
-          backgroundColor: 'var(--color-primary-fixed)',
-          color: 'var(--color-on-primary-fixed)',
-          padding: 'var(--space-sm)',
-          borderRadius: 'var(--radius-md)',
-          display: 'flex',
-          gap: '8px',
-          alignItems: 'flex-start'
-        }}>
-          <span className="material-symbols-outlined" style={{ color: 'var(--color-primary)', fontSize: '22px' }}>psychology_alt</span>
+        <div className={styles.hintCard}>
+          <span className="material-symbols-outlined" style={{ color: '#ea580c', fontSize: '22px' }}>
+            psychology_alt
+          </span>
           <div style={{ flex: 1 }}>
-            <p style={{ fontSize: '13px', fontWeight: 800, margin: '0 0 2px' }}>Tips Memotong Pecahan:</p>
-            <p style={{ fontSize: '12px', margin: 0, lineHeight: 1.4 }}>{currentTask.hint}</p>
+            <p className={styles.hintCardTitle}>Tips Koki Milo:</p>
+            <p className={styles.hintCardText}>{currentTask.hint}</p>
           </div>
           <button
+            type="button"
             onClick={() => engine.setShowHint(false)}
-            style={{ background: 'none', border: 'none', cursor: 'pointer', color: 'var(--color-on-primary-fixed)' }}
+            style={{ background: 'none', border: 'none', cursor: 'pointer', color: '#7c2d12' }}
           >
             <span className="material-symbols-outlined" style={{ fontSize: '18px' }}>close</span>
           </button>
         </div>
       )}
 
-      {/* Buttons */}
+      {/* 6. Serve / Next Action Buttons */}
       {engine.selectedAnswer === null ? (
         <button
+          type="button"
           onClick={handleCheck}
           disabled={selectedSlices.length === 0}
-          style={{
-            width: '100%',
-            padding: '14px',
-            backgroundColor: selectedSlices.length > 0 ? 'var(--color-primary)' : 'var(--color-surface-container-high)',
-            color: selectedSlices.length > 0 ? 'var(--color-on-primary)' : 'var(--color-text-muted)',
-            borderRadius: 'var(--radius-full)',
-            fontWeight: 800,
-            fontSize: '15px',
-            border: 'none',
-            cursor: selectedSlices.length > 0 ? 'pointer' : 'not-allowed',
-            boxShadow: selectedSlices.length > 0 ? 'var(--shadow-tactile-primary)' : 'none'
-          }}
+          className={`${styles.servePizzaBtn} ${selectedSlices.length === 0 ? styles.servePizzaBtnDisabled : ''}`}
         >
-          Sajikan Pizza ({selectedSlices.length}/{currentTask.totalSlices}) 🍕
+          <span>
+            {selectedSlices.length === 0
+              ? 'Pilih Potongan Pizza Terlebih Dahulu 🍕'
+              : `Sajikan ${selectedSlices.length}/${currentTask.totalSlices} Loyang Pizza! 🍕`}
+          </span>
         </button>
       ) : (
         <button
+          type="button"
           onClick={handleNext}
-          style={{
-            width: '100%',
-            padding: '14px',
-            backgroundColor: 'var(--color-tertiary-container)',
-            color: 'var(--color-on-tertiary-container)',
-            borderRadius: 'var(--radius-full)',
-            fontWeight: 800,
-            fontSize: '15px',
-            border: 'none',
-            cursor: 'pointer',
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            gap: '8px',
-            boxShadow: 'var(--shadow-tactile-tertiary)'
-          }}
+          className={styles.nextQuestBtn}
         >
-          <span>{engine.questionNumber >= engine.totalQuestions ? 'Selesaikan Misi & Ambil Hadiah' : 'Tantangan Berikutnya'}</span>
-          <span className="material-symbols-outlined" style={{ fontSize: '20px' }}>arrow_forward</span>
+          <span>
+            {engine.questionNumber >= engine.totalQuestions
+              ? 'Selesaikan Misi & Ambil Hadiah'
+              : 'Tantangan Berikutnya'}
+          </span>
+          <span className="material-symbols-outlined" style={{ fontSize: '20px' }}>
+            arrow_forward
+          </span>
         </button>
       )}
     </div>

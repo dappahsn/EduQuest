@@ -1,0 +1,1122 @@
+/* WorldMap.css - EduQuest Fantasy World Map Styles */
+
+/* =========================================================
+   BASE PAGE LAYOUT (Strict Single-Frame / No-Scroll on Desktop)
+   ========================================================= */
+.worldmap-page {
+  height: 100vh;
+  max-height: 100vh;
+  overflow: hidden;
+  background: radial-gradient(circle at 50% 20%, #0c122c 0%, #070a1a 50%, #03050d 100%);
+  padding-top: 68px; /* Exact GameHeader height */
+  padding-bottom: 68px; /* Exact BottomNavDock height */
+  display: flex;
+  flex-direction: column;
+  box-sizing: border-box;
+}
+
+.worldmap-layout {
+  flex: 1;
+  min-height: 0;
+  height: 100%;
+  max-height: 100%;
+  width: 100%;
+  max-width: 100%;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  box-sizing: border-box;
+  overflow: hidden;
+  position: relative;
+}
+
+/* =========================================================
+   FLOATING CANVAS TOP HUD (Cosmic Deep Space Edition)
+   ========================================================= */
+.canvas-top-hud {
+  position: absolute;
+  top: 16px;
+  left: 24px;
+  right: 24px;
+  z-index: 20;
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 12px;
+  pointer-events: none;
+}
+
+.canvas-hud-title-badge {
+  pointer-events: auto;
+  background: rgba(10, 16, 38, 0.88);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border-radius: 9999px;
+  padding: 8px 18px 8px 10px;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4), 0 0 16px rgba(56, 189, 248, 0.25);
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  border: 1px solid rgba(56, 189, 248, 0.35);
+  user-select: none;
+}
+
+.canvas-hud-icon {
+  width: 38px;
+  height: 38px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #0284c7 0%, #38bdf8 100%);
+  color: #ffffff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 0 14px rgba(56, 189, 248, 0.6);
+  flex-shrink: 0;
+}
+
+.canvas-hud-icon .material-symbols-outlined {
+  font-size: 22px;
+}
+
+.canvas-hud-text {
+  display: flex;
+  flex-direction: column;
+}
+
+.canvas-hud-sub {
+  font-size: 10px;
+  font-weight: 800;
+  color: #38bdf8;
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  line-height: 1.2;
+  text-shadow: 0 0 8px rgba(56, 189, 248, 0.6);
+}
+
+.canvas-hud-title {
+  font-size: 14px;
+  font-weight: 800;
+  color: #f8fafc;
+  margin: 1px 0 0;
+  line-height: 1.2;
+  text-shadow: 0 1px 4px rgba(0, 0, 0, 0.5);
+}
+
+.canvas-hud-gift-btn {
+  pointer-events: auto;
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  border-radius: 9999px;
+  cursor: pointer;
+  font-size: 12px;
+  font-weight: 800;
+  user-select: none;
+  flex-shrink: 0;
+  transition: all 0.25s cubic-bezier(0.34, 1.56, 0.64, 1);
+  border: none;
+}
+
+/* 1. STATE KLAIM SELESAI (SUDAH DIKLAIM: Badge Hijau Mint Transparan & Tenang) */
+.canvas-hud-gift-btn.claimed {
+  background: rgba(16, 185, 129, 0.16);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+  border: 1px solid rgba(52, 211, 153, 0.45);
+  border-bottom: 2px solid rgba(16, 185, 129, 0.6);
+  color: #34d399;
+  padding: 7px 14px;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.35), 0 0 14px rgba(16, 185, 129, 0.2), inset 0 1px 0 rgba(255, 255, 255, 0.15);
+  cursor: default;
+}
+
+.canvas-hud-gift-btn.claimed:hover {
+  background: rgba(16, 185, 129, 0.24);
+  border-color: rgba(52, 211, 153, 0.65);
+  box-shadow: 0 4px 18px rgba(16, 185, 129, 0.35);
+  transform: none;
+}
+
+.canvas-hud-gift-btn.claimed .material-symbols-outlined {
+  color: #10b981;
+  font-size: 17px;
+}
+
+/* 2. STATE SIAP KLAIM (Semua Misi Selesai: Oranye Emas Bercahaya & Pulsing) */
+.canvas-hud-gift-btn.ready-to-claim {
+  background: linear-gradient(135deg, #f59e0b 0%, #ea580c 100%);
+  color: #ffffff;
+  padding: 8px 16px;
+  border: 1px solid rgba(255, 255, 255, 0.35);
+  border-bottom: 3px solid #b45309;
+  box-shadow: 0 6px 20px rgba(245, 158, 11, 0.45), 0 0 18px rgba(249, 115, 22, 0.4), inset 0 1px 0 rgba(255, 255, 255, 0.4);
+  animation: giftChestPulse 2.2s infinite ease-in-out;
+}
+
+.canvas-hud-gift-btn.ready-to-claim:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 24px rgba(245, 158, 11, 0.65), 0 0 22px rgba(249, 115, 22, 0.6);
+}
+
+.canvas-hud-gift-btn.ready-to-claim:active {
+  transform: translateY(2px);
+  border-bottom-width: 1px;
+}
+
+.canvas-hud-gift-btn.ready-to-claim .material-symbols-outlined {
+  font-size: 18px;
+}
+
+/* 3. STATE DALAM PROGRES (Belum Semua Misi: Dark Glass Kosmik Sleek) */
+.canvas-hud-gift-btn.in-progress {
+  background: rgba(15, 23, 42, 0.72);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(255, 255, 255, 0.16);
+  border-bottom: 2px solid rgba(255, 255, 255, 0.1);
+  color: #cbd5e1;
+  padding: 7px 14px;
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.4);
+}
+
+.canvas-hud-gift-btn.in-progress:hover {
+  background: rgba(30, 41, 59, 0.85);
+  border-color: rgba(56, 189, 248, 0.45);
+  color: #f1f5f9;
+  transform: translateY(-1px);
+}
+
+.canvas-hud-gift-btn.in-progress .material-symbols-outlined {
+  color: #38bdf8;
+  font-size: 17px;
+}
+
+@keyframes giftChestPulse {
+  0%, 100% {
+    transform: scale(1);
+    box-shadow: 0 6px 20px rgba(245, 158, 11, 0.45), 0 0 16px rgba(249, 115, 22, 0.35);
+  }
+  50% {
+    transform: scale(1.04);
+    box-shadow: 0 8px 26px rgba(245, 158, 11, 0.7), 0 0 22px rgba(249, 115, 22, 0.6);
+  }
+}
+
+/* =========================================================
+   CANVAS STYLING:
+   - Desktop (>=960px): Full Widescreen 16:9 Galaxy Map (Fit to Viewport, NO SCROLL)
+   - Mobile (<960px): Full-Bleed 9:16 Space Map
+   ========================================================= */
+.worldmap-canvas {
+  position: relative;
+  width: 100%;
+  overflow: hidden;
+  background-color: #050816;
+  background-repeat: no-repeat;
+  user-select: none;
+  box-sizing: border-box;
+}
+
+/* DESKTOP WIDESCREEN (3D Cosmic Planets Solar System - Edge-to-Edge, No Scroll!) */
+@media (min-width: 960px) {
+  .worldmap-canvas {
+    flex: 1;
+    min-height: 0;
+    height: 100%;
+    max-height: 100%;
+    border-radius: 0;
+    box-shadow: none;
+    background-image: url('/images/galaxy-map-bg.jpg');
+    background-size: cover;
+    background-position: center center;
+  }
+
+  /* =========================================================
+     CLEAN 3D LUMINOUS STARLIGHT HYPERLANE
+     ========================================================= */
+  .sea-routes-layer {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+    z-index: 5;
+  }
+
+  /* Layer 1: Sub-surface Luminous Glow Ribbon */
+  .route-glow-ribbon {
+    fill: none;
+    stroke-width: 16;
+    stroke-linecap: round;
+    opacity: 0.35;
+  }
+
+  /* Layer 2: Core Focused Laser Conduit */
+  .route-core-laser {
+    fill: none;
+    stroke-width: 2.5;
+    stroke-linecap: round;
+    opacity: 0.95;
+    filter: drop-shadow(0 0 6px rgba(255, 255, 255, 0.8));
+  }
+
+  /* =========================================================
+     DESKTOP 3D COSMIC PLANETS CONTAINER (With Perspective Parallax)
+     ========================================================= */
+  /* DESKTOP 3D COSMIC PLANETS CONTAINER */
+  .desktop-archipelago-container {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 10;
+    pointer-events: none;
+  }
+
+  /* Individual Interactive Planet Units */
+  .island-interactive-unit {
+    position: absolute;
+    pointer-events: auto;
+    cursor: pointer;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: flex-end;
+    user-select: none;
+    transform: translateY(0);
+    transition: transform 0.35s cubic-bezier(0.34, 1.56, 0.64, 1), z-index 0.2s ease;
+  }
+
+  /* Planet Desktop Coordinates & 3D Perspective Scale (Evenly Spaced Cosmic Arch) */
+  .desktop-archipelago-container .island-unit-angka {
+    left: 5%;
+    bottom: 8%;
+    width: clamp(200px, 18vw, 250px);
+  }
+
+  .desktop-archipelago-container .island-unit-sains {
+    left: 21%;
+    top: 20%;
+    width: clamp(190px, 17vw, 240px);
+  }
+
+  .desktop-archipelago-container .island-unit-cerita {
+    left: 42%;
+    top: 34%;
+    width: clamp(200px, 18vw, 250px);
+  }
+
+  .desktop-archipelago-container .island-unit-tekateki {
+    left: 64%;
+    right: auto;
+    top: 20%;
+    width: clamp(190px, 17vw, 240px);
+  }
+
+  .desktop-archipelago-container .island-unit-angkasa {
+    right: 4%;
+    left: auto;
+    top: 18%;
+    width: clamp(200px, 18vw, 260px);
+  }
+}
+
+/* =========================================================
+   GLOBAL BASE PLANET & COMPONENT STYLES (Shared Desktop & Mobile)
+   ========================================================= */
+
+/* Island Avatar Pin Standing on Top */
+.island-avatar-wrapper {
+  position: absolute;
+  top: -26px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 30;
+  pointer-events: none;
+  animation: avatarLand 0.4s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+}
+
+  /* Floating Planet Name Badge (Positioned Below the Planet) */
+  .island-floating-badge {
+    position: absolute;
+    bottom: -28px;
+    top: auto;
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 20;
+    background: rgba(10, 16, 38, 0.92);
+    backdrop-filter: blur(14px);
+    -webkit-backdrop-filter: blur(14px);
+    border-radius: 9999px;
+    padding: 4px 12px 4px 6px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.5), 0 0 0 1px rgba(255, 255, 255, 0.2);
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    white-space: nowrap;
+    transition: transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1), box-shadow 0.3s ease, background 0.3s ease, border-color 0.3s ease;
+  }
+
+  .island-badge-icon {
+    width: 24px;
+    height: 24px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+  }
+
+  .island-badge-text {
+    display: flex;
+    flex-direction: column;
+  }
+
+  .island-badge-name {
+    font-size: 11px;
+    font-weight: 800;
+    color: #f8fafc;
+    line-height: 1.1;
+    text-shadow: 0 1px 3px rgba(0, 0, 0, 0.8);
+  }
+
+  .island-badge-sub {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    margin-top: 1px;
+  }
+
+  .island-badge-tier {
+    font-size: 9px;
+    font-weight: 800;
+  }
+
+  .island-badge-prog {
+    font-size: 9px;
+    font-weight: 800;
+    padding: 1px 6px;
+    border-radius: 9999px;
+    display: inline-flex;
+    align-items: center;
+    gap: 2px;
+  }
+
+  /* 3D Floating Planet Model Body */
+  .island-body-3d {
+    width: 100%;
+    position: relative;
+    z-index: 10;
+    transition: transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1), filter 0.4s ease;
+    animation: islandIdleFloat 4.5s ease-in-out infinite;
+  }
+
+  .island-unit-angka .island-body-3d { animation-delay: 0s; }
+  .island-unit-sains .island-body-3d { animation-delay: 1.4s; }
+  .island-unit-cerita .island-body-3d { animation-delay: 2.8s; }
+  .island-unit-tekateki .island-body-3d { animation-delay: 0.9s; }
+  .island-unit-angkasa .island-body-3d { animation-delay: 2.1s; }
+
+  @keyframes islandIdleFloat {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-7px); }
+  }
+
+  /* Luminous Atmospheric Halo Glow Behind Planet */
+  .planet-atmosphere-halo {
+    position: absolute;
+    top: 6%;
+    left: 6%;
+    right: 6%;
+    bottom: 6%;
+    border-radius: 50%;
+    background: radial-gradient(circle at center, var(--planet-color) 0%, rgba(0, 0, 0, 0) 70%);
+    filter: blur(24px);
+    opacity: 0.45;
+    pointer-events: none;
+    z-index: 1;
+    transition: opacity 0.4s ease, transform 0.4s ease, filter 0.4s ease;
+  }
+
+  /* 3D Spherical Fresnel Lighting Overlay */
+  .planet-fresnel-sphere {
+    position: absolute;
+    inset: 4%;
+    border-radius: 50%;
+    pointer-events: none;
+    z-index: 7;
+    background: radial-gradient(circle at 32% 25%, rgba(255, 255, 255, 0.4) 0%, rgba(255, 255, 255, 0.05) 45%, rgba(2, 6, 23, 0.35) 75%, rgba(2, 6, 23, 0.8) 100%);
+    mix-blend-mode: overlay;
+    box-shadow: inset 0 0 28px var(--planet-color);
+  }
+
+  .island-3d-img {
+    width: 100%;
+    height: auto;
+    object-fit: contain;
+    display: block;
+    filter: drop-shadow(0 20px 28px rgba(0, 0, 0, 0.7));
+    pointer-events: none;
+    transform: translateZ(0);
+    position: relative;
+    z-index: 5;
+  }
+
+  /* Cosmic Space Gravity Well Base */
+  .planet-space-base,
+  .island-sea-base {
+    position: absolute;
+    bottom: 8px;
+    width: 85%;
+    height: 24px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 1;
+    pointer-events: none;
+  }
+
+  .planet-space-gravity-shadow,
+  .island-sea-shadow {
+    position: absolute;
+    width: 76%;
+    height: 100%;
+    border-radius: 50%;
+    background: radial-gradient(ellipse at center, rgba(15, 23, 42, 0.85) 0%, rgba(2, 6, 23, 0.45) 45%, rgba(0, 0, 0, 0) 75%);
+    filter: blur(8px);
+    transition: all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+  }
+
+  /* =========================================================
+     HOVER ELEVATION EFFECT ("PLANET NAIK" WHEN HOVERED!)
+     ========================================================= */
+  .island-interactive-unit:hover {
+    z-index: 50 !important;
+    transform: translateY(-28px) scale(1.12) !important;
+  }
+
+  .island-interactive-unit:hover .island-body-3d {
+    animation-play-state: paused;
+    filter: drop-shadow(0 36px 48px rgba(0, 0, 0, 0.75)) drop-shadow(0 0 35px var(--planet-color)) !important;
+  }
+
+  .island-interactive-unit:hover .planet-atmosphere-halo {
+    opacity: 0.98;
+    transform: scale(1.45);
+    filter: blur(36px);
+  }
+
+  .island-interactive-unit:hover .island-floating-badge {
+    transform: translateX(-50%) translateY(4px) scale(1.06);
+    box-shadow: 0 14px 34px rgba(0, 0, 0, 0.65), 0 0 18px var(--planet-color);
+    background: rgba(15, 23, 52, 0.98);
+    border-color: rgba(255, 255, 255, 0.4);
+  }
+
+  .island-interactive-unit:hover .island-avatar-wrapper {
+    transform: translateX(-50%) translateY(-4px);
+  }
+
+  .island-interactive-unit:hover .planet-space-gravity-shadow,
+  .island-interactive-unit:hover .island-sea-shadow {
+    transform: scale(1.3);
+    opacity: 0.25;
+    filter: blur(16px);
+  }
+
+  /* Selected Planet Glowing Style */
+  .island-interactive-unit.selected-island .island-floating-badge {
+    box-shadow: 0 0 0 2px rgba(56, 189, 248, 0.6), 0 10px 24px rgba(0, 0, 0, 0.5);
+    border-color: rgba(56, 189, 248, 0.8);
+    background: rgba(15, 23, 52, 0.96);
+  }
+
+  /* Desktop Bottom-Center Start Action Bar ("Untuk Mulai di Tengah Bawah") */
+  .desktop-bottom-start-bar {
+    position: absolute;
+    bottom: 22px;
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 35;
+    background: rgba(10, 16, 38, 0.88);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    border: 1px solid rgba(56, 189, 248, 0.32);
+    border-radius: 9999px;
+    padding: 8px 12px 8px 18px;
+    display: flex;
+    align-items: center;
+    gap: 22px;
+    box-shadow: 0 16px 36px rgba(0, 0, 0, 0.65), 0 0 24px rgba(56, 189, 248, 0.18);
+    transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+    user-select: none;
+  }
+
+  .desktop-bottom-start-bar:hover {
+    border-color: rgba(56, 189, 248, 0.55);
+    box-shadow: 0 20px 44px rgba(0, 0, 0, 0.75), 0 0 32px rgba(56, 189, 248, 0.28);
+    transform: translateX(-50%) translateY(-2px);
+  }
+
+  .start-bar-planet-preview {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+
+  .start-bar-planet-icon {
+    width: 38px;
+    height: 38px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #ffffff;
+    flex-shrink: 0;
+    transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+  }
+
+  .desktop-bottom-start-bar:hover .start-bar-planet-icon {
+    transform: scale(1.1) rotate(8deg);
+  }
+
+  .start-bar-planet-icon .material-symbols-outlined {
+    font-size: 20px;
+  }
+
+  .start-bar-planet-text {
+    display: flex;
+    flex-direction: column;
+    text-align: left;
+  }
+
+  .start-bar-tag {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 11px;
+    font-weight: 700;
+  }
+
+  .start-bar-tier {
+    font-weight: 800;
+  }
+
+  .start-bar-divider {
+    color: #475569;
+  }
+
+  .start-bar-progress {
+    color: #94a3b8;
+  }
+
+  .start-bar-title {
+    font-size: 15px;
+    font-weight: 800;
+    color: #f8fafc;
+    margin: 0;
+    letter-spacing: -0.01em;
+    white-space: nowrap;
+  }
+
+  .start-bar-launch-btn {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 10px 22px;
+    border-radius: 9999px;
+    color: #ffffff;
+    text-decoration: none;
+    font-size: 13.5px;
+    font-weight: 800;
+    letter-spacing: 0.01em;
+    white-space: nowrap;
+    cursor: pointer;
+    transition: all 0.25s cubic-bezier(0.34, 1.56, 0.64, 1);
+  }
+
+  .start-bar-launch-btn:hover:not(.btn-locked) {
+    transform: translateY(-2px) scale(1.03);
+    filter: brightness(1.12);
+  }
+
+  .start-bar-launch-btn:active:not(.btn-locked) {
+    transform: translateY(1px) scale(0.98);
+  }
+
+  .start-bar-launch-btn.btn-locked {
+    cursor: not-allowed;
+    color: #94a3b8;
+    background: #334155 !important;
+    box-shadow: none !important;
+  }
+
+  .start-btn-icon {
+    font-size: 18px;
+  }
+
+  .start-btn-arrow {
+    font-size: 18px;
+    transition: transform 0.25s ease;
+  }
+
+  .start-bar-launch-btn:hover:not(.btn-locked) .start-btn-arrow {
+    transform: translateX(4px);
+  }
+
+/* =========================================================
+   DESKTOP-SPECIFIC OVERRIDES (>=960px)
+   ========================================================= */
+@media (min-width: 960px) {
+  .desktop-bottom-start-bar {
+    position: absolute;
+    bottom: 22px;
+    left: 50%;
+    transform: translateX(-50%);
+  }
+
+  /* Hide mobile vertical galaxy container on desktop */
+  .mobile-galaxy-container,
+  .mobile-hyperlane-svg {
+    display: none !important;
+  }
+}
+
+/* =========================================================
+   MOBILE PORTRAIT (Cosmic Ascending Galaxy Flow / "Ke Atas")
+   ========================================================= */
+@media (max-width: 959px) {
+  .worldmap-page {
+    height: 100vh;
+    height: 100dvh;
+    max-height: 100vh;
+    max-height: 100dvh;
+    overflow: hidden !important; /* Strict Single-Page: 1 Halaman Masuk Semua */
+    padding-top: 54px; /* Mobile GameHeader */
+    padding-bottom: 68px; /* BottomNavDock */
+    display: flex;
+    flex-direction: column;
+    box-sizing: border-box;
+    background: radial-gradient(circle at 50% 15%, #0c122c 0%, #070a1a 50%, #03050d 100%);
+  }
+
+  .worldmap-layout {
+    flex: 1;
+    min-height: 0;
+    height: 100%;
+    max-height: 100%;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    position: relative;
+    width: 100%;
+    margin: 0;
+    padding: 0;
+  }
+
+  .worldmap-canvas {
+    flex: 1;
+    min-height: 0;
+    height: 100%;
+    max-height: 100%;
+    width: 100%;
+    position: relative;
+    background-image: url('/images/galaxy-map-bg.jpg');
+    background-size: cover;
+    background-position: center center;
+    padding: 0;
+    display: block;
+    overflow: hidden;
+    box-shadow: none;
+  }
+
+  /* Top HUD on Mobile */
+  .canvas-top-hud {
+    position: absolute;
+    top: 8px;
+    left: 8px;
+    right: 8px;
+    z-index: 20;
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+  }
+
+  .canvas-hud-title-badge {
+    padding: 4px 10px 4px 6px;
+    gap: 6px;
+  }
+
+  .canvas-hud-icon {
+    width: 26px;
+    height: 26px;
+  }
+
+  .canvas-hud-icon .material-symbols-outlined {
+    font-size: 15px;
+  }
+
+  .canvas-hud-sub {
+    font-size: 8px;
+  }
+
+  .canvas-hud-title {
+    font-size: 10.5px;
+  }
+
+  .canvas-hud-gift-btn {
+    padding: 5px 9px;
+    font-size: 10px;
+    gap: 4px;
+  }
+
+  .canvas-hud-gift-btn.claimed {
+    padding: 4px 8px;
+    font-size: 9.5px;
+    gap: 3px;
+  }
+
+  .canvas-hud-gift-btn .material-symbols-outlined {
+    font-size: 14px;
+  }
+
+  /* Hide Desktop Horizontal Elements */
+  .sea-routes-layer,
+  .desktop-galaxy-hyperlane,
+  .desktop-archipelago-container {
+    display: none !important;
+  }
+
+  /* ---------------------------------------------------------
+     MOBILE VERTICAL GALAXY CONTAINER & ASCENDING NODES
+     --------------------------------------------------------- */
+  .mobile-galaxy-container {
+    display: block !important;
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+    z-index: 5;
+  }
+
+  .mobile-hyperlane-svg {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+    z-index: 2;
+  }
+
+  .mobile-galaxy-container .island-interactive-unit {
+    position: absolute;
+    pointer-events: auto;
+    cursor: pointer;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: flex-end;
+    user-select: none;
+    transition: transform 0.35s cubic-bezier(0.34, 1.56, 0.64, 1), filter 0.3s ease;
+  }
+
+  .mobile-galaxy-container .island-interactive-unit:hover,
+  .mobile-galaxy-container .island-interactive-unit.hovered-island {
+    z-index: 40 !important;
+    transform: translate(-50%, calc(-50% - 6px)) scale(1.12) !important;
+  }
+
+  .mobile-galaxy-container .island-interactive-unit.selected-island {
+    z-index: 45 !important;
+    transform: translate(-50%, calc(-50% - 4px)) scale(1.08) !important;
+  }
+
+  .mobile-galaxy-container .island-interactive-unit.selected-island .planet-atmosphere-halo {
+    opacity: 0.95 !important;
+    transform: scale(1.3) !important;
+    filter: blur(20px) !important;
+  }
+
+  .mobile-galaxy-container .island-interactive-unit.selected-island .island-3d-img {
+    filter: drop-shadow(0 16px 26px rgba(0, 0, 0, 0.8)) drop-shadow(0 0 16px var(--planet-color)) !important;
+  }
+
+  /* Strict width boundaries for mobile images */
+  .mobile-galaxy-container .island-body-3d {
+    width: 100% !important;
+    max-width: 100% !important;
+  }
+
+  .mobile-galaxy-container .island-3d-img {
+    width: 100% !important;
+    max-width: 100% !important;
+    height: auto !important;
+    object-fit: contain !important;
+    display: block !important;
+  }
+
+  /* 1. Planet Lembah Angka (Bottom - Start of Journey) */
+  .mobile-galaxy-container .island-unit-angka {
+    top: 77%;
+    left: 26%;
+    right: auto;
+    bottom: auto;
+    width: 98px;
+    transform: translate(-50%, -50%);
+  }
+
+  /* 2. Planet Hutan Sains (Ascending Upward) */
+  .mobile-galaxy-container .island-unit-sains {
+    top: 61%;
+    left: 74%;
+    right: auto;
+    bottom: auto;
+    width: 92px;
+    transform: translate(-50%, -50%);
+  }
+
+  /* 3. Planet Negeri Cerita (Ascending Upward) */
+  .mobile-galaxy-container .island-unit-cerita {
+    top: 45%;
+    left: 26%;
+    right: auto;
+    bottom: auto;
+    width: 96px;
+    transform: translate(-50%, -50%);
+  }
+
+  /* 4. Planet Gunung Teka-Teki (Ascending Upward) */
+  .mobile-galaxy-container .island-unit-tekateki {
+    top: 29%;
+    left: 74%;
+    right: auto;
+    bottom: auto;
+    width: 92px;
+    transform: translate(-50%, -50%);
+  }
+
+  /* 5. Planet Angkasa Pengetahuan (Summit Apex - Center Top) */
+  .mobile-galaxy-container .island-unit-angkasa {
+    top: 13%;
+    left: 50%;
+    right: auto;
+    bottom: auto;
+    width: 106px;
+    transform: translate(-50%, -50%);
+  }
+
+  /* Compact Badges for Mobile (Positioned Below the Planet) */
+  .mobile-galaxy-container .island-floating-badge {
+    bottom: -22px;
+    top: auto;
+    padding: 3px 9px 3px 6px;
+    gap: 5px;
+    border-radius: 9999px;
+  }
+
+  .mobile-galaxy-container .island-badge-icon {
+    width: 18px;
+    height: 18px;
+  }
+
+  .mobile-galaxy-container .island-badge-icon .material-symbols-outlined {
+    font-size: 12px;
+  }
+
+  .mobile-galaxy-container .island-badge-name {
+    font-size: 9px;
+    max-width: 105px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  .mobile-galaxy-container .island-badge-sub {
+    gap: 4px;
+  }
+
+  .mobile-galaxy-container .island-badge-tier {
+    font-size: 8px;
+  }
+
+  .mobile-galaxy-container .island-badge-prog {
+    font-size: 8px;
+    padding: 0 5px;
+  }
+
+  /* Atmosphere Halo Scale for Mobile */
+  .mobile-galaxy-container .planet-atmosphere-halo {
+    filter: blur(20px);
+    opacity: 0.7;
+  }
+
+  /* Avatar Pin Placement on Mobile */
+  .mobile-galaxy-container .island-avatar-wrapper {
+    top: -54px;
+  }
+
+  .mobile-galaxy-container .avatar-speech-bubble {
+    padding: 3px 8px;
+    font-size: 8.5px;
+    gap: 4px;
+    white-space: nowrap;
+  }
+
+  .mobile-galaxy-container .avatar-speech-bubble .material-symbols-outlined {
+    font-size: 12px !important;
+  }
+
+  .mobile-galaxy-container .player-avatar-frame {
+    width: 34px;
+    height: 34px;
+  }
+
+  /* ---------------------------------------------------------
+     MOBILE BOTTOM-CENTER START ACTION BAR (Docked inside Canvas)
+     --------------------------------------------------------- */
+  .desktop-bottom-start-bar {
+    display: flex !important;
+    position: absolute !important;
+    bottom: 8px !important;
+    left: 50% !important;
+    transform: translateX(-50%) !important;
+    width: calc(100% - 16px) !important;
+    max-width: 400px !important;
+    z-index: 45 !important;
+    padding: 4px 8px 4px 12px !important;
+    gap: 10px !important;
+    box-shadow: 0 10px 28px rgba(0, 0, 0, 0.85), 0 0 16px rgba(56, 189, 248, 0.25) !important;
+    background: rgba(10, 16, 38, 0.94) !important;
+    border: 1px solid rgba(56, 189, 248, 0.4) !important;
+  }
+
+  .desktop-bottom-start-bar .start-bar-planet-icon {
+    width: 32px;
+    height: 32px;
+  }
+
+  .desktop-bottom-start-bar .start-bar-planet-icon .material-symbols-outlined {
+    font-size: 18px;
+  }
+
+  .desktop-bottom-start-bar .start-bar-tag {
+    font-size: 9.5px;
+    gap: 4px;
+  }
+
+  .desktop-bottom-start-bar .start-bar-title {
+    font-size: 12.5px;
+    max-width: 140px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  .desktop-bottom-start-bar .start-bar-launch-btn {
+    padding: 8px 16px;
+    font-size: 12px;
+    gap: 6px;
+  }
+
+  .desktop-bottom-start-bar .start-btn-icon {
+    font-size: 15px;
+  }
+
+  .desktop-bottom-start-bar .start-btn-arrow {
+    font-size: 15px;
+  }
+}
+
+/* Avatar Pin Animation */
+.player-avatar-pin {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  margin-bottom: 4px;
+}
+
+.player-avatar-halo {
+  position: absolute;
+  width: 60px;
+  height: 60px;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(56, 189, 248, 0.5) 0%, rgba(2, 132, 199, 0) 70%);
+  animation: pulseAvatar 2.2s infinite ease-in-out;
+}
+
+@keyframes avatarLand {
+  0% {
+    opacity: 0;
+    transform: translate(-50%, -18px) scale(0.65);
+  }
+  70% {
+    transform: translate(-50%, 3px) scale(1.08, 0.92);
+  }
+  100% {
+    opacity: 1;
+    transform: translate(-50%, 0) scale(1);
+  }
+}
+
+@keyframes pulseAvatar {
+  0% { transform: scale(0.9); opacity: 0.7; }
+  50% { transform: scale(1.25); opacity: 0.2; }
+  100% { transform: scale(0.9); opacity: 0.7; }
+}
+
+.player-avatar-frame {
+  width: 46px;
+  height: 46px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #38bdf8 0%, #0284c7 100%);
+  padding: 2px;
+  box-shadow: 0 8px 20px rgba(2, 132, 199, 0.4), 0 0 0 2px #ffffff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  z-index: 10;
+  transition: transform 0.2s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+.player-avatar-frame:hover {
+  transform: scale(1.08);
+}
+
+/* Speech Bubble */
+.avatar-speech-bubble {
+  position: relative;
+  background: #ffffff;
+  padding: 4px 10px;
+  border-radius: 9999px;
+  box-shadow: 0 4px 14px rgba(18, 26, 52, 0.12);
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  margin-bottom: 4px;
+  animation: bounceGentle 3s ease-in-out infinite;
+  border: 1px solid rgba(2, 132, 199, 0.15);
+  white-space: nowrap;
+}
+
+.speech-triangle {
+  position: absolute;
+  bottom: -4px;
+  left: 50%;
+  transform: translateX(-50%) rotate(45deg);
+  width: 8px;
+  height: 8px;
+  background: #ffffff;
+  border-right: 1px solid rgba(2, 132, 199, 0.15);
+  border-bottom: 1px solid rgba(2, 132, 199, 0.15);
+}
+
+@keyframes bounceGentle {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-3px); }
+}

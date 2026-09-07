@@ -1,0 +1,1707 @@
+/* ==========================================================================
+   3D ISOMETRIC CYBER VOLCANIC FORTRESS (DIRECT TILE-CLICK INTERACTION)
+   Pure CSS 3D with preserve-3d, extruded 3D blocks & floating entities
+   Single-Screen Fit, Zero Scrolling
+   ========================================================================== */
+
+.gameContainer {
+  height: 100%;
+  max-height: 100%;
+  width: 100%;
+  max-width: 680px;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  padding: 8px 12px 12px;
+  box-sizing: border-box;
+  overflow: hidden;
+  color: #f1f5f9;
+  font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, sans-serif;
+  user-select: none;
+  background: 
+    radial-gradient(ellipse at 50% 12%, rgba(14, 116, 144, 0.28) 0%, transparent 60%),
+    radial-gradient(ellipse at 50% 95%, rgba(220, 38, 38, 0.24) 0%, transparent 55%),
+    linear-gradient(180deg, #090e1a 0%, #030712 100%);
+  border: 1.5px solid rgba(56, 189, 248, 0.25);
+  border-radius: 20px;
+  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.75), inset 0 1px 0 rgba(255, 255, 255, 0.1);
+}
+
+/* --------------------------------------------------------------------------
+   Top Control Bar (Compact, ~34px)
+   -------------------------------------------------------------------------- */
+.topControlBar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  padding: 2px 4px;
+  flex-shrink: 0;
+}
+
+.sectorBadgeWrap {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  min-width: 0;
+}
+
+.sectorBadge {
+  font-size: 0.72rem;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  color: #06b6d4;
+  background: rgba(6, 182, 212, 0.15);
+  border: 1px solid rgba(6, 182, 212, 0.4);
+  padding: 2px 8px;
+  border-radius: 8px;
+  white-space: nowrap;
+}
+
+.sectorTitle {
+  margin: 0;
+  font-size: 0.95rem;
+  font-weight: 800;
+  color: #f8fafc;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.topActionBtns {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  flex-shrink: 0;
+}
+
+.iconBtn {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  padding: 4px 10px;
+  background: rgba(30, 41, 59, 0.75);
+  border: 1px solid rgba(148, 163, 184, 0.25);
+  border-radius: 8px;
+  color: #94a3b8;
+  font-size: 0.76rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.iconBtn:hover:not(:disabled) {
+  background: rgba(51, 65, 85, 0.9);
+  color: #f8fafc;
+  border-color: #06b6d4;
+}
+
+.iconBtn:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+.iconBtnActive {
+  background: rgba(245, 158, 11, 0.25);
+  border-color: #f59e0b;
+  color: #fef3c7;
+}
+
+.iconBtnLabel {
+  font-size: 0.76rem;
+}
+
+/* --------------------------------------------------------------------------
+   Status / Hint Banner (~28px)
+   -------------------------------------------------------------------------- */
+.statusBanner {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: rgba(15, 23, 42, 0.85);
+  border: 1px solid rgba(6, 182, 212, 0.3);
+  border-radius: 8px;
+  padding: 4px 10px;
+  font-size: 0.78rem;
+  color: #cbd5e1;
+  flex-shrink: 0;
+  min-height: 28px;
+  box-sizing: border-box;
+}
+
+.status_success {
+  border-color: #10b981;
+  background: rgba(16, 185, 129, 0.15);
+  color: #6ee7b7;
+}
+
+.status_error {
+  border-color: #f43f5e;
+  background: rgba(244, 63, 94, 0.15);
+  color: #fda4af;
+  animation: shakeShort 0.35s ease;
+}
+
+@keyframes shakeShort {
+  20%, 80% { transform: translateX(-3px); }
+  40%, 60% { transform: translateX(3px); }
+}
+
+.statusIndicator {
+  font-size: 0.85rem;
+}
+
+.statusText {
+  font-weight: 600;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.hintBanner {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: rgba(245, 158, 11, 0.18);
+  border: 1px solid #f59e0b;
+  border-radius: 8px;
+  padding: 4px 10px;
+  color: #fef3c7;
+  font-size: 0.78rem;
+  font-weight: 700;
+  flex-shrink: 0;
+}
+
+.hintEmoji {
+  font-size: 0.9rem;
+}
+
+.hintText {
+  flex: 1;
+  line-height: 1.3;
+}
+
+.hintClose {
+  background: none;
+  border: none;
+  color: #f59e0b;
+  font-size: 0.9rem;
+  font-weight: 800;
+  cursor: pointer;
+}
+
+/* --------------------------------------------------------------------------
+   🌟 3D ISOMETRIC STAGE & VOLCANIC BOARD 🌟
+   -------------------------------------------------------------------------- */
+.arena3DWrapper {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 0;
+  position: relative;
+  overflow: visible;
+  padding: 2px 0;
+  z-index: 20;
+}
+
+.perspectiveStage {
+  perspective: 1200px;
+  perspective-origin: 50% 40%;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transform-style: preserve-3d;
+}
+
+.isometricBoard {
+  display: grid;
+  gap: 5px;
+  background: linear-gradient(135deg, #111827 0%, #0a0f1d 100%);
+  border: 2px solid #1e293b;
+  border-radius: 14px;
+  padding: 6px;
+  transform-style: preserve-3d;
+  transform: translateY(-26px) rotateX(36deg) rotateZ(-30deg);
+  transition: transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+  box-shadow: 
+    -3px 5px 0 #090e17,
+    -6px 10px 0 #060a12,
+    -9px 15px 0 #04070d,
+    -14px 22px 35px rgba(0, 0, 0, 0.85);
+  max-width: 330px;
+  max-height: 330px;
+  width: min(84vw, 330px);
+  aspect-ratio: 1 / 1;
+  box-sizing: border-box;
+}
+
+/* 3D Tile Structure */
+.tile3D {
+  position: relative;
+  border-radius: 8px;
+  transform-style: preserve-3d;
+  box-sizing: border-box;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer !important;
+  pointer-events: auto !important;
+  transition: all 0.2s ease;
+}
+
+.tile3D:active {
+  transform: translateZ(1px) scale(0.97);
+}
+
+.tilePlatform3D {
+  background: linear-gradient(135deg, #1b263b 0%, #101726 100%);
+  border: 1.5px solid rgba(56, 189, 248, 0.25);
+  box-shadow: inset 0 1px 2px rgba(255, 255, 255, 0.12), inset 0 -2px 4px rgba(0, 0, 0, 0.4);
+  cursor: pointer !important;
+  transition: all 0.2s ease;
+}
+
+.tilePlatform3D:hover {
+  border-color: #38bdf8 !important;
+  background: linear-gradient(135deg, rgba(30, 58, 102, 0.8) 0%, rgba(15, 23, 42, 0.95) 100%) !important;
+  box-shadow: 0 0 18px rgba(56, 189, 248, 0.65), inset 0 0 10px rgba(56, 189, 248, 0.35) !important;
+  transform: scale(1.04);
+  z-index: 50 !important;
+  cursor: pointer !important;
+}
+
+.tilePlatform3D:active {
+  transform: translateZ(1px);
+  box-shadow: 0 0 24px rgba(56, 189, 248, 0.9) !important;
+}
+
+.tileCurrentRobot {
+  cursor: default !important;
+}
+
+.tileCurrentRobot:hover {
+  transform: translateZ(0) !important;
+  box-shadow: inset 0 1px 2px rgba(255, 255, 255, 0.12), inset 0 -2px 4px rgba(0, 0, 0, 0.4) !important;
+  border-color: rgba(56, 189, 248, 0.25) !important;
+  z-index: 1 !important;
+}
+
+.tileSwitchPlatform {
+  background: linear-gradient(135deg, rgba(30, 27, 75, 0.7) 0%, rgba(15, 23, 42, 0.95) 100%) !important;
+  border: 1.5px solid rgba(245, 158, 11, 0.6) !important;
+  box-shadow: inset 0 1px 2px rgba(255, 255, 255, 0.1), 0 0 12px rgba(245, 158, 11, 0.35) !important;
+  cursor: pointer !important;
+  transition: all 0.2s ease;
+}
+
+.tileSwitchPlatform:hover {
+  border-color: #fbbf24 !important;
+  box-shadow: 0 0 24px rgba(245, 158, 11, 0.85), inset 0 0 12px rgba(245, 158, 11, 0.4) !important;
+  transform: scale(1.04);
+  z-index: 60 !important;
+  cursor: pointer !important;
+}
+
+.tileLaserActive {
+  background: linear-gradient(135deg, rgba(69, 10, 10, 0.65) 0%, rgba(20, 5, 5, 0.9) 100%) !important;
+  border: 1.5px solid rgba(239, 68, 68, 0.7) !important;
+  box-shadow: inset 0 1px 2px rgba(255, 255, 255, 0.1), 0 0 12px rgba(239, 68, 68, 0.5) !important;
+  cursor: pointer !important;
+  transition: all 0.2s ease;
+}
+
+.tileLaserActive:hover {
+  border-color: #f87171 !important;
+  box-shadow: 0 0 22px rgba(239, 68, 68, 0.9), inset 0 0 12px rgba(239, 68, 68, 0.5) !important;
+  transform: scale(1.03);
+  z-index: 50 !important;
+  cursor: pointer !important;
+}
+
+.tileWall3D {
+  background: #090e17;
+  border: 1.5px solid rgba(71, 85, 105, 0.3);
+}
+
+.tileLava3D {
+  background: #3f0909;
+  border: 1.5px solid rgba(239, 68, 68, 0.4);
+}
+
+.tileFloor {
+  width: 100%;
+  height: 100%;
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transform-style: preserve-3d;
+  pointer-events: auto !important;
+  cursor: pointer !important;
+}
+
+.tileCornerDot {
+  position: absolute;
+  top: 3px;
+  left: 3px;
+  width: 3px;
+  height: 3px;
+  border-radius: 50%;
+  background: rgba(56, 189, 248, 0.4);
+  pointer-events: none;
+}
+
+/* --------------------------------------------------------------------------
+   Interactive Walkable Step Pad (Vibrant Neon Cyan)
+   -------------------------------------------------------------------------- */
+/* --------------------------------------------------------------------------
+   Interactive Walkable Step Pad (Vibrant Neon Cyan)
+   -------------------------------------------------------------------------- */
+.tileWalkable {
+  cursor: pointer !important;
+  pointer-events: auto !important;
+  z-index: 200 !important;
+  border: 2.5px solid #22d3ee !important;
+  background: linear-gradient(135deg, rgba(6, 182, 212, 0.35) 0%, rgba(3, 105, 161, 0.45) 100%) !important;
+  box-shadow: 0 0 20px rgba(34, 211, 238, 0.75), inset 0 0 14px rgba(6, 182, 212, 0.45) !important;
+  animation: pulseWalkTile 1.5s infinite alternate ease-in-out;
+  transform: translateZ(3px);
+}
+
+.tileWalkable:hover {
+  transform: translateZ(3px) scale(1.06);
+  background: linear-gradient(135deg, rgba(6, 182, 212, 0.65) 0%, rgba(2, 132, 199, 0.75) 100%) !important;
+  border-color: #67e8f9 !important;
+  box-shadow: 0 0 32px rgba(56, 189, 248, 1), inset 0 0 20px rgba(34, 211, 238, 0.8) !important;
+}
+
+@keyframes pulseWalkTile {
+  from { border-color: #06b6d4; box-shadow: 0 0 14px rgba(6, 182, 212, 0.6); }
+  to { border-color: #67e8f9; box-shadow: 0 0 24px rgba(103, 232, 249, 0.95); }
+}
+
+.walkStepPad {
+  position: absolute;
+  inset: 0;
+  transform-style: preserve-3d;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  pointer-events: auto !important;
+  cursor: pointer !important;
+  z-index: 100;
+}
+
+.walkFloorGlow {
+  position: absolute;
+  width: 85%;
+  height: 85%;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(6, 182, 212, 0.65) 0%, transparent 70%);
+  transform: translateZ(1px);
+  animation: pulseGlowCircle 1.4s infinite alternate ease-in-out;
+  pointer-events: none !important;
+}
+
+.walkBadgeFloor {
+  position: relative;
+  z-index: 105;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 3px;
+  padding: 3px 8px;
+  background: linear-gradient(135deg, #0284c7 0%, #0369a1 100%);
+  border: 1.5px solid #67e8f9;
+  border-radius: 999px;
+  box-shadow: 0 0 12px rgba(6, 182, 212, 0.9);
+  transform: translateZ(3px);
+  white-space: nowrap;
+  max-width: 92%;
+  animation: pulseBadgeGlow 1.2s infinite alternate ease-in-out;
+  pointer-events: auto !important;
+  cursor: pointer !important;
+}
+
+@keyframes pulseBadgeGlow {
+  from { box-shadow: 0 0 10px rgba(6, 182, 212, 0.7); border-color: #67e8f9; }
+  to { box-shadow: 0 0 18px rgba(103, 232, 249, 1); border-color: #e0f2fe; }
+}
+
+.walkArrow {
+  font-size: 0.85rem;
+  font-weight: 900;
+  color: #e0f2fe;
+  filter: drop-shadow(0 0 4px #38bdf8);
+  line-height: 1;
+}
+
+.walkText {
+  font-size: 0.65rem;
+  font-weight: 900;
+  color: #ffffff;
+  letter-spacing: 0.5px;
+  line-height: 1;
+}
+
+/* --------------------------------------------------------------------------
+   Interactive Jumpable Step Pad (High-Energy Amber)
+   -------------------------------------------------------------------------- */
+.tileJumpable {
+  cursor: pointer !important;
+  pointer-events: auto !important;
+  z-index: 200 !important;
+  border: 2.5px solid #fbbf24 !important;
+  background: linear-gradient(135deg, rgba(245, 158, 11, 0.35) 0%, rgba(180, 83, 9, 0.45) 100%) !important;
+  box-shadow: 0 0 22px rgba(245, 158, 11, 0.85), inset 0 0 14px rgba(245, 158, 11, 0.5) !important;
+  animation: pulseJumpTile 1.2s infinite alternate ease-in-out;
+  transform: translateZ(3px);
+}
+
+.tileJumpable:hover {
+  transform: translateZ(3px) scale(1.06);
+  background: linear-gradient(135deg, rgba(245, 158, 11, 0.65) 0%, rgba(180, 83, 9, 0.75) 100%) !important;
+  border-color: #fde047 !important;
+  box-shadow: 0 0 32px rgba(251, 191, 36, 1), inset 0 0 20px rgba(245, 158, 11, 0.8) !important;
+}
+
+@keyframes pulseJumpTile {
+  from { border-color: #f59e0b; box-shadow: 0 0 14px rgba(245, 158, 11, 0.6); }
+  to { border-color: #fde047; box-shadow: 0 0 26px rgba(253, 224, 71, 0.95); }
+}
+
+.jumpStepPad {
+  position: absolute;
+  inset: 0;
+  transform-style: preserve-3d;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  pointer-events: auto !important;
+  cursor: pointer !important;
+  z-index: 100;
+}
+
+.jumpFloorGlow {
+  position: absolute;
+  width: 85%;
+  height: 85%;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(245, 158, 11, 0.65) 0%, transparent 70%);
+  transform: translateZ(1px);
+  animation: pulseGlowCircle 1.1s infinite alternate ease-in-out;
+  pointer-events: none !important;
+}
+
+.jumpBadgeFloor {
+  position: relative;
+  z-index: 105;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 3px;
+  padding: 3px 8px;
+  background: linear-gradient(135deg, #d97706 0%, #b45309 100%);
+  border: 1.5px solid #fef08a;
+  border-radius: 999px;
+  box-shadow: 0 0 16px rgba(245, 158, 11, 0.9);
+  transform: translateZ(3px);
+  white-space: nowrap;
+  max-width: 92%;
+  pointer-events: auto !important;
+  cursor: pointer !important;
+}
+
+.jumpIcon {
+  font-size: 0.85rem;
+  filter: drop-shadow(0 0 4px #fbbf24);
+  line-height: 1;
+}
+
+.jumpText {
+  font-size: 0.65rem;
+  font-weight: 900;
+  color: #ffffff;
+  letter-spacing: 0.5px;
+  line-height: 1;
+}
+
+@keyframes pulseGlowCircle {
+  from { transform: translateZ(1px) scale(0.85); opacity: 0.6; }
+  to { transform: translateZ(1px) scale(1.15); opacity: 1; }
+}
+
+/* --------------------------------------------------------------------------
+   3D Extruded Obsidian Wall Block
+   -------------------------------------------------------------------------- */
+.cube3DWall,
+.cube3DWall * {
+  pointer-events: none !important;
+}
+
+.cube3DWall {
+  position: absolute;
+  inset: 2px;
+  transform-style: preserve-3d;
+}
+
+.cubeTop {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(135deg, #475569 0%, #334155 100%);
+  border: 1.5px solid #94a3b8;
+  border-radius: 5px;
+  transform: translateZ(28px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: inset 0 1px 2px rgba(255, 255, 255, 0.3), 0 0 8px rgba(0, 0, 0, 0.5);
+}
+
+.cubeTopEmboss {
+  font-size: 0.85rem;
+  filter: drop-shadow(0 0 3px rgba(239, 68, 68, 0.6));
+  line-height: 1;
+}
+
+.cubeFront {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  height: 28px;
+  background: linear-gradient(180deg, #334155 0%, #1e293b 100%);
+  transform-origin: bottom center;
+  transform: rotateX(-90deg);
+  border-left: 1px solid #475569;
+  border-right: 1px solid #475569;
+  border-bottom: 1px solid #0f172a;
+}
+
+.cubeRight {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  right: 0;
+  width: 28px;
+  background: linear-gradient(90deg, #1e293b 0%, #0f172a 100%);
+  transform-origin: right center;
+  transform: rotateY(90deg);
+  border-top: 1px solid #475569;
+  border-bottom: 1px solid #475569;
+  border-right: 1px solid #0f172a;
+}
+
+/* --------------------------------------------------------------------------
+   3D Sunken Magma Lava Pit
+   -------------------------------------------------------------------------- */
+.lavaPit3D,
+.lavaPit3D * {
+  pointer-events: none !important;
+}
+
+.lavaPit3D {
+  position: absolute;
+  inset: 2px;
+  background: radial-gradient(circle at 50% 50%, #f97316 0%, #dc2626 55%, #7f1d1d 95%);
+  border: 2px solid #ef4444;
+  border-radius: 5px;
+  transform: translateZ(-2px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: inset 0 0 14px #b91c1c, 0 0 12px rgba(239, 68, 68, 0.6);
+  animation: lavaPulse 1.8s infinite alternate ease-in-out;
+}
+
+.lavaGlowRing {
+  position: absolute;
+  inset: -1px;
+  border-radius: 6px;
+  border: 1px dashed rgba(254, 215, 170, 0.4);
+}
+
+@keyframes lavaPulse {
+  from { box-shadow: inset 0 0 8px #dc2626, 0 0 6px rgba(239, 68, 68, 0.4); }
+  to { box-shadow: inset 0 0 16px #f97316, 0 0 14px rgba(249, 115, 22, 0.7); }
+}
+
+.lavaBubble1 {
+  font-size: 0.95rem;
+  animation: floatBubble 1.5s infinite alternate ease-in-out;
+  filter: drop-shadow(0 0 4px #f97316);
+}
+
+.lavaBubble2 {
+  font-size: 0.8rem;
+  animation: floatBubble 1.2s infinite alternate-reverse ease-in-out;
+  filter: drop-shadow(0 0 4px #dc2626);
+}
+
+@keyframes floatBubble {
+  from { transform: translateY(0) scale(0.9); }
+  to { transform: translateY(-3px) scale(1.1); }
+}
+
+/* --------------------------------------------------------------------------
+   3D Interactive Cyber Pressure Switch
+   -------------------------------------------------------------------------- */
+.switch3DAnchor,
+.switch3DAnchor *,
+.switchPad3D,
+.switchPad3D * {
+  pointer-events: none !important;
+  user-select: none;
+}
+
+.switch3DAnchor {
+  position: absolute;
+  inset: 0;
+  transform-style: preserve-3d;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 15;
+}
+
+.switchPad3D {
+  position: relative;
+  transform-style: preserve-3d;
+  transform: translateZ(2px);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+.tileSwitchPlatform:hover .switchPad3D {
+  transform: translateZ(2px) scale(1.04);
+}
+
+.switchSvg {
+  filter: drop-shadow(0 4px 10px rgba(0, 0, 0, 0.65));
+}
+
+.switchRotatingRing {
+  transform-origin: 40px 40px;
+  animation: spinRing 12s linear infinite;
+}
+
+@keyframes spinRing {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+.switchRaisedGroup {
+  transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+  filter: drop-shadow(0 3px 6px rgba(180, 83, 9, 0.7));
+}
+
+.switchDepressedGroup {
+  transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+  transform-origin: 40px 40px;
+  transform: scale(0.92);
+  filter: drop-shadow(0 1px 12px rgba(16, 185, 129, 0.95));
+}
+
+.switchFloorLabel {
+  margin-top: 3px;
+  padding: 2px 8px;
+  background: rgba(15, 23, 42, 0.94);
+  border: 1.5px solid #f59e0b;
+  border-radius: 999px;
+  font-size: 0.58rem;
+  font-weight: 900;
+  color: #fef08a;
+  letter-spacing: 0.5px;
+  white-space: nowrap;
+  box-shadow: 0 0 10px rgba(245, 158, 11, 0.65);
+  pointer-events: none;
+  transition: all 0.3s ease;
+}
+
+.switchFloorLabelActive {
+  border-color: #34d399;
+  color: #ecfdf5;
+  box-shadow: 0 0 14px rgba(52, 211, 153, 0.9);
+  background: rgba(6, 78, 59, 0.94);
+}
+
+/* --------------------------------------------------------------------------
+   3D Laser Beam Barrier
+   -------------------------------------------------------------------------- */
+.laserBarrier3D,
+.laserBarrier3D * {
+  pointer-events: none !important;
+}
+
+.laserBarrier3D {
+  position: absolute;
+  inset: 0;
+  transform-style: preserve-3d;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 3px;
+}
+
+.laserPylonLeft, .laserPylonRight {
+  width: 8px;
+  height: 24px;
+  background: linear-gradient(180deg, #94a3b8 0%, #475569 100%);
+  border: 1.5px solid #cbd5e1;
+  border-radius: 4px;
+  transform: translateZ(18px);
+  box-shadow: 0 0 8px rgba(0, 0, 0, 0.5);
+}
+
+.laserBeam {
+  flex: 1;
+  height: 4px;
+  background: #ef4444;
+  box-shadow: 0 0 12px #ef4444, 0 0 24px #f87171, 0 0 36px #ef4444;
+  transform: translateZ(18px);
+  animation: laserPulse 0.25s infinite alternate;
+}
+
+@keyframes laserPulse {
+  from { opacity: 0.75; }
+  to { opacity: 1; }
+}
+
+.tileTargetCell {
+  cursor: pointer !important;
+  pointer-events: auto !important;
+  z-index: 70 !important;
+  border-color: #34d399 !important;
+}
+
+.tileTargetCell.tileWalkable {
+  z-index: 220 !important;
+}
+
+.tileTargetCell:hover {
+  transform: scale(1.06);
+  border-color: #6ee7b7 !important;
+  box-shadow: 0 0 28px rgba(52, 211, 153, 0.95), inset 0 0 16px rgba(52, 211, 153, 0.6) !important;
+  z-index: 80 !important;
+}
+
+/* --------------------------------------------------------------------------
+   3D Elevated Energy Crystal Battery (Target Objective)
+   -------------------------------------------------------------------------- */
+.targetAnchor,
+.targetAnchor *,
+.targetBillboard,
+.targetBillboard *,
+.targetBadgeFloor,
+.targetBadgeFloor * {
+  pointer-events: none !important;
+  user-select: none;
+}
+
+.targetAnchor {
+  position: absolute;
+  inset: 0;
+  transform-style: preserve-3d;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 15;
+}
+
+.targetFloorRadar {
+  position: absolute;
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  border: 2px solid #38bdf8;
+  background: radial-gradient(circle, rgba(56, 189, 248, 0.35) 0%, transparent 70%);
+  transform: translateZ(1px);
+  animation: pulseGlowCircle 1.6s infinite alternate ease-in-out;
+  pointer-events: none;
+}
+
+.targetFloorShadow {
+  position: absolute;
+  width: 30px;
+  height: 18px;
+  border-radius: 50%;
+  background: rgba(0, 0, 0, 0.65);
+  filter: blur(2px);
+  transform: translateZ(1px);
+  pointer-events: none;
+}
+
+/* Flat Floor Direction Badge - Sits right on the floor without 3D overhang */
+.targetBadgeFloor {
+  position: absolute;
+  bottom: 3px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  padding: 2.5px 8px;
+  background: linear-gradient(135deg, #059669 0%, #047857 100%);
+  border: 1.5px solid #34d399;
+  border-radius: 999px;
+  box-shadow: 0 0 14px rgba(52, 211, 153, 0.9);
+  transform: translateZ(2px);
+  white-space: nowrap;
+  font-size: 0.64rem;
+  font-weight: 900;
+  color: #ffffff;
+  letter-spacing: 0.4px;
+  animation: pulseBadgeGlow 1.2s infinite alternate ease-in-out;
+}
+
+/* Compact Floating 3D Battery Core */
+.targetBillboard {
+  position: absolute;
+  transform-style: preserve-3d;
+  transform: translateZ(16px) rotateZ(30deg) rotateX(-36deg);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  animation: floatTargetBob 1.8s infinite ease-in-out;
+  width: 34px;
+  height: 40px;
+  z-index: 46;
+  pointer-events: auto !important;
+  cursor: pointer !important;
+}
+
+@keyframes floatTargetBob {
+  0%, 100% { transform: translateZ(16px) rotateZ(30deg) rotateX(-36deg) translateY(0); }
+  50% { transform: translateZ(22px) rotateZ(30deg) rotateX(-36deg) translateY(-3px); }
+}
+
+/* --------------------------------------------------------------------------
+   3D Cyber Crystal Battery (Fusion Power Core)
+   -------------------------------------------------------------------------- */
+.fusionCell3D {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer !important;
+  pointer-events: auto !important;
+}
+
+/* Top Golden Terminal Anode */
+.cellAnodeCap {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+.cellAnodeNub {
+  width: 8px;
+  height: 4px;
+  background: linear-gradient(180deg, #fde047 0%, #ca8a04 100%);
+  border-radius: 3px 3px 0 0;
+  border: 1px solid #fef08a;
+  box-shadow: 0 0 6px rgba(250, 204, 21, 0.9);
+}
+
+.cellTopRing {
+  width: 20px;
+  height: 4px;
+  background: linear-gradient(90deg, #334155 0%, #64748b 50%, #334155 100%);
+  border-radius: 2px;
+  border: 1px solid #94a3b8;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.6);
+}
+
+/* Transparent Plasma Cylinder Chamber */
+.plasmaGlassChamber {
+  position: relative;
+  width: 22px;
+  height: 28px;
+  background: linear-gradient(135deg, rgba(6, 182, 212, 0.25) 0%, rgba(16, 185, 129, 0.35) 100%);
+  border-left: 1.5px solid rgba(103, 232, 249, 0.8);
+  border-right: 1.5px solid rgba(52, 211, 153, 0.8);
+  box-shadow: 
+    0 0 14px rgba(52, 211, 153, 0.7),
+    inset 0 0 10px rgba(6, 182, 212, 0.6);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: visible;
+}
+
+/* Subtle Glass Curved Highlight */
+.glassReflection {
+  position: absolute;
+  top: 2px;
+  left: 3px;
+  width: 3px;
+  height: 24px;
+  background: rgba(255, 255, 255, 0.75);
+  border-radius: 2px;
+  filter: blur(0.5px);
+  pointer-events: none;
+}
+
+/* Internal Glowing Quantum Plasma Core */
+.quantumCoreBeam {
+  position: absolute;
+  width: 6px;
+  height: 22px;
+  background: linear-gradient(180deg, #a7f3d0 0%, #34d399 50%, #06b6d4 100%);
+  border-radius: 999px;
+  box-shadow: 0 0 12px #34d399, 0 0 20px #06b6d4;
+  animation: pulseBeam 1s infinite alternate ease-in-out;
+}
+
+@keyframes pulseBeam {
+  from { opacity: 0.75; transform: scaleY(0.9); }
+  to { opacity: 1; transform: scaleY(1.05); }
+}
+
+/* Segmented Energy Level Bars */
+.energyLevelBars {
+  position: relative;
+  z-index: 2;
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  align-items: center;
+}
+
+.energyBar1, .energyBar2, .energyBar3 {
+  width: 14px;
+  height: 4px;
+  border-radius: 2px;
+  background: linear-gradient(90deg, #34d399 0%, #67e8f9 100%);
+  box-shadow: 0 0 8px rgba(52, 211, 153, 0.95);
+  animation: pulseEnergyBar 1.2s infinite alternate ease-in-out;
+}
+
+.energyBar2 { animation-delay: 0.25s; }
+.energyBar3 { animation-delay: 0.5s; }
+
+@keyframes pulseEnergyBar {
+  0% { opacity: 0.65; transform: scaleX(0.85); }
+  100% { opacity: 1; transform: scaleX(1); }
+}
+
+/* Orbiting Holographic Ring */
+.orbitHoloRing {
+  position: absolute;
+  width: 30px;
+  height: 12px;
+  border-radius: 50%;
+  border: 1.5px solid #67e8f9;
+  box-shadow: 0 0 8px #38bdf8;
+  transform: rotateX(70deg);
+  animation: spinHoloRing 2.5s infinite linear;
+  pointer-events: none;
+}
+
+@keyframes spinHoloRing {
+  0% { transform: rotateX(70deg) rotateZ(0deg); }
+  100% { transform: rotateX(70deg) rotateZ(360deg); }
+}
+
+/* Bottom Titanium Cathode Base */
+.cellCathodeBase {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+}
+
+.cellBasePlate {
+  width: 22px;
+  height: 5px;
+  background: linear-gradient(90deg, #1e293b 0%, #475569 50%, #1e293b 100%);
+  border-radius: 0 0 3px 3px;
+  border: 1px solid #64748b;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.7);
+}
+
+.cellBaseFinLeft, .cellBaseFinRight {
+  width: 3px;
+  height: 7px;
+  background: #475569;
+  border-radius: 1px;
+}
+
+/* --------------------------------------------------------------------------
+   3D Upright Bot Budi Character Model
+   -------------------------------------------------------------------------- */
+.robotAnchor,
+.robotAnchor *,
+.robotBillboard,
+.robotBillboard *,
+.budiCharacterWrapper,
+.budiCharacterWrapper *,
+.budiSvg,
+.budiSvg * {
+  pointer-events: none !important;
+  user-select: none;
+}
+
+.robotAnchor {
+  position: absolute;
+  inset: 0;
+  transform-style: preserve-3d;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 15;
+  pointer-events: none !important;
+}
+
+.robotPedestalRing {
+  position: absolute;
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  border: 2px solid #06b6d4;
+  background: radial-gradient(circle, rgba(6, 182, 212, 0.45) 0%, transparent 70%);
+  transform: translateZ(1px);
+  animation: pulseGlowCircle 1.5s infinite alternate ease-in-out;
+  pointer-events: none !important;
+}
+
+.robotGroundShadow {
+  position: absolute;
+  width: 24px;
+  height: 12px;
+  border-radius: 50%;
+  background: rgba(0, 0, 0, 0.7);
+  filter: blur(2px);
+  transform: translateZ(1px);
+  pointer-events: none !important;
+}
+
+.budiCharacterWrapper {
+  position: absolute;
+  width: 38px;
+  height: 48px;
+  max-width: 100%;
+  transform-style: preserve-3d;
+  transform: translateZ(16px) rotateZ(30deg) rotateX(-36deg);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  animation: floatBudi 2.2s ease-in-out infinite alternate;
+  pointer-events: none !important;
+  user-select: none;
+}
+
+@keyframes floatBudi {
+  0% { transform: translateZ(16px) rotateZ(30deg) rotateX(-36deg) translateY(0); }
+  100% { transform: translateZ(22px) rotateZ(30deg) rotateX(-36deg) translateY(-3px); }
+}
+
+.budiSvg {
+  width: 38px;
+  height: 48px;
+  overflow: visible;
+  filter: drop-shadow(0 4px 8px rgba(0, 0, 0, 0.45));
+  pointer-events: none !important;
+}
+
+/* Floating robotic hands bobbing */
+.svgFloatingHandLeft {
+  animation: handBobLeft 2s ease-in-out infinite alternate;
+  transform-origin: 11px 52px;
+}
+
+@keyframes handBobLeft {
+  0% { transform: translateY(0); }
+  100% { transform: translateY(-3px) rotate(-4deg); }
+}
+
+.svgFloatingHandRight {
+  animation: handBobRight 2s ease-in-out infinite alternate;
+  transform-origin: 65px 52px;
+}
+
+@keyframes handBobRight {
+  0% { transform: translateY(0); }
+  100% { transform: translateY(-3px) rotate(4deg); }
+}
+
+/* Dual Thruster Flame Flicker */
+.svgThrusterGroup {
+  animation: thrusterPuff 0.35s infinite alternate ease-in-out;
+  transform-origin: 38px 66px;
+}
+
+@keyframes thrusterPuff {
+  0% { transform: scaleY(0.85); opacity: 0.85; }
+  100% { transform: scaleY(1.18); opacity: 1; }
+}
+
+/* Antenna Beacon Broadcast Pulse */
+.svgAntennaPulse {
+  animation: antennaPulseAnim 1.4s infinite ease-out;
+  transform-origin: 38px 4px;
+}
+
+@keyframes antennaPulseAnim {
+  0% { transform: scale(0.6); opacity: 0.9; }
+  100% { transform: scale(2.2); opacity: 0; }
+}
+
+/* Cute Expressive Glowing Cyan Eyes */
+.svgBudiEyesGroup {
+  animation: eyeBlink 3.8s infinite ease-in-out;
+  transform-origin: 38px 26px;
+}
+
+@keyframes eyeBlink {
+  0%, 94%, 100% { transform: scaleY(1); }
+  97% { transform: scaleY(0.1); }
+}
+
+/* Clean Cyber Holographic Badge: "BUDI" */
+.budiNameBadge {
+  margin-top: 0px;
+  padding: 2.5px 10px;
+  background: rgba(10, 15, 30, 0.96);
+  border: 1.5px solid #38bdf8;
+  border-radius: 999px;
+  font-size: 0.64rem;
+  font-weight: 900;
+  color: #e0f2fe;
+  letter-spacing: 1px;
+  white-space: nowrap;
+  box-shadow: 0 0 12px rgba(56, 189, 248, 0.85), inset 0 0 6px rgba(2, 132, 199, 0.5);
+  text-shadow: 0 0 4px #0284c7;
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+
+.budiNameDot {
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  background: #38bdf8;
+  box-shadow: 0 0 6px #38bdf8, 0 0 12px #38bdf8;
+  animation: blinkDot 0.8s infinite alternate;
+}
+
+@keyframes blinkDot {
+  from { opacity: 0.5; transform: scale(0.8); }
+  to { opacity: 1; transform: scale(1.2); }
+}
+
+.robotJumping3D {
+  animation: arcJump3D 0.38s ease-in-out forwards !important;
+}
+
+@keyframes arcJump3D {
+  0% { transform: translateZ(28px) rotateZ(30deg) rotateX(-36deg) scale(1); }
+  50% { transform: translateZ(78px) rotateZ(30deg) rotateX(-36deg) scale(1.35); }
+  100% { transform: translateZ(28px) rotateZ(30deg) rotateX(-36deg) scale(1); }
+}
+
+
+/* --------------------------------------------------------------------------
+   Bottom Interactive Control Bar (Direct Tap Mode)
+   -------------------------------------------------------------------------- */
+.bottomInteractiveBar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  background: rgba(15, 23, 42, 0.92);
+  backdrop-filter: blur(12px);
+  border: 1px solid rgba(148, 163, 184, 0.25);
+  border-radius: 999px;
+  padding: 6px 16px;
+  flex-shrink: 0;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.4);
+  max-width: 380px;
+  width: 100%;
+  margin: 0 auto;
+  z-index: 10;
+  box-sizing: border-box;
+}
+
+.stepMeterWrap {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.stepMeterLabel {
+  font-size: 0.78rem;
+  font-weight: 800;
+  text-transform: uppercase;
+  color: #94a3b8;
+  letter-spacing: 0.5px;
+}
+
+.stepMeterPill {
+  display: flex;
+  align-items: center;
+  gap: 3px;
+  background: rgba(6, 182, 212, 0.15);
+  border: 1px solid rgba(6, 182, 212, 0.35);
+  padding: 3px 10px;
+  border-radius: 999px;
+}
+
+.stepCountNow {
+  font-size: 0.92rem;
+  font-weight: 900;
+  color: #38bdf8;
+}
+
+.stepCountMax {
+  font-size: 0.76rem;
+  font-weight: 700;
+  color: #64748b;
+}
+
+.interactiveActionBtns {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.btnTargetDirect {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  padding: 8px 14px;
+  background: linear-gradient(135deg, #059669 0%, #047857 100%);
+  border: 1.5px solid #34d399;
+  border-radius: 8px;
+  color: #ffffff;
+  font-size: 0.8rem;
+  font-weight: 800;
+  cursor: pointer;
+  box-shadow: 0 0 12px rgba(16, 185, 129, 0.45);
+  transition: all 0.2s ease;
+  white-space: nowrap;
+}
+
+.btnTargetDirect:hover:not(:disabled) {
+  transform: translateY(-2px);
+  background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+  box-shadow: 0 0 18px rgba(52, 211, 153, 0.75);
+}
+
+.btnTargetDirect:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+
+.btnRestartSmall {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 16px;
+  background: rgba(244, 63, 94, 0.16);
+  border: 1.5px solid rgba(244, 63, 94, 0.45);
+  border-radius: 10px;
+  color: #fda4af;
+  font-size: 0.82rem;
+  font-weight: 800;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  white-space: nowrap;
+  flex-shrink: 0;
+  box-shadow: 0 2px 8px rgba(244, 63, 94, 0.2);
+}
+
+.btnRestartSmall:hover:not(:disabled) {
+  background: rgba(244, 63, 94, 0.28);
+  border-color: #f43f5e;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 14px rgba(244, 63, 94, 0.35);
+  color: #ffffff;
+}
+
+.btnRestartSmall:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+/* --------------------------------------------------------------------------
+   Modals (Compact Overlay)
+   -------------------------------------------------------------------------- */
+.modalBackdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 99;
+  background: rgba(0, 0, 0, 0.85);
+  backdrop-filter: blur(6px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 14px;
+  animation: fadeIn 0.2s ease;
+}
+
+.modalCard, .completeCard {
+  width: 100%;
+  max-width: 440px;
+  background: linear-gradient(180deg, #1e293b 0%, #0f172a 100%);
+  border: 2px solid #06b6d4;
+  border-radius: 20px;
+  padding: 22px 18px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  box-shadow: 0 16px 48px rgba(0, 0, 0, 0.8), 0 0 35px rgba(6, 182, 212, 0.3);
+  animation: popIn 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+.completeCard {
+  border-color: #f59e0b;
+  box-shadow: 0 16px 48px rgba(0, 0, 0, 0.8), 0 0 40px rgba(245, 158, 11, 0.35);
+}
+
+@keyframes popIn {
+  from { transform: scale(0.9); opacity: 0; }
+  to { transform: scale(1); opacity: 1; }
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+.modalTrophy, .completeIconGlow {
+  font-size: 2.4rem;
+  margin-bottom: 4px;
+}
+
+.modalBadge, .completeBadge {
+  font-size: 0.72rem;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 1.5px;
+  color: #38bdf8;
+  margin-bottom: 2px;
+}
+
+.completeBadge {
+  color: #fbbf24;
+}
+
+.modalTitle, .completeHeading {
+  margin: 0 0 8px;
+  font-size: 1.25rem;
+  font-weight: 800;
+  color: #f8fafc;
+}
+
+.modalText, .completeDesc {
+  font-size: 0.85rem;
+  color: #94a3b8;
+  line-height: 1.45;
+  margin: 0 0 16px;
+}
+
+.btnModalNext, .btnCompletePrimary {
+  width: 100%;
+  padding: 12px;
+  background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+  border: 1px solid #34d399;
+  border-radius: 12px;
+  color: #ffffff;
+  font-size: 0.95rem;
+  font-weight: 800;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  box-shadow: 0 4px 14px rgba(16, 185, 129, 0.35);
+}
+
+.btnCompletePrimary {
+  background: linear-gradient(135deg, #0284c7 0%, #0369a1 100%);
+  border-color: #38bdf8;
+  box-shadow: 0 4px 14px rgba(2, 132, 199, 0.4);
+}
+
+.btnModalNext:hover, .btnCompletePrimary:hover {
+  transform: translateY(-2px);
+  filter: brightness(1.1);
+}
+
+.rewardGrid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 8px;
+  width: 100%;
+  margin-bottom: 18px;
+}
+
+.rewardBox {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  background: rgba(0, 0, 0, 0.35);
+  border: 1px solid rgba(245, 158, 11, 0.3);
+  border-radius: 10px;
+  padding: 8px 4px;
+}
+
+.rewardNum {
+  font-size: 1.05rem;
+  font-weight: 800;
+  color: #fbbf24;
+}
+
+.rewardLabel {
+  font-size: 0.68rem;
+  font-weight: 600;
+  color: #94a3b8;
+  margin-top: 2px;
+}
+
+/* --------------------------------------------------------------------------
+   Small Screen Support (<680px height)
+   -------------------------------------------------------------------------- */
+@media (max-height: 680px) {
+  .gameContainer {
+    padding: 3px 6px 6px;
+  }
+  .isometricBoard {
+    max-width: 250px;
+    max-height: 250px;
+  }
+  .bottomInteractiveBar {
+    padding: 6px 10px;
+  }
+  .btnRestartSmall {
+    padding: 6px 10px;
+    font-size: 0.76rem;
+  }
+}
+
+/* ==========================================================================
+   DIRECT TACTICAL BOARD (100% RELIABLE DIRECT CLICK & D-PAD STEPPING)
+   ========================================================================== */
+.arenaTacticalWrapper {
+  flex: 1;
+  min-height: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  padding: 4px 0;
+  z-index: 20;
+}
+
+.tacticalBoard {
+  display: grid;
+  gap: 6px;
+  background: linear-gradient(135deg, #090e17 0%, #030712 100%);
+  border: 2px solid rgba(56, 189, 248, 0.35);
+  border-radius: 16px;
+  padding: 8px;
+  box-shadow: 0 12px 35px rgba(0, 0, 0, 0.8), inset 0 1px 0 rgba(255, 255, 255, 0.1);
+  max-width: 350px;
+  max-height: 350px;
+  width: min(86vw, 350px);
+  aspect-ratio: 1 / 1;
+  box-sizing: border-box;
+}
+
+.tacticalCell {
+  position: relative;
+  background: rgba(30, 41, 59, 0.7);
+  border: 1.5px solid rgba(71, 85, 105, 0.45);
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  box-sizing: border-box;
+  transition: all 0.18s ease;
+  user-select: none;
+  overflow: hidden;
+}
+
+.tacticalCell:hover {
+  background: rgba(51, 65, 85, 0.85);
+  border-color: rgba(56, 189, 248, 0.7);
+  transform: scale(1.04);
+}
+
+.tacticalCellWalkable {
+  background: linear-gradient(135deg, rgba(6, 182, 212, 0.3) 0%, rgba(3, 105, 161, 0.4) 100%) !important;
+  border: 2px solid #22d3ee !important;
+  box-shadow: 0 0 16px rgba(34, 211, 238, 0.7), inset 0 0 10px rgba(6, 182, 212, 0.3) !important;
+  animation: pulseWalkCell 1.4s infinite alternate ease-in-out;
+}
+
+@keyframes pulseWalkCell {
+  from { border-color: #06b6d4; box-shadow: 0 0 12px rgba(6, 182, 212, 0.5); }
+  to { border-color: #67e8f9; box-shadow: 0 0 22px rgba(103, 232, 249, 0.9); }
+}
+
+.tacticalCellWall {
+  background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%) !important;
+  border-color: #475569 !important;
+  cursor: not-allowed !important;
+  box-shadow: inset 0 2px 6px rgba(0, 0, 0, 0.8);
+}
+
+.tacticalCellLava {
+  background: #3f0909 !important;
+  border-color: #ef4444 !important;
+  cursor: not-allowed !important;
+}
+
+.tacticalCellLaser {
+  background: rgba(220, 38, 38, 0.25) !important;
+  border-color: #ef4444 !important;
+  box-shadow: 0 0 14px rgba(239, 68, 68, 0.6) !important;
+}
+
+.tacticalCellLaserOff {
+  background: rgba(30, 41, 59, 0.35) !important;
+  border-color: rgba(71, 85, 105, 0.3) !important;
+  opacity: 0.55;
+}
+
+.tacticalCellSwitch {
+  background: rgba(245, 158, 11, 0.2) !important;
+  border-color: #f59e0b !important;
+  box-shadow: 0 0 14px rgba(245, 158, 11, 0.5) !important;
+}
+
+.tacticalCellSwitchActive {
+  background: rgba(16, 185, 129, 0.25) !important;
+  border-color: #10b981 !important;
+  box-shadow: 0 0 16px rgba(16, 185, 129, 0.6) !important;
+}
+
+.tacticalCellTarget {
+  background: rgba(6, 182, 212, 0.22) !important;
+  border-color: #06b6d4 !important;
+  box-shadow: 0 0 18px rgba(6, 182, 212, 0.65) !important;
+}
+
+/* Walkable Indicator Dot (Clean, minimalist, never overflows) */
+.walkDot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: #38bdf8;
+  box-shadow: 0 0 8px #38bdf8, 0 0 16px rgba(56, 189, 248, 0.85);
+  animation: pulseWalkDot 1.2s infinite alternate ease-in-out;
+  pointer-events: none;
+}
+
+@keyframes pulseWalkDot {
+  from {
+    transform: scale(0.8);
+    opacity: 0.55;
+    box-shadow: 0 0 6px #0284c7;
+  }
+  to {
+    transform: scale(1.3);
+    opacity: 1;
+    box-shadow: 0 0 12px #38bdf8, 0 0 20px rgba(56, 189, 248, 0.95);
+  }
+}
+
+/* --------------------------------------------------------------------------
+   Laser Electrocution & Death Animation Styles
+   -------------------------------------------------------------------------- */
+.tacticalCellLaserZapped {
+  background: radial-gradient(circle, rgba(239, 68, 68, 0.95) 0%, rgba(245, 158, 11, 0.7) 45%, rgba(220, 38, 38, 0.4) 100%) !important;
+  border: 2.5px solid #fef08a !important;
+  box-shadow: 0 0 25px rgba(239, 68, 68, 0.95), 0 0 45px rgba(245, 158, 11, 0.8), inset 0 0 20px #ffffff !important;
+  animation: laserZapPulse 0.12s infinite alternate !important;
+  z-index: 10;
+}
+
+@keyframes laserZapPulse {
+  from { transform: scale(0.97); }
+  to { transform: scale(1.05); }
+}
+
+.robotDying {
+  animation: robotDeathShake 0.08s infinite alternate, robotDeathColor 0.2s infinite alternate !important;
+  transform-origin: center center;
+}
+
+@keyframes robotDeathShake {
+  0% { transform: translate(-3px, 1px) rotate(-5deg) scale(0.95); }
+  50% { transform: translate(3px, -2px) rotate(4deg) scale(1.05); }
+  100% { transform: translate(-2px, 3px) rotate(-3deg) scale(0.97); }
+}
+
+@keyframes robotDeathColor {
+  0% { filter: drop-shadow(0 0 10px #ef4444) brightness(1.7); }
+  50% { filter: drop-shadow(0 0 20px #f59e0b) brightness(2.2); }
+  100% { filter: drop-shadow(0 0 16px #38bdf8) brightness(1.9); }
+}
+
+.zapSparks {
+  animation: zapFlicker 0.09s infinite alternate;
+}
+
+@keyframes zapFlicker {
+  0% { opacity: 0.3; transform: scale(0.85); }
+  100% { opacity: 1; transform: scale(1.2); }
+}
+
+/* Floating Death Overlay Banner */
+.deathOverlay {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background: rgba(15, 23, 42, 0.95);
+  border: 2px solid #ef4444;
+  border-radius: 16px;
+  padding: 12px 24px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  box-shadow: 0 0 35px rgba(239, 68, 68, 0.8), inset 0 0 15px rgba(239, 68, 68, 0.3);
+  z-index: 50;
+  animation: deathPop 0.25s cubic-bezier(0.34, 1.56, 0.64, 1);
+  pointer-events: none;
+  backdrop-filter: blur(8px);
+}
+
+@keyframes deathPop {
+  0% { transform: translate(-50%, -50%) scale(0.6); opacity: 0; }
+  100% { transform: translate(-50%, -50%) scale(1); opacity: 1; }
+}
+
+.deathOverlayTitle {
+  font-size: 1.05rem;
+  font-weight: 900;
+  color: #fca5a5;
+  letter-spacing: 0.5px;
+  text-shadow: 0 0 10px rgba(239, 68, 68, 0.8);
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.deathOverlaySub {
+  font-size: 0.75rem;
+  font-weight: 700;
+  color: #94a3b8;
+}
+

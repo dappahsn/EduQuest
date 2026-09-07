@@ -1,0 +1,1281 @@
+/* StoryBuilder.module.css */
+/* Modern interactive storytelling layout with authentic Timun Mas & Buto Ijo illustrations */
+
+.container {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  height: 100%;
+  max-width: 760px;
+  margin: 0 auto;
+  gap: 10px;
+  box-sizing: border-box;
+  justify-content: space-between;
+  overflow-y: auto;
+  overflow-x: hidden;
+  padding: 2px 2px 8px 2px;
+}
+
+/* Header & Control Bar */
+.headerRow {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 8px;
+  flex-shrink: 0;
+}
+
+.categoryBadge {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  background: var(--color-surface-container-high, #f1f5f9);
+  padding: 5px 14px;
+  border-radius: 9999px;
+  border: 1px solid var(--color-outline-subtle, #e2e8f0);
+}
+
+.categoryIcon {
+  color: #d97706;
+  font-size: 18px;
+}
+
+.categoryTitle {
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--color-text-main, #1e293b);
+}
+
+.categoryDivider {
+  color: #94a3b8;
+}
+
+.categorySub {
+  font-size: 12px;
+  font-weight: 800;
+  color: #b45309;
+}
+
+.headerActions {
+  display: flex;
+  gap: 6px;
+}
+
+.headerBtn {
+  background: var(--color-surface-container-high, #f1f5f9);
+  border: 1px solid var(--color-outline-subtle, #e2e8f0);
+  border-radius: 9999px;
+  padding: 5px 12px;
+  font-size: 12px;
+  font-weight: 800;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  color: var(--color-text-main, #334155);
+  transition: background 0.15s, transform 0.1s;
+}
+
+.headerBtn:hover {
+  background: #e2e8f0;
+  transform: translateY(-1px);
+}
+
+.headerBtn:active {
+  transform: translateY(0);
+}
+
+/* Hint Card */
+.hintBox {
+  background: linear-gradient(135deg, #fef3c7 0%, #fde68a 100%);
+  color: #78350f;
+  border: 1.5px solid #fcd34d;
+  padding: 10px 14px;
+  border-radius: 14px;
+  display: flex;
+  gap: 10px;
+  align-items: flex-start;
+  box-shadow: 0 2px 8px rgba(217, 119, 6, 0.15);
+  animation: slideDown 0.25s ease-out;
+  flex-shrink: 0;
+}
+
+.hintIcon {
+  color: #d97706;
+  font-size: 22px;
+  flex-shrink: 0;
+  margin-top: 2px;
+}
+
+.hintTitle {
+  font-size: 12.5px;
+  font-weight: 800;
+  margin: 0 0 2px;
+}
+
+.hintText {
+  font-size: 12px;
+  margin: 0;
+  line-height: 1.45;
+  color: #92400e;
+}
+
+.hintCloseBtn {
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: #78350f;
+  padding: 2px;
+  display: flex;
+  align-items: center;
+  border-radius: 6px;
+}
+
+.hintCloseBtn:hover {
+  background: rgba(180, 83, 9, 0.12);
+}
+
+/* Story Title Banner */
+.storyBanner {
+  background: linear-gradient(135deg, #fed7aa 0%, #ffedd5 100%);
+  border: 1.5px solid #fdba74;
+  color: #7c2d12;
+  padding: 6px 14px;
+  border-radius: 12px;
+  box-shadow: 0 2px 6px rgba(194, 65, 12, 0.08);
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-shrink: 0;
+}
+
+.bannerIcon {
+  font-size: 24px;
+  flex-shrink: 0;
+}
+
+.bannerBadge {
+  font-size: 10px;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  color: #ea580c;
+  display: block;
+}
+
+.bannerTitle {
+  font-size: 14px;
+  font-weight: 900;
+  margin: 1px 0 0;
+  color: #7c2d12;
+}
+
+/* ---------------------------------------------------------------------------
+   AUTHENTIC STORYBOOK SCENE CARD (CINEMATIC BACKGROUND + REAL SPRITES)
+   --------------------------------------------------------------------------- */
+.sceneCard {
+  width: 100%;
+  flex: 1 1 260px;
+  min-height: 240px;
+  max-height: 380px;
+  border-radius: 18px;
+  overflow: hidden;
+  position: relative;
+  box-shadow: 0 8px 24px rgba(6, 78, 59, 0.28), inset 0 1px 2px rgba(255, 255, 255, 0.15);
+  border: 2px solid #34d399;
+  background: #022c22;
+  user-select: none;
+  display: flex;
+  flex-direction: column;
+}
+
+@media (min-width: 640px) {
+  .sceneCard {
+    min-height: 280px;
+  }
+}
+
+/* Cinematic Background Image */
+.sceneBgImg {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center 65%;
+  filter: brightness(0.92) contrast(1.05);
+}
+
+/* Subtle Vignette & Forest Mist Overlay */
+.mistOverlay {
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(circle at 50% 20%, transparent 40%, rgba(2, 44, 34, 0.45) 85%, rgba(2, 44, 34, 0.7) 100%),
+              linear-gradient(to top, rgba(2, 44, 34, 0.7) 0%, transparent 35%);
+  pointer-events: none;
+}
+
+/* Unified Top Scene Bar */
+.sceneTopBar {
+  position: absolute;
+  top: 8px;
+  left: 8px;
+  right: 8px;
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 8px;
+  z-index: 15;
+  pointer-events: none;
+}
+
+/* Floating Status Tag on Scene */
+.sceneStatusBadge {
+  position: static;
+  pointer-events: auto;
+  background: rgba(15, 23, 42, 0.88);
+  backdrop-filter: blur(8px);
+  padding: 4px 10px;
+  border-radius: 9999px;
+  border: 1px solid rgba(255, 255, 255, 0.22);
+  color: #fef08a;
+  font-size: 10.5px;
+  font-weight: 800;
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.4);
+  flex-shrink: 0;
+}
+
+.sceneSpeechBubble {
+  position: static;
+  pointer-events: auto;
+  background: rgba(255, 255, 255, 0.96);
+  backdrop-filter: blur(8px);
+  color: #1e293b;
+  border: 2px solid #ca8a04;
+  padding: 4px 10px;
+  border-radius: 12px;
+  font-size: 11px;
+  font-weight: 900;
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.3);
+  animation: popSpeech 0.3s ease-out;
+  max-width: 60%;
+  text-align: right;
+  line-height: 1.3;
+}
+
+@keyframes popSpeech {
+  0% { transform: scale(0.6); opacity: 0; }
+  100% { transform: scale(1); opacity: 1; }
+}
+
+/* ---------------------------------------------------------------------------
+   CHARACTER SLOTS (BUTO IJO & TIMUN MAS)
+   --------------------------------------------------------------------------- */
+.characterSlot {
+  position: absolute;
+  bottom: 10px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  z-index: 10;
+}
+
+.butoSlot {
+  left: 20px;
+}
+
+@media (min-width: 640px) {
+  .butoSlot {
+    left: 55px;
+  }
+}
+
+.timunSlot {
+  right: 25px;
+}
+
+@media (min-width: 640px) {
+  .timunSlot {
+    right: 65px;
+  }
+}
+
+.characterWrapper {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Buto Ijo Image */
+.butoImg {
+  height: clamp(170px, 26vh, 235px);
+  width: auto;
+  object-fit: contain;
+  filter: drop-shadow(0 6px 14px rgba(0, 0, 0, 0.6));
+  display: block;
+}
+
+/* Timun Mas Image */
+.timunImg {
+  height: clamp(150px, 23vh, 205px);
+  width: auto;
+  object-fit: contain;
+  filter: drop-shadow(0 6px 14px rgba(0, 0, 0, 0.6));
+  display: block;
+}
+
+/* Name Tag Pill */
+.namePill {
+  margin-top: 4px;
+  background: rgba(15, 23, 42, 0.88);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  padding: 2px 10px;
+  border-radius: 9999px;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.4);
+  position: relative;
+  z-index: 15;
+}
+
+.namePill span {
+  font-size: 10px;
+  font-weight: 900;
+  letter-spacing: 0.5px;
+  color: #fef08a;
+}
+
+/* Golden Hero Aura for Timun Mas */
+.heroAura {
+  position: absolute;
+  inset: -10px;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(254, 240, 138, 0.5) 0%, rgba(234, 179, 8, 0.2) 65%, transparent 100%);
+  filter: blur(8px);
+  animation: pulseAura 1.5s infinite ease-in-out;
+  pointer-events: none;
+}
+
+@keyframes pulseAura {
+  0%, 100% { transform: scale(1); opacity: 0.7; }
+  50% { transform: scale(1.15); opacity: 1; }
+}
+
+/* ---------------------------------------------------------------------------
+   CHARACTER ANIMATIONS
+   --------------------------------------------------------------------------- */
+
+/* Timun Mas Running */
+.timunRunAnim {
+  animation: runBounce 0.7s infinite ease-in-out alternate;
+  transform-origin: center bottom;
+}
+
+@keyframes runBounce {
+  0% { transform: translateY(0px) rotate(0deg); }
+  100% { transform: translateY(-8px) rotate(1.5deg); }
+}
+
+/* Timun Mas Victory Jump */
+.timunVictoryAnim {
+  animation: victoryLeap 0.8s infinite ease-in-out alternate;
+  transform-origin: center bottom;
+}
+
+@keyframes victoryLeap {
+  0% { transform: translateY(0px) scale(1); }
+  100% { transform: translateY(-20px) scale(1.08); }
+}
+
+/* Buto Ijo Stomping */
+.butoStompAnim {
+  animation: giantStomp 1.1s infinite ease-in-out;
+  transform-origin: center bottom;
+}
+
+@keyframes giantStomp {
+  0%, 100% { transform: translateY(0px) rotate(0deg); }
+  50% { transform: translateY(-6px) rotate(-1.5deg); }
+}
+
+/* Buto Ijo Trapped / Shaking */
+.butoTrappedAnim {
+  animation: trappedShake 0.45s infinite ease-in-out;
+  transform-origin: center bottom;
+}
+
+@keyframes trappedShake {
+  0%, 100% { transform: translateX(0px) rotate(0deg); }
+  25% { transform: translateX(-4px) rotate(-2deg); }
+  75% { transform: translateX(4px) rotate(2deg); }
+}
+
+/* Dizzy Stars Floating Above Buto Ijo */
+.dizzyStars {
+  position: absolute;
+  top: -24px;
+  display: flex;
+  gap: 4px;
+  font-size: 16px;
+  animation: floatDizzy 1.2s infinite ease-in-out alternate;
+}
+
+@keyframes floatDizzy {
+  0% { transform: translateY(0px) scale(0.9); }
+  100% { transform: translateY(-6px) scale(1.15); }
+}
+
+/* Victory Sparkles Floating Above Timun Mas */
+.victorySparkles {
+  position: absolute;
+  top: -28px;
+  display: flex;
+  gap: 5px;
+  font-size: 18px;
+  animation: sparkleBounce 0.8s infinite ease-in-out alternate;
+}
+
+@keyframes sparkleBounce {
+  0% { transform: scale(0.8) rotate(-5deg); }
+  100% { transform: scale(1.2) rotate(10deg); }
+}
+
+/* ---------------------------------------------------------------------------
+   AUTHENTIC MAGICAL SEED STREAM & CUCUMBER VINES OBSTACLE
+   --------------------------------------------------------------------------- */
+.seedsStreamContainer {
+  position: absolute;
+  top: 38%;
+  left: 36%;
+  width: 36%;
+  height: 35%;
+  pointer-events: none;
+  z-index: 11;
+  animation: streamFlow 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+.seedsStreamImg {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  filter: drop-shadow(0 0 10px rgba(253, 224, 71, 0.75));
+  animation: seedsGlowPulse 1.8s infinite ease-in-out alternate;
+}
+
+@keyframes streamFlow {
+  0% {
+    opacity: 0;
+    transform: scale(0.6) translate(20px, -10px);
+  }
+  100% {
+    opacity: 1;
+    transform: scale(1) translate(0, 0);
+  }
+}
+
+@keyframes seedsGlowPulse {
+  0% { filter: drop-shadow(0 0 6px rgba(253, 224, 71, 0.6)) brightness(1); }
+  100% { filter: drop-shadow(0 0 14px rgba(250, 204, 21, 0.9)) brightness(1.15); }
+}
+
+.vinesObstacleContainer {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 68%;
+  height: clamp(48px, 9vh, 72px);
+  pointer-events: none;
+  z-index: 12;
+  display: flex;
+  align-items: flex-end;
+  animation: vinesSprout 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+  transform-origin: left bottom;
+}
+
+.vinesObstacleImg {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  object-position: left bottom;
+  filter: drop-shadow(0 -2px 8px rgba(0, 0, 0, 0.45));
+  animation: cucumberGoldenGlow 2s infinite ease-in-out alternate;
+}
+
+@keyframes vinesSprout {
+  0% {
+    opacity: 0;
+    transform: translateY(20px) scaleY(0.4);
+  }
+  70% {
+    transform: translateY(-2px) scaleY(1.05);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0) scaleY(1);
+  }
+}
+
+@keyframes cucumberGoldenGlow {
+  0% { filter: drop-shadow(0 -2px 6px rgba(0, 0, 0, 0.4)) brightness(1); }
+  100% { filter: drop-shadow(0 -2px 12px rgba(234, 179, 8, 0.45)) brightness(1.08); }
+}
+
+/* ---------------------------------------------------------------------------
+   SENTENCE BUILDER CANVAS (TRAY)
+   --------------------------------------------------------------------------- */
+.sentenceCanvas {
+  background: #ffffff;
+  border-radius: 16px;
+  padding: 10px 14px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+  min-height: 86px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  border: 2px dashed #94a3b8;
+  transition: border-color 0.2s, background 0.2s;
+  flex-shrink: 0;
+}
+
+.sentenceCanvasActive {
+  border-color: #3b82f6;
+  background: #f8fafc;
+}
+
+.sentenceCanvasSuccess {
+  border-color: #10b981;
+  background: #f0fdf4;
+}
+
+.emptyPlaceholder {
+  font-size: 13px;
+  font-weight: 600;
+  color: #64748b;
+  text-align: center;
+}
+
+.wordsTray {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+}
+
+.placedWordPill {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  background: linear-gradient(135deg, #e0f2fe 0%, #bae6fd 100%);
+  border: 1.5px solid #7dd3fc;
+  border-bottom: 3px solid #38bdf8;
+  color: #0369a1;
+  padding: 5px 12px;
+  border-radius: 12px;
+  box-shadow: 0 2px 6px rgba(3, 105, 161, 0.15);
+  animation: wordPop 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+.roleTag {
+  font-size: 9.5px;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.4px;
+  color: #0284c7;
+  margin-bottom: 1px;
+}
+
+.placedWordText {
+  font-size: 14px;
+  font-weight: 800;
+  color: #0c4a6e;
+}
+
+@keyframes wordPop {
+  0% { transform: scale(0.7); opacity: 0; }
+  100% { transform: scale(1); opacity: 1; }
+}
+
+.feedbackMsg {
+  font-size: 13px;
+  font-weight: 800;
+  margin: 8px 0 0;
+  text-align: center;
+}
+
+.feedbackSuccess {
+  color: #059669;
+}
+
+.feedbackError {
+  color: #dc2626;
+}
+
+/* ---------------------------------------------------------------------------
+   AVAILABLE WORD BLOCKS (PILIHAN BALOK KATA)
+   --------------------------------------------------------------------------- */
+.blocksSection {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  flex-shrink: 0;
+  padding-bottom: 4px;
+}
+
+.blocksHeader {
+  font-size: 12px;
+  font-weight: 800;
+  color: var(--color-text-muted, #475569);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.blocksGrid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 8px;
+}
+
+.wordBlockBtn {
+  background: linear-gradient(180deg, #ffffff 0%, #f8fafc 100%);
+  border: 2px solid #cbd5e1;
+  border-bottom: 4px solid #94a3b8;
+  border-radius: 14px;
+  padding: 10px 12px;
+  min-height: 62px;
+  box-shadow: 0 3px 8px rgba(0, 0, 0, 0.06);
+  cursor: pointer;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 3px;
+  transition: transform 0.12s ease, border-color 0.12s, box-shadow 0.12s;
+  outline: none;
+}
+
+.wordBlockBtn:hover:not(:disabled) {
+  transform: translateY(-2px);
+  border-color: #38bdf8;
+  border-bottom-color: #0284c7;
+  box-shadow: 0 6px 14px rgba(56, 189, 248, 0.22);
+}
+
+.wordBlockBtn:active:not(:disabled) {
+  transform: translateY(2px);
+  border-bottom-width: 2px;
+}
+
+.wordBlockBtnUsed {
+  background: #f1f5f9 !important;
+  opacity: 0.4 !important;
+  border-color: #cbd5e1 !important;
+  border-bottom-width: 2px !important;
+  box-shadow: none !important;
+  cursor: default !important;
+}
+
+/* SPOK Color Coding for Extra Educational Polish */
+.block_subjek {
+  border-color: #fed7aa;
+  border-bottom-color: #ea580c;
+  background: linear-gradient(180deg, #fffbeb 0%, #fef3c7 100%);
+}
+.block_subjek .blockTypeTag {
+  color: #c2410c;
+}
+
+.block_predikat {
+  border-color: #bbf7d0;
+  border-bottom-color: #16a34a;
+  background: linear-gradient(180deg, #f0fdf4 0%, #dcfce7 100%);
+}
+.block_predikat .blockTypeTag {
+  color: #15803d;
+}
+
+.block_objek {
+  border-color: #bae6fd;
+  border-bottom-color: #0284c7;
+  background: linear-gradient(180deg, #f0f9ff 0%, #e0f2fe 100%);
+}
+.block_objek .blockTypeTag {
+  color: #0369a1;
+}
+
+.block_keterangan {
+  border-color: #e9d5ff;
+  border-bottom-color: #9333ea;
+  background: linear-gradient(180deg, #faf5ff 0%, #f3e8ff 100%);
+}
+.block_keterangan .blockTypeTag {
+  color: #7e22ce;
+}
+
+.blockTypeTag {
+  font-size: 10px;
+  font-weight: 800;
+  color: #64748b;
+  text-transform: uppercase;
+  letter-spacing: 0.3px;
+}
+
+.blockLabel {
+  font-size: 15px;
+  font-weight: 800;
+  color: #1e293b;
+}
+
+/* ---------------------------------------------------------------------------
+   ACTION COMPLETION BUTTON
+   --------------------------------------------------------------------------- */
+.finishBtn {
+  width: 100%;
+  padding: 14px;
+  background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+  color: #ffffff;
+  border-radius: 9999px;
+  font-weight: 900;
+  font-size: 15px;
+  border: none;
+  cursor: pointer;
+  box-shadow: 0 4px 14px rgba(16, 185, 129, 0.35);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  transition: transform 0.15s, filter 0.15s;
+}
+
+.finishBtn:hover {
+  filter: brightness(1.08);
+  transform: translateY(-2px);
+}
+
+.finishBtn:active {
+  transform: translateY(0);
+}
+
+@keyframes slideDown {
+  0% { transform: translateY(-8px); opacity: 0; }
+  100% { transform: translateY(0); opacity: 1; }
+}
+
+/* ---------------------------------------------------------------------------
+   MISI 02: KANCIL & BUAYA RIVER SCENE
+   --------------------------------------------------------------------------- */
+.buayaSlot {
+  position: absolute;
+  bottom: 10%;
+  left: 36%;
+  width: clamp(90px, 22vw, 140px);
+  z-index: 10;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  pointer-events: none;
+}
+
+.buayaWrapper {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  animation: buayaFloat 3s ease-in-out infinite alternate;
+}
+
+.buayaImg {
+  width: 100%;
+  height: auto;
+  max-height: clamp(65px, 14vh, 95px);
+  object-fit: contain;
+  filter: drop-shadow(0 4px 8px rgba(0, 50, 40, 0.5));
+}
+
+@keyframes buayaFloat {
+  0% { transform: translateY(0) rotate(-1deg); }
+  100% { transform: translateY(-6px) rotate(1.5deg); }
+}
+
+.kancilSlot {
+  position: absolute;
+  z-index: 12;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  transition: left 0.5s cubic-bezier(0.34, 1.56, 0.64, 1),
+              bottom 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
+  pointer-events: none;
+}
+
+.kancilImg {
+  width: clamp(65px, 16vw, 100px);
+  height: auto;
+  max-height: clamp(80px, 18vh, 120px);
+  object-fit: contain;
+  filter: drop-shadow(0 4px 8px rgba(0, 0, 0, 0.35));
+}
+
+/* Dynamic Steps across River for Kancil */
+.kancilStep0 {
+  left: 4%;
+  bottom: 12%;
+}
+
+.kancilStep1 {
+  left: 24%;
+  bottom: 22%;
+  animation: kancilJumpBounce 0.45s ease-out;
+}
+
+.kancilStep2 {
+  left: 44%;
+  bottom: 26%;
+  animation: kancilJumpBounce 0.45s ease-out;
+}
+
+.kancilStep3 {
+  left: 64%;
+  bottom: 22%;
+  animation: kancilJumpBounce 0.45s ease-out;
+}
+
+.kancilStep4 {
+  left: 80%;
+  bottom: 14%;
+  animation: kancilJumpBounce 0.45s ease-out;
+}
+
+@keyframes kancilJumpBounce {
+  0% { transform: translateY(12px) scale(0.9, 1.1); }
+  50% { transform: translateY(-18px) scale(1.05, 0.95); }
+  100% { transform: translateY(0) scale(1, 1); }
+}
+
+.kancilVictoryAnim {
+  animation: kancilCelebrate 0.8s ease-in-out infinite alternate;
+}
+
+@keyframes kancilCelebrate {
+  0% { transform: translateY(0) scale(1) rotate(0deg); }
+  50% { transform: translateY(-12px) scale(1.08) rotate(3deg); }
+  100% { transform: translateY(0) scale(1) rotate(-3deg); }
+}
+
+/* ---------------------------------------------------------------------------
+   MISI 02: ROUND STEP PILLS & INDICATOR
+   --------------------------------------------------------------------------- */
+.roundStepPills {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  background: rgba(255, 255, 255, 0.85);
+  backdrop-filter: blur(4px);
+  border: 1px solid rgba(226, 232, 240, 0.8);
+  padding: 5px 10px;
+  border-radius: 9999px;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.04);
+}
+
+.roundDot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: #cbd5e1;
+  transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.roundDotActive {
+  width: 22px;
+  border-radius: 6px;
+  background: linear-gradient(90deg, #f59e0b, #d97706);
+  box-shadow: 0 0 8px rgba(245, 158, 11, 0.5);
+}
+
+.roundDotDone {
+  background: #10b981;
+}
+
+/* ---------------------------------------------------------------------------
+   MISI 02: SPOK ALTAR SLOTS
+   --------------------------------------------------------------------------- */
+.spokAltar {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 8px;
+  width: 100%;
+  flex-shrink: 0;
+}
+
+.spokSlot {
+  background: #ffffff;
+  border-radius: 14px;
+  padding: 8px 6px;
+  min-height: 84px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  border: 2px dashed #cbd5e1;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.04);
+  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+  cursor: pointer;
+  position: relative;
+  overflow: hidden;
+}
+
+.spokSlot:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.08);
+}
+
+.slotS {
+  border-color: #fed7aa;
+  background: linear-gradient(180deg, #fffaf5 0%, #fff7ed 100%);
+}
+.slotS .spokSlotHeader {
+  color: #c2410c;
+  background: rgba(234, 88, 12, 0.1);
+}
+
+.slotP {
+  border-color: #bbf7d0;
+  background: linear-gradient(180deg, #f6fef9 0%, #f0fdf4 100%);
+}
+.slotP .spokSlotHeader {
+  color: #15803d;
+  background: rgba(22, 163, 74, 0.1);
+}
+
+.slotO {
+  border-color: #bae6fd;
+  background: linear-gradient(180deg, #f4faff 0%, #f0f9ff 100%);
+}
+.slotO .spokSlotHeader {
+  color: #0369a1;
+  background: rgba(2, 132, 199, 0.1);
+}
+
+.slotK {
+  border-color: #e9d5ff;
+  background: linear-gradient(180deg, #faf6fe 0%, #faf5ff 100%);
+}
+.slotK .spokSlotHeader {
+  color: #7e22ce;
+  background: rgba(147, 51, 234, 0.1);
+}
+
+.spokSlotFilled {
+  border-style: solid;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.06);
+  animation: slotPop 0.25s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+@keyframes slotPop {
+  0% { transform: scale(0.92); }
+  100% { transform: scale(1); }
+}
+
+.spokSlotHeader {
+  font-size: 9.5px;
+  font-weight: 800;
+  letter-spacing: 0.4px;
+  padding: 2px 6px;
+  border-radius: 6px;
+  text-align: center;
+}
+
+.spokSlotGuide {
+  font-size: 10px;
+  color: #94a3b8;
+  font-weight: 700;
+  text-align: center;
+  margin: auto 0;
+  line-height: 1.25;
+}
+
+.spokPlacedContent {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 2px;
+  margin: auto 0;
+  text-align: center;
+}
+
+.spokPlacedText {
+  font-size: 13px;
+  font-weight: 800;
+  color: #0f172a;
+  line-height: 1.2;
+}
+
+.spokRemoveTag {
+  font-size: 9px;
+  color: #ef4444;
+  background: rgba(239, 68, 68, 0.12);
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 800;
+  margin-top: 2px;
+}
+
+/* ---------------------------------------------------------------------------
+   MISI 02: NEXT ROUND BUTTON
+   --------------------------------------------------------------------------- */
+.nextRoundBtn {
+  width: 100%;
+  padding: 13px;
+  background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
+  color: #ffffff;
+  border-radius: 9999px;
+  font-weight: 900;
+  font-size: 15px;
+  border: none;
+  cursor: pointer;
+  box-shadow: 0 4px 14px rgba(37, 99, 235, 0.35);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  transition: transform 0.15s, filter 0.15s;
+}
+
+.nextRoundBtn:hover {
+  filter: brightness(1.08);
+  transform: translateY(-2px);
+}
+
+.nextRoundBtn:active {
+  transform: translateY(0);
+}
+
+/* ---------------------------------------------------------------------------
+   MISI 02 BABAK 2: CENDRAWASIH EMAS SCENE
+   --------------------------------------------------------------------------- */
+.cendrawasihSlot {
+  position: absolute;
+  left: 24%;
+  bottom: 24%;
+  width: clamp(130px, 28vw, 195px);
+  z-index: 10;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  pointer-events: none;
+}
+
+.cendrawasihImg {
+  width: 100%;
+  height: auto;
+  max-height: clamp(100px, 22vh, 165px);
+  object-fit: contain;
+  filter: drop-shadow(0 6px 14px rgba(0, 0, 0, 0.4));
+  transition: transform 0.35s ease;
+}
+
+.cendrawasihGentleAnim {
+  animation: cendraGentle 3.2s ease-in-out infinite alternate;
+}
+
+.cendrawasihFlapAnim {
+  animation: cendraFlap 0.75s ease-in-out infinite alternate;
+}
+
+.cendrawasihVictoryDance {
+  animation: cendraDance 0.85s ease-in-out infinite alternate;
+}
+
+@keyframes cendraGentle {
+  0% { transform: translateY(0) rotate(0deg); }
+  100% { transform: translateY(-4px) rotate(1.5deg); }
+}
+
+@keyframes cendraFlap {
+  0% { transform: translateY(0) scale(1, 1) rotate(-1deg); }
+  50% { transform: translateY(-12px) scale(1.06, 0.95) rotate(3deg); }
+  100% { transform: translateY(-4px) scale(1.02, 1.04) rotate(-2deg); }
+}
+
+@keyframes cendraDance {
+  0% { transform: translateY(0) scale(1) rotate(0deg); }
+  50% { transform: translateY(-18px) scale(1.1) rotate(4deg); }
+  100% { transform: translateY(-2px) scale(1.02) rotate(-3deg); }
+}
+
+.goldenWingAura {
+  position: absolute;
+  top: -12px;
+  left: -12px;
+  right: -12px;
+  bottom: -12px;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(250, 204, 21, 0.5) 0%, rgba(234, 179, 8, 0.2) 60%, transparent 75%);
+  filter: blur(8px);
+  z-index: -1;
+  animation: auraPulse 1.8s ease-in-out infinite alternate;
+}
+
+@keyframes auraPulse {
+  0% { opacity: 0.6; transform: scale(0.95); }
+  100% { opacity: 1; transform: scale(1.08); }
+}
+
+/* ---------------------------------------------------------------------------
+   MISI 02 BABAK 3: PEMUDA DANAU SAKTI & IKAN MAS SCENE
+   --------------------------------------------------------------------------- */
+.pemudaSlot {
+  position: absolute;
+  left: 4%;
+  bottom: 2%;
+  width: clamp(105px, 23vw, 155px);
+  z-index: 10;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  pointer-events: none;
+}
+
+.pemudaImg {
+  width: 100%;
+  height: auto;
+  max-height: clamp(90px, 20vh, 145px);
+  object-fit: contain;
+  filter: drop-shadow(0 4px 10px rgba(0, 0, 0, 0.45));
+}
+
+.pemudaGentleAnim {
+  animation: pemudaGentle 3s ease-in-out infinite alternate;
+}
+
+.pemudaCareAnim {
+  animation: pemudaCare 1.6s ease-in-out infinite alternate;
+}
+
+@keyframes pemudaGentle {
+  0% { transform: translateY(0); }
+  100% { transform: translateY(-3px); }
+}
+
+@keyframes pemudaCare {
+  0% { transform: translateY(0) rotate(0deg); }
+  50% { transform: translateY(-6px) rotate(-1.5deg); }
+  100% { transform: translateY(0) rotate(1deg); }
+}
+
+.ikanMasSlot {
+  position: absolute;
+  left: 40%;
+  bottom: 2%;
+  width: clamp(75px, 16vw, 115px);
+  z-index: 11;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  pointer-events: none;
+}
+
+.ikanMasImg {
+  width: 100%;
+  height: auto;
+  max-height: clamp(65px, 14vh, 100px);
+  object-fit: contain;
+  filter: drop-shadow(0 0 10px rgba(245, 158, 11, 0.85));
+}
+
+.ikanMasSubmergedAnim {
+  animation: ikanSubmerged 3s ease-in-out infinite alternate;
+  opacity: 0.9;
+}
+
+.ikanMasSwimAnim {
+  animation: ikanSwim 1.6s ease-in-out infinite alternate;
+  opacity: 1;
+}
+
+.ikanMasLeapAnim {
+  animation: ikanLeap 1.1s cubic-bezier(0.34, 1.56, 0.64, 1) infinite alternate;
+  opacity: 1;
+}
+
+@keyframes ikanSubmerged {
+  0% { transform: translateY(2px) scale(0.95); }
+  100% { transform: translateY(-4px) scale(1); }
+}
+
+@keyframes ikanSwim {
+  0% { transform: translateY(0) rotate(-3deg); }
+  100% { transform: translateY(-6px) rotate(4deg); }
+}
+
+@keyframes ikanLeap {
+  0% { transform: translateY(8px) scale(0.92) rotate(-8deg); }
+  50% { transform: translateY(-18px) scale(1.08) rotate(12deg); }
+  100% { transform: translateY(0) scale(1) rotate(0deg); }
+}
+
+.waterRipple {
+  position: absolute;
+  bottom: 6px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 80%;
+  height: 16px;
+  border-radius: 50%;
+  border: 1.5px solid rgba(56, 189, 248, 0.5);
+  background: radial-gradient(circle, rgba(14, 165, 233, 0.25) 0%, transparent 70%);
+  pointer-events: none;
+  animation: rippleGlow 2s infinite ease-in-out alternate;
+}
+
+@keyframes rippleGlow {
+  0% { transform: translateX(-50%) scale(0.9); opacity: 0.5; }
+  100% { transform: translateX(-50%) scale(1.15); opacity: 0.9; }
+}
+
+.goldenFishGlow {
+  position: absolute;
+  top: -8px;
+  left: -8px;
+  right: -8px;
+  bottom: -8px;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(251, 191, 36, 0.5) 0%, rgba(245, 158, 11, 0.2) 60%, transparent 75%);
+  filter: blur(6px);
+  z-index: -1;
+  animation: fishGlow 1.8s ease-in-out infinite alternate;
+}
+
+@keyframes fishGlow {
+  0% { opacity: 0.6; transform: scale(0.92); }
+  100% { opacity: 1; transform: scale(1.08); }
+}
+
+.waterSplashes {
+  position: absolute;
+  top: -16px;
+  right: 6px;
+  display: flex;
+  gap: 4px;
+  font-size: 14px;
+  animation: splashFloat 1.2s ease-out infinite;
+}
+
+@keyframes splashFloat {
+  0% { transform: translateY(4px) scale(0.8); opacity: 0; }
+  50% { transform: translateY(-8px) scale(1.1); opacity: 1; }
+  100% { transform: translateY(-16px) scale(1); opacity: 0; }
+}
+
+
+

@@ -28,14 +28,6 @@ function BottomNavDock() {
           <span className={styles.tabLabel}>{t('navDaily')}</span>
         </NavLink>
 
-        <NavLink
-          to="/collection"
-          className={({ isActive }) => `${styles.tab} ${isActive ? styles.activeTab : ''}`}
-          onClick={() => audioManager.playSfx('button-click')}
-        >
-          <span className="material-symbols-outlined">backpack</span>
-          <span className={styles.tabLabel}>{t('navCollection')}</span>
-        </NavLink>
 
         <NavLink
           to="/achievements"
@@ -47,12 +39,12 @@ function BottomNavDock() {
         </NavLink>
 
         <NavLink
-          to="/character"
+          to="/profile"
           className={({ isActive }) => `${styles.tab} ${isActive ? styles.activeTab : ''}`}
           onClick={() => audioManager.playSfx('button-click')}
         >
-          <span className="material-symbols-outlined">face</span>
-          <span className={styles.tabLabel}>{t('navCharacter')}</span>
+          <span className="material-symbols-outlined">account_circle</span>
+          <span className={styles.tabLabel}>{t('navProfile')}</span>
         </NavLink>
       </div>
     </nav>

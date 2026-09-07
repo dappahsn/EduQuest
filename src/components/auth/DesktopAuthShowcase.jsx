@@ -4,11 +4,11 @@ import styles from '../../pages/auth/Auth.module.css';
 export default function DesktopAuthShowcase({
   badge = '✨ EDUQUEST ADVENTURE',
   title = 'Jelajahi 5 Dunia Ajaib EduQuest',
-  description = 'Belajar matematika, sains, bahasa, dan logika jadi petualangan seru dengan karakter dan hewan sahabat impianmu!',
+  description = 'Belajar matematika, sains, bahasa, dan logika jadi petualangan seru dengan misi dan tantangan edukasi interaktif!',
   illustration,
   features = [
     { icon: 'explore', text: '5 Kepulauan Interaktif' },
-    { icon: 'pets', text: '6 Hewan Sahabat Unik' },
+    { icon: 'psychology', text: 'Tantangan Belajar Seru' },
     { icon: 'military_tech', text: 'Koin & Lencana Prestasi' }
   ]
 }) {

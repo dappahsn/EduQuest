@@ -71,8 +71,13 @@ export function AuthProvider({ children }) {
           const savedDevSession = localStorage.getItem(DEV_SESSION_KEY);
           if (savedDevSession) {
             const parsed = JSON.parse(savedDevSession);
-            setSession(parsed);
-            setUser(parsed.user);
+            // Bersihkan sesi mock dev-google-explorer agar user tidak otomatis masuk ke akun dummy
+            if (parsed?.user?.id === 'dev-google-explorer') {
+              localStorage.removeItem(DEV_SESSION_KEY);
+            } else {
+              setSession(parsed);
+              setUser(parsed.user);
+            }
           }
         } catch (e) {
           console.warn('[EduQuest Auth] Failed reading dev session:', e);
@@ -397,10 +402,92 @@ function saveLocalAccount(acc) {
   };
 
   // GOOGLE OAUTH
-  const signInWithGoogle = async () => {
+  const signInWithGoogle = async (customGoogleData = null) => {
     setError(null);
-    try {
-      if (supabase?.auth?.signInWithOAuth) {
+
+    // 1. Jika data akun Google dikirim langsung (dari modal login Google mandiri):
+    if (customGoogleData?.email) {
+      const cleanEmail = customGoogleData.email.trim();
+      const cleanName = customGoogleData.username?.trim() || cleanEmail.split('@')[0];
+      const googleUser = {
+        id: 'google-' + cleanEmail.toLowerCase().replace(/[^a-z0-9]/g, '_'),
+        email: cleanEmail,
+        user_metadata: {
+          username: cleanName,
+          full_name: cleanName,
+          provider: 'google'
+        },
+        aud: 'authenticated',
+        role: 'authenticated'
+      };
+      const googleSession = {
+        access_token: 'google-session-' + Date.now(),
+        token_type: 'bearer',
+        expires_in: 86400,
+        user: googleUser
+      };
+      localStorage.setItem(DEV_SESSION_KEY, JSON.stringify(googleSession));
+      setSession(googleSession);
+      setUser(googleUser);
+      return { user: googleUser, session: googleSession };
+    }
+
+    // 2. Jika Google Client ID dikonfigurasi di .env (Google Identity Services OAuth2 Popup):
+    const googleClientId = typeof import.meta !== 'undefined' && import.meta.env?.VITE_GOOGLE_CLIENT_ID;
+    if (googleClientId && typeof window !== 'undefined' && window.google?.accounts?.oauth2) {
+      return new Promise((resolve, reject) => {
+        try {
+          const client = window.google.accounts.oauth2.initTokenClient({
+            client_id: googleClientId,
+            scope: 'openid email profile',
+            callback: async (tokenResponse) => {
+              if (tokenResponse.error) {
+                reject(new Error(tokenResponse.error_description || tokenResponse.error));
+                return;
+              }
+              try {
+                const res = await fetch('https://www.googleapis.com/oauth2/v3/userinfo', {
+                  headers: { Authorization: `Bearer ${tokenResponse.access_token}` }
+                });
+                const googleProfile = await res.json();
+                const displayName = googleProfile.name || googleProfile.given_name || googleProfile.email.split('@')[0];
+                const googleUser = {
+                  id: 'google-' + (googleProfile.sub || googleProfile.email.replace(/[^a-z0-9]/g, '_')),
+                  email: googleProfile.email,
+                  user_metadata: {
+                    username: displayName,
+                    full_name: googleProfile.name,
+                    avatar_url: googleProfile.picture,
+                    provider: 'google'
+                  },
+                  aud: 'authenticated',
+                  role: 'authenticated'
+                };
+                const googleSession = {
+                  access_token: tokenResponse.access_token,
+                  token_type: 'bearer',
+                  expires_in: 3600,
+                  user: googleUser
+                };
+                localStorage.setItem(DEV_SESSION_KEY, JSON.stringify(googleSession));
+                setSession(googleSession);
+                setUser(googleUser);
+                resolve({ user: googleUser, session: googleSession });
+              } catch (profileErr) {
+                reject(profileErr);
+              }
+            }
+          });
+          client.requestAccessToken();
+        } catch (gisErr) {
+          reject(gisErr);
+        }
+      });
+    }
+
+    // 3. Jika Supabase aktif (dan bukan mode Neon REST Data API):
+    if (isSupabaseActive && !isNeonActive && supabase?.auth?.signInWithOAuth) {
+      try {
         const { data, error } = await supabase.auth.signInWithOAuth({
           provider: 'google',
           options: {
@@ -409,32 +496,15 @@ function saveLocalAccount(acc) {
         });
         if (error) throw error;
         return data;
+      } catch (err) {
+        setError(err.message);
+        throw err;
       }
-    } catch (err) {
-      if (isAuthServiceUnavailable(err)) {
-        console.info('[EduQuest Auth] Simulasi Google OAuth (mode lokal).');
-        const mockUser = {
-          id: 'dev-google-explorer',
-          email: 'petualang.google@eduquest.id',
-          user_metadata: { username: 'Petualang Google', full_name: 'Petualang Google' },
-          aud: 'authenticated',
-          role: 'authenticated'
-        };
-        const mockSession = {
-          access_token: 'mock-google-token-' + Date.now(),
-          token_type: 'bearer',
-          expires_in: 86400,
-          user: mockUser
-        };
-        localStorage.setItem(DEV_SESSION_KEY, JSON.stringify(mockSession));
-        setSession(mockSession);
-        setUser(mockUser);
-        return { user: mockUser, session: mockSession };
-      }
-
-      setError(err.message);
-      throw err;
     }
+
+    // 4. Jika OAuth endpoint belum siap (misal Neon Data API yang tidak memiliki OAuth server),
+    // minta UI untuk menampilkan modal login Google interaktif agar pengguna dapat login dengan akunnya sendiri
+    return { requiresModal: true };
   };
 
   // LOGOUT

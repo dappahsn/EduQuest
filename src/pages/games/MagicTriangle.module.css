@@ -1,0 +1,787 @@
+/* ==========================================================================
+   MAGIC TRIANGLE (Misi 03 - Penjumlahan Segitiga Ajaib) - 3D CRYSTAL ARENA
+   ========================================================================== */
+
+.container {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  gap: 14px;
+}
+
+/* 1. Header Navigation Bar */
+.subHeaderBar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.missionBadge {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: rgba(255, 255, 255, 0.95);
+  padding: 6px 14px;
+  border-radius: 9999px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+  border: 1.5px solid #ddd6fe;
+}
+
+.missionBadgeText {
+  font-size: 12.5px;
+  font-weight: 800;
+  color: #4c1d95;
+}
+
+.missionBadgeHighlight {
+  font-size: 12.5px;
+  font-weight: 900;
+  color: #7c3aed;
+}
+
+.scoreBadge {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  background: rgba(255, 255, 255, 0.95);
+  padding: 6px 14px;
+  border-radius: 9999px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+  border: 1.5px solid #ddd6fe;
+}
+
+.scoreBadgeText {
+  font-size: 12.5px;
+  font-weight: 800;
+  color: #4c1d95;
+}
+
+.scoreValue {
+  color: #7c3aed;
+  font-weight: 900;
+}
+
+/* 2. Challenge Formula Banner */
+.challengeBanner {
+  background: linear-gradient(135deg, #1e1b4b 0%, #312e81 60%, #4338ca 100%);
+  border: 2px solid #818cf8;
+  border-radius: 22px;
+  padding: 16px 20px;
+  color: #ffffff;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  box-shadow: 0 10px 25px -5px rgba(79, 70, 229, 0.4), 0 0 0 1px rgba(255, 255, 255, 0.15);
+  position: relative;
+  overflow: hidden;
+}
+
+.challengeBanner::before {
+  content: '';
+  position: absolute;
+  top: -50%;
+  left: -50%;
+  width: 200%;
+  height: 200%;
+  background: radial-gradient(circle at 30% 30%, rgba(168, 85, 247, 0.25) 0%, transparent 60%);
+  pointer-events: none;
+}
+
+.bannerLeft {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  position: relative;
+  z-index: 2;
+}
+
+.bannerIconWrap {
+  width: 46px;
+  height: 46px;
+  border-radius: 14px;
+  background: linear-gradient(135deg, #8b5cf6 0%, #6d28d9 100%);
+  border: 2px solid #c4b5fd;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 0 18px rgba(139, 92, 246, 0.6);
+  flex-shrink: 0;
+}
+
+.bannerPretitle {
+  font-size: 11px;
+  font-weight: 900;
+  text-transform: uppercase;
+  color: #c4b5fd;
+  letter-spacing: 0.08em;
+  margin: 0;
+}
+
+.bannerTitle {
+  font-size: 15px;
+  font-weight: 800;
+  margin: 3px 0 0;
+  color: #ffffff;
+  line-height: 1.35;
+}
+
+.mathFormulaBadge {
+  position: relative;
+  z-index: 2;
+  background: rgba(255, 255, 255, 0.95);
+  color: #312e81;
+  padding: 8px 18px;
+  border-radius: 9999px;
+  font-size: 19px;
+  font-weight: 900;
+  letter-spacing: -0.02em;
+  box-shadow: 0 0 20px rgba(196, 181, 253, 0.5), 0 4px 10px rgba(0, 0, 0, 0.2);
+  flex-shrink: 0;
+}
+
+/* 3. The 3D Mystic Crystal Cavern Arena */
+.cavernArena {
+  position: relative;
+  background: radial-gradient(ellipse at 50% 25%, #1e1b4b 0%, #0f172a 65%, #020617 100%);
+  border-radius: 28px;
+  padding: 24px 18px 22px;
+  box-shadow: 0 20px 45px -10px rgba(15, 23, 42, 0.6), 0 0 0 3px #6366f1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 16px;
+  overflow: hidden;
+  min-height: 440px;
+  justify-content: space-between;
+}
+
+/* Starfield / Sparkle background */
+.cavernStars {
+  position: absolute;
+  inset: 0;
+  background-image: radial-gradient(circle at 15% 20%, rgba(255, 255, 255, 0.25) 1px, transparent 1px),
+                    radial-gradient(circle at 85% 30%, rgba(196, 181, 253, 0.3) 1.5px, transparent 1.5px),
+                    radial-gradient(circle at 50% 80%, rgba(255, 255, 255, 0.2) 1px, transparent 1px),
+                    radial-gradient(circle at 25% 65%, rgba(168, 85, 247, 0.25) 2px, transparent 2px),
+                    radial-gradient(circle at 75% 75%, rgba(56, 189, 248, 0.25) 1.5px, transparent 1.5px);
+  background-size: 100% 100%;
+  pointer-events: none;
+}
+
+/* Top HUD in Arena (Explorer badge & Step Indicator) */
+.arenaTopHud {
+  position: relative;
+  z-index: 5;
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.explorerBadge {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: rgba(255, 255, 255, 0.9);
+  backdrop-filter: blur(8px);
+  padding: 4px 14px 4px 5px;
+  border-radius: 9999px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.25);
+  border: 1.5px solid rgba(255, 255, 255, 0.8);
+}
+
+.explorerAvatar {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  overflow: hidden;
+  border: 2px solid #7c3aed;
+}
+
+.explorerAvatar img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.explorerName {
+  font-size: 13px;
+  font-weight: 800;
+  color: #1e1b4b;
+}
+
+.stepIndicatorBadge {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  background: rgba(30, 27, 75, 0.8);
+  border: 1px solid #818cf8;
+  padding: 6px 14px;
+  border-radius: 9999px;
+  color: #c4b5fd;
+  font-size: 12px;
+  font-weight: 800;
+}
+
+/* 4. The 3D Magic Triangle Altar */
+.altarStage3D {
+  position: relative;
+  z-index: 10;
+  width: 310px;
+  height: 250px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 6px 0 2px;
+}
+
+.triangleSvgGraphic {
+  width: 100%;
+  height: 100%;
+  overflow: visible;
+  filter: drop-shadow(0 14px 25px rgba(0, 0, 0, 0.6)) drop-shadow(0 0 16px rgba(129, 140, 248, 0.4));
+}
+
+/* Center Altar Rune Sphere */
+.altarCenterRune {
+  position: absolute;
+  top: 54%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  pointer-events: none;
+  z-index: 15;
+}
+
+.runeSumLabel {
+  font-size: 10px;
+  font-weight: 900;
+  color: #a5b4fc;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  text-shadow: 0 1px 3px rgba(0, 0, 0, 0.9);
+}
+
+.runeSumValue {
+  font-size: 26px;
+  font-weight: 900;
+  color: #ffffff;
+  text-shadow: 0 0 16px #818cf8, 0 2px 4px rgba(0, 0, 0, 0.9);
+  font-family: 'Outfit', sans-serif;
+}
+
+/* Instruction line */
+.instructionBar {
+  position: relative;
+  z-index: 5;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: rgba(30, 27, 75, 0.65);
+  backdrop-filter: blur(8px);
+  border: 1px solid rgba(165, 180, 252, 0.3);
+  border-radius: 9999px;
+  padding: 6px 18px;
+  color: #e0e7ff;
+  font-size: 12.5px;
+  font-weight: 700;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+}
+
+/* 5. 4 Interactive 3D Gemstone Crystal Buttons */
+.crystalGrid {
+  position: relative;
+  z-index: 10;
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 16px;
+  width: 100%;
+  margin: 6px 0;
+}
+
+.crystalBtn {
+  position: relative;
+  background: transparent;
+  border: none;
+  padding: 0;
+  margin: 0;
+  cursor: pointer;
+  outline: none;
+  width: 100%;
+  aspect-ratio: 280 / 140;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: transform 0.22s cubic-bezier(0.34, 1.56, 0.64, 1),
+              filter 0.22s ease;
+  filter: drop-shadow(0 12px 18px rgba(0, 0, 0, 0.6));
+  overflow: visible;
+}
+
+.crystalBtn:hover:not(:disabled) {
+  transform: translateY(-8px) scale(1.04);
+  filter: drop-shadow(0 18px 28px rgba(129, 140, 248, 0.5)) drop-shadow(0 0 16px rgba(168, 85, 247, 0.5));
+}
+
+.crystalBtn:active:not(:disabled) {
+  transform: translateY(2px) scale(0.98);
+  filter: drop-shadow(0 6px 10px rgba(0, 0, 0, 0.4));
+}
+
+.crystalBtn:disabled {
+  cursor: not-allowed;
+}
+
+.crystalBtn:disabled:not(.crystalBtnCorrect):not(.crystalBtnWrong) {
+  opacity: 0.45;
+  filter: grayscale(0.5) drop-shadow(0 4px 8px rgba(0, 0, 0, 0.3));
+}
+
+.crystalBtnCorrect {
+  transform: translateY(-6px) scale(1.06) !important;
+  filter: drop-shadow(0 0 32px rgba(52, 211, 153, 0.9)) !important;
+}
+
+.crystalBtnWrong {
+  animation: crystalShake 0.6s ease-in-out !important;
+  filter: drop-shadow(0 0 28px rgba(239, 68, 68, 0.85)) !important;
+}
+
+@keyframes crystalShake {
+  0%, 100% { transform: rotate(0deg) translateY(0); }
+  20% { transform: rotate(-8deg) translateY(4px); }
+  40% { transform: rotate(8deg) translateY(-2px); }
+  60% { transform: rotate(-4deg) translateY(2px); }
+  80% { transform: rotate(4deg) translateY(-1px); }
+}
+
+/* Floating bobbing on crystals */
+.crystalFloat0 {
+  animation: crystalBob 3.5s infinite ease-in-out;
+}
+
+.crystalFloat1 {
+  animation: crystalBob 4s infinite ease-in-out 0.4s;
+}
+
+.crystalFloat2 {
+  animation: crystalBob 3.7s infinite ease-in-out 0.8s;
+}
+
+.crystalFloat3 {
+  animation: crystalBob 4.2s infinite ease-in-out 1.2s;
+}
+
+@keyframes crystalBob {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-6px); }
+}
+
+.crystalSvg {
+  width: 100%;
+  height: 100%;
+  display: block;
+  overflow: visible;
+}
+
+/* Plaque on Crystal */
+.crystalPlaque {
+  position: absolute;
+  top: 5%;
+  background: linear-gradient(180deg, #312e81 0%, #1e1b4b 100%);
+  border: 1.5px solid #818cf8;
+  border-radius: 6px;
+  padding: 2px 10px;
+  font-size: 11px;
+  font-weight: 900;
+  color: #e0e7ff;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  box-shadow: 0 3px 8px rgba(0, 0, 0, 0.5);
+  pointer-events: none;
+}
+
+/* Chiseled Number on Crystal */
+.crystalNumberWrap {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  pointer-events: none;
+}
+
+.crystalNumber {
+  font-family: 'Outfit', sans-serif, system-ui;
+  font-size: 36px;
+  font-weight: 900;
+  color: #ffffff;
+  letter-spacing: -0.02em;
+  text-shadow: 0 0 16px rgba(255, 255, 255, 0.9), 0 3px 0 #1e1b4b, 0 6px 12px rgba(0, 0, 0, 0.9);
+}
+
+.crystalBtnCorrect .crystalNumber {
+  color: #ecfdf5 !important;
+  text-shadow: 0 0 24px #34d399, 0 2px 4px rgba(0, 0, 0, 0.9) !important;
+}
+
+.crystalBtnWrong .crystalNumber {
+  color: #fff1f2 !important;
+  text-shadow: 0 0 20px #ef4444, 0 2px 4px rgba(0, 0, 0, 0.9) !important;
+}
+
+/* Success & Wrong Badges */
+.correctBadge {
+  position: absolute;
+  top: -16px;
+  background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+  color: #ffffff;
+  padding: 4px 14px;
+  border-radius: 9999px;
+  font-size: 11.5px;
+  font-weight: 900;
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  box-shadow: 0 4px 16px rgba(16, 185, 129, 0.6);
+  border: 1.5px solid #a7f3d0;
+  z-index: 20;
+  animation: popBadge 0.25s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+.wrongBadge {
+  position: absolute;
+  top: -16px;
+  background: linear-gradient(135deg, #ef4444 0%, #b91c1c 100%);
+  color: #ffffff;
+  padding: 4px 14px;
+  border-radius: 9999px;
+  font-size: 11.5px;
+  font-weight: 900;
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  box-shadow: 0 4px 16px rgba(239, 68, 68, 0.6);
+  border: 1.5px solid #fecaca;
+  z-index: 20;
+  animation: popBadge 0.25s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+@keyframes popBadge {
+  from { transform: scale(0.5); opacity: 0; }
+  to { transform: scale(1); opacity: 1; }
+}
+
+/* Progress Pill */
+.bottomProgressPill {
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: rgba(30, 27, 75, 0.85);
+  backdrop-filter: blur(8px);
+  border-radius: 16px;
+  padding: 8px 16px;
+  border: 1px solid rgba(165, 180, 252, 0.3);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+}
+
+.progressText {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 12.5px;
+  font-weight: 800;
+  color: #e0e7ff;
+}
+
+.dotsRow {
+  display: flex;
+  gap: 6px;
+  align-items: center;
+}
+
+.dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  transition: all 0.25s ease;
+}
+
+.dotActive {
+  background-color: #38bdf8;
+  box-shadow: 0 0 10px #38bdf8;
+  transform: scale(1.2);
+}
+
+.dotPending {
+  background-color: #475569;
+}
+
+/* 6. Utility Action Buttons */
+.utilityRow {
+  display: flex;
+  gap: 12px;
+  width: 100%;
+}
+
+.utilityBtn {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  background-color: #ffffff;
+  color: #312e81;
+  padding: 12px 16px;
+  border-radius: 9999px;
+  border: 1.5px solid #c7d2fe;
+  font-weight: 800;
+  font-size: 13.5px;
+  cursor: pointer;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.04);
+  transition: all 0.15s ease;
+}
+
+.utilityBtn:hover {
+  background-color: #eef2ff;
+  border-color: #a5b4fc;
+  transform: translateY(-1px);
+}
+
+/* Hint Card */
+.hintCard {
+  background: linear-gradient(135deg, #e0e7ff 0%, #ede9fe 100%);
+  border: 1.5px solid #c7d2fe;
+  padding: 14px 18px;
+  border-radius: 18px;
+  display: flex;
+  gap: 12px;
+  align-items: flex-start;
+  box-shadow: 0 4px 14px rgba(79, 70, 229, 0.12);
+}
+
+.hintTitle {
+  font-size: 13px;
+  font-weight: 900;
+  color: #312e81;
+  margin: 0 0 2px;
+}
+
+.hintText {
+  font-size: 12.5px;
+  color: #1e1b4b;
+  margin: 0;
+  line-height: 1.4;
+}
+
+/* Next Question / Finish Button */
+.nextBtn {
+  width: 100%;
+  padding: 15px;
+  border-radius: 9999px;
+  background: linear-gradient(135deg, #7c3aed 0%, #6d28d9 100%);
+  color: #ffffff;
+  font-weight: 900;
+  font-size: 16px;
+  border: none;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  box-shadow: 0 8px 20px rgba(109, 40, 217, 0.45), 0 4px 0 #4c1d95;
+  transition: all 0.18s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+.nextBtn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 12px 24px rgba(109, 40, 217, 0.55), 0 4px 0 #4c1d95;
+}
+
+.nextBtn:active {
+  transform: translateY(2px);
+  box-shadow: 0 4px 10px rgba(109, 40, 217, 0.35), 0 1px 0 #4c1d95;
+}
+
+/* --------------------------------------------------------------------------
+   7. Floating Bottom Action Popup (Popup Next)
+   -------------------------------------------------------------------------- */
+.nextPopupOverlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(3, 7, 18, 0.55);
+  backdrop-filter: blur(4px);
+  z-index: 150;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  animation: fadeIn 0.25s ease-out;
+}
+
+.nextPopupCard {
+  width: 100%;
+  max-width: 660px;
+  margin: 0 auto;
+  border-top-left-radius: 26px;
+  border-top-right-radius: 26px;
+  padding: 20px 24px 28px 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  animation: slideUpPopup 0.32s cubic-bezier(0.34, 1.56, 0.64, 1);
+  box-shadow: 0 -12px 48px rgba(0, 0, 0, 0.75);
+  position: relative;
+}
+
+@keyframes slideUpPopup {
+  from {
+    transform: translateY(100%);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+.popupCorrect {
+  background: linear-gradient(180deg, #064e3b 0%, #022c22 100%);
+  border-top: 2px solid #34d399;
+  border-left: 2px solid #059669;
+  border-right: 2px solid #059669;
+  box-shadow: 
+    0 -12px 48px rgba(0, 0, 0, 0.75),
+    0 -4px 24px rgba(16, 185, 129, 0.35);
+}
+
+.popupWrong {
+  background: linear-gradient(180deg, #7f1d1d 0%, #450a0a 100%);
+  border-top: 2px solid #f87171;
+  border-left: 2px solid #dc2626;
+  border-right: 2px solid #dc2626;
+  box-shadow: 
+    0 -12px 48px rgba(0, 0, 0, 0.75),
+    0 -4px 24px rgba(239, 68, 68, 0.3);
+}
+
+.popupHeaderRow {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.popupIconWrapCorrect {
+  width: 44px;
+  height: 44px;
+  border-radius: 14px;
+  background: rgba(16, 185, 129, 0.25);
+  border: 1.5px solid #34d399;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 0 16px rgba(16, 185, 129, 0.4);
+  flex-shrink: 0;
+}
+
+.popupIconWrapWrong {
+  width: 44px;
+  height: 44px;
+  border-radius: 14px;
+  background: rgba(239, 68, 68, 0.25);
+  border: 1.5px solid #f87171;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 0 16px rgba(239, 68, 68, 0.4);
+  flex-shrink: 0;
+}
+
+.popupTitle {
+  font-size: 18px;
+  font-weight: 900;
+  margin: 0;
+  line-height: 1.25;
+}
+
+.popupTitleCorrect {
+  color: #a7f3d0;
+  text-shadow: 0 1px 4px rgba(0, 0, 0, 0.4);
+}
+
+.popupTitleWrong {
+  color: #fecaca;
+  text-shadow: 0 1px 4px rgba(0, 0, 0, 0.4);
+}
+
+.popupMessage {
+  font-size: 13.5px;
+  font-weight: 600;
+  color: #f1f5f9;
+  margin: 0;
+  line-height: 1.5;
+  background: rgba(0, 0, 0, 0.2);
+  padding: 10px 14px;
+  border-radius: 12px;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.popupActionRow {
+  display: flex;
+  gap: 10px;
+  margin-top: 4px;
+}
+
+.popupNextBtn {
+  flex: 1;
+  background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+  color: #ffffff;
+  border: none;
+  border-radius: 14px;
+  padding: 14px 24px;
+  font-size: 15px;
+  font-weight: 900;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  cursor: pointer;
+  box-shadow: 
+    0 6px 20px rgba(16, 185, 129, 0.45),
+    inset 0 1px 0 rgba(255, 255, 255, 0.3);
+  transition: all 0.2s cubic-bezier(0.34, 1.56, 0.64, 1);
+  letter-spacing: 0.3px;
+}
+
+.popupNextBtn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 26px rgba(16, 185, 129, 0.65);
+}
+
+.popupRetryBtn {
+  flex: 1;
+  background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
+  color: #ffffff;
+  border: none;
+  border-radius: 14px;
+  padding: 14px 24px;
+  font-size: 15px;
+  font-weight: 900;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  cursor: pointer;
+  box-shadow: 
+    0 6px 20px rgba(245, 158, 11, 0.4),
+    inset 0 1px 0 rgba(255, 255, 255, 0.3);
+  transition: all 0.2s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+.popupRetryBtn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 26px rgba(245, 158, 11, 0.6);
+}

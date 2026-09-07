@@ -94,17 +94,21 @@ button:disabled {
   border-radius: inherit;
 }
 
-/* Tactile Click & Hover Micro-Interactions */
-button:not(:disabled), a.btn, [role="button"]:not(:disabled) {
+/* Tactile Click & Hover Micro-Interactions (Only HTML elements, never SVG elements) */
+button:not(:disabled):not([class*="Node"]):not([class*="node"]):not([class*="Hub"]):not([class*="creature"]):not(svg *):not(svg),
+a.btn,
+[role="button"]:not(:disabled):not([class*="Node"]):not([class*="node"]):not([class*="Hub"]):not([class*="creature"]):not(svg *):not(svg) {
   transition: transform 0.16s cubic-bezier(0.34, 1.56, 0.64, 1), box-shadow 0.16s, filter 0.16s;
 }
 
-button:not(:disabled):hover, [role="button"]:not(:disabled):hover {
+button:not(:disabled):not([class*="Node"]):not([class*="node"]):not([class*="Hub"]):not([class*="creature"]):not(svg *):not(svg):hover,
+[role="button"]:not(:disabled):not([class*="Node"]):not([class*="node"]):not([class*="Hub"]):not([class*="creature"]):not(svg *):not(svg):hover {
   filter: brightness(1.04);
   transform: translateY(-2px);
 }
 
-button:not(:disabled):active, [role="button"]:not(:disabled):active {
+button:not(:disabled):not([class*="Node"]):not([class*="node"]):not([class*="Hub"]):not([class*="creature"]):not(svg *):not(svg):active,
+[role="button"]:not(:disabled):not([class*="Node"]):not([class*="node"]):not([class*="Hub"]):not([class*="creature"]):not(svg *):not(svg):active {
   transform: translateY(2px) scale(0.96);
   filter: brightness(0.95);
   transition: transform 0.05s ease;
@@ -130,6 +134,11 @@ button:not(:disabled):active, [role="button"]:not(:disabled):active {
   0% { transform: scale(0.8); opacity: 0; }
   70% { transform: scale(1.04); opacity: 1; }
   100% { transform: scale(1); opacity: 1; }
+}
+
+@keyframes toastSlideDown {
+  0% { transform: translate(-50%, -18px) scale(0.92); opacity: 0; }
+  100% { transform: translate(-50%, 0) scale(1); opacity: 1; }
 }
 
 @keyframes celebratePop {

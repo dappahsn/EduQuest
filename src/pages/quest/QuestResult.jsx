@@ -389,7 +389,7 @@ export default function QuestResult() {
           </Link>
 
           <Link
-            to="/collection"
+            to="/achievements"
             style={{
               width: '100%',
               padding: '12px',
@@ -405,8 +405,8 @@ export default function QuestResult() {
               textDecoration: 'none'
             }}
           >
-            <span className="material-symbols-outlined" style={{ fontSize: '18px' }}>backpack</span>
-            <span>Lihat Hadiah di Koleksi</span>
+            <span className="material-symbols-outlined" style={{ fontSize: '18px' }}>emoji_events</span>
+            <span>Lihat Prestasi</span>
           </Link>
         </div>
       </main>

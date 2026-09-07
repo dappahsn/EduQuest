@@ -1,0 +1,726 @@
+/* ==========================================================================
+   KODE ALGORITMA RODA GIGI (GEAR PUZZLE) - GUNUNG TEKA-TEKI MISI 02
+   Cyber-Volcanic Ancient Mechanical Engine Aesthetic
+   ========================================================================== */
+
+.gameContainer {
+  height: 100%;
+  max-height: 100%;
+  width: 100%;
+  max-width: 720px;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  padding: 10px 14px 14px;
+  box-sizing: border-box;
+  overflow: hidden;
+  color: #f1f5f9;
+  font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, sans-serif;
+  user-select: none;
+  background: 
+    radial-gradient(ellipse at 50% 10%, rgba(245, 158, 11, 0.22) 0%, transparent 60%),
+    radial-gradient(ellipse at 50% 95%, rgba(220, 38, 38, 0.28) 0%, transparent 55%),
+    linear-gradient(180deg, #0b1120 0%, #030712 100%);
+  border: 1.5px solid rgba(245, 158, 11, 0.35);
+  border-radius: 20px;
+  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.8), inset 0 1px 0 rgba(255, 255, 255, 0.1);
+}
+
+/* --------------------------------------------------------------------------
+   Top Control Bar
+   -------------------------------------------------------------------------- */
+.topControlBar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  flex-shrink: 0;
+}
+
+.levelBadgeWrap {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  min-width: 0;
+}
+
+.levelBadge {
+  font-size: 0.72rem;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  color: #fbbf24;
+  background: rgba(245, 158, 11, 0.16);
+  border: 1px solid rgba(245, 158, 11, 0.45);
+  padding: 3px 10px;
+  border-radius: 999px;
+  white-space: nowrap;
+}
+
+.levelTitle {
+  font-size: 0.95rem;
+  font-weight: 800;
+  color: #f8fafc;
+  margin: 0;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  text-shadow: 0 1px 3px rgba(0, 0, 0, 0.6);
+}
+
+.topActionBtns {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  flex-shrink: 0;
+}
+
+.iconBtn {
+  background: rgba(30, 41, 59, 0.8);
+  border: 1px solid rgba(148, 163, 184, 0.25);
+  color: #cbd5e1;
+  padding: 5px 10px;
+  border-radius: 8px;
+  font-size: 0.78rem;
+  font-weight: 700;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  transition: all 0.2s ease;
+}
+
+.iconBtn:hover {
+  background: rgba(51, 65, 85, 0.9);
+  color: #ffffff;
+  border-color: rgba(245, 158, 11, 0.5);
+  transform: translateY(-1px);
+}
+
+.iconBtnActive {
+  background: rgba(245, 158, 11, 0.25) !important;
+  border-color: #f59e0b !important;
+  color: #fef08a !important;
+}
+
+/* --------------------------------------------------------------------------
+   Status / Challenge Banner
+   -------------------------------------------------------------------------- */
+.challengeBanner {
+  margin: 6px 0;
+  background: rgba(15, 23, 42, 0.88);
+  border: 1px solid rgba(245, 158, 11, 0.3);
+  border-radius: 12px;
+  padding: 8px 14px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-shrink: 0;
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.4);
+}
+
+.challengeIcon {
+  font-size: 1.4rem;
+  flex-shrink: 0;
+  animation: pulseIcon 1.8s infinite alternate ease-in-out;
+}
+
+@keyframes pulseIcon {
+  from { transform: scale(0.95); }
+  to { transform: scale(1.1); filter: drop-shadow(0 0 6px #f59e0b); }
+}
+
+.challengeTextWrap {
+  flex: 1;
+  min-width: 0;
+}
+
+.challengeHeadline {
+  font-size: 0.86rem;
+  font-weight: 800;
+  color: #fef08a;
+  margin-bottom: 2px;
+  line-height: 1.25;
+}
+
+.challengeInstruction {
+  font-size: 0.85rem;
+  font-weight: 700;
+  color: #fef08a;
+  line-height: 1.35;
+}
+
+/* Hint Box */
+.hintBanner {
+  margin: 6px 0;
+  background: rgba(120, 53, 15, 0.4);
+  border: 1.5px dashed #f59e0b;
+  border-radius: 12px;
+  padding: 8px 14px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  color: #fef3c7;
+  font-size: 0.8rem;
+  font-weight: 700;
+  flex-shrink: 0;
+  animation: fadeIn 0.25s ease-out;
+}
+
+.hintCloseBtn {
+  background: none;
+  border: none;
+  color: #f59e0b;
+  font-size: 1rem;
+  font-weight: 900;
+  cursor: pointer;
+  padding: 0 4px;
+}
+
+/* --------------------------------------------------------------------------
+   Stage / Mechanical Gear Arena
+   -------------------------------------------------------------------------- */
+.gearStageWrapper {
+  flex: 1;
+  min-height: 0;
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: 
+    radial-gradient(circle at 50% 50%, rgba(30, 41, 59, 0.7) 0%, rgba(15, 23, 42, 0.95) 75%),
+    linear-gradient(135deg, rgba(15, 23, 42, 0.9) 0%, rgba(3, 7, 18, 0.95) 100%);
+  border: 1.5px solid rgba(71, 85, 105, 0.4);
+  border-radius: 16px;
+  padding: 12px;
+  box-shadow: inset 0 0 35px rgba(0, 0, 0, 0.8), 0 8px 24px rgba(0, 0, 0, 0.5);
+  overflow: hidden;
+}
+
+.gearStageInner {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+}
+
+/* Circuit background grid */
+.circuitGridOverlay {
+  position: absolute;
+  inset: 0;
+  background-image: 
+    radial-gradient(rgba(245, 158, 11, 0.15) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(30, 41, 59, 0.3) 1px, transparent 1px),
+    linear-gradient(0deg, rgba(30, 41, 59, 0.3) 1px, transparent 1px);
+  background-size: 32px 32px;
+  pointer-events: none;
+  opacity: 0.65;
+}
+
+.svgEngineCanvas {
+  width: 100%;
+  height: 100%;
+  max-width: 620px;
+  max-height: 380px;
+  display: block;
+}
+
+/* Gear Rotation Classes */
+.spinCW {
+  transform-origin: center;
+  animation: rotateCW 4s linear infinite;
+}
+
+.spinCCW {
+  transform-origin: center;
+  animation: rotateCCW 4s linear infinite;
+}
+
+.spinCWSlow {
+  transform-origin: center;
+  animation: rotateCW 6s linear infinite;
+}
+
+.spinCCWSlow {
+  transform-origin: center;
+  animation: rotateCCW 6s linear infinite;
+}
+
+.spinCWFast {
+  transform-origin: center;
+  animation: rotateCW 2s linear infinite;
+}
+
+.spinCCWFast {
+  transform-origin: center;
+  animation: rotateCCW 2s linear infinite;
+}
+
+@keyframes rotateCW {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+@keyframes rotateCCW {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(-360deg); }
+}
+
+/* Pulses & Energy Glows */
+.pulseEnergyCore {
+  animation: corePulse 1.4s infinite alternate ease-in-out;
+}
+
+@keyframes corePulse {
+  from { opacity: 0.65; filter: drop-shadow(0 0 6px #06b6d4); }
+  to { opacity: 1; filter: drop-shadow(0 0 16px #38bdf8); }
+}
+
+.targetCoreAmber {
+  animation: amberTargetPulse 1.2s infinite alternate ease-in-out;
+}
+
+@keyframes amberTargetPulse {
+  from { opacity: 0.7; filter: drop-shadow(0 0 8px #f59e0b); }
+  to { opacity: 1; filter: drop-shadow(0 0 20px #fde047); }
+}
+
+/* --------------------------------------------------------------------------
+   Answer Control Console
+   -------------------------------------------------------------------------- */
+.answerConsoleWrapper {
+  margin-top: 10px;
+  background: rgba(15, 23, 42, 0.92);
+  border: 1.5px solid rgba(148, 163, 184, 0.25);
+  border-radius: 16px;
+  padding: 10px 14px;
+  flex-shrink: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.4);
+}
+
+.answerConsoleHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+}
+
+.questionPromptText {
+  font-size: 0.85rem;
+  font-weight: 800;
+  color: #e2e8f0;
+}
+
+.stepPill {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  background: rgba(245, 158, 11, 0.15);
+  border: 1px solid rgba(245, 158, 11, 0.4);
+  padding: 2px 8px;
+  border-radius: 999px;
+  font-size: 0.74rem;
+  font-weight: 800;
+  color: #fbbf24;
+}
+
+/* --------------------------------------------------------------------------
+   Direct Target Gear Orbital & Interactive Styles
+   -------------------------------------------------------------------------- */
+.targetGearUnit {
+  transition: filter 0.25s ease;
+}
+
+.targetGearInteractive {
+  cursor: pointer;
+  transition: filter 0.25s ease;
+}
+
+.targetGearInteractive:hover {
+  filter: drop-shadow(0 0 16px rgba(251, 191, 36, 0.95)) brightness(1.1);
+}
+
+.targetReticleWrap {
+  transform-origin: center;
+  animation: reticleBreathe 2.4s infinite ease-in-out;
+}
+
+@keyframes reticleBreathe {
+  0% { transform: scale(0.98); opacity: 0.75; }
+  50% { transform: scale(1.02); opacity: 1; }
+  100% { transform: scale(0.98); opacity: 0.75; }
+}
+
+.targetOrbitalRing {
+  animation: orbitalDash 12s linear infinite;
+  stroke-dasharray: 8 6;
+}
+
+@keyframes orbitalDash {
+  from { stroke-dashoffset: 0; }
+  to { stroke-dashoffset: 56; }
+}
+
+.targetReticleCorner {
+  filter: drop-shadow(0 0 5px #f59e0b);
+}
+
+.targetHubButton {
+  cursor: pointer;
+  transition: transform 0.2s cubic-bezier(0.34, 1.56, 0.64, 1), filter 0.2s ease;
+}
+
+.targetHubButton:hover {
+  filter: brightness(1.15) drop-shadow(0 0 10px rgba(251, 191, 36, 0.85));
+}
+
+.targetHubButton:active {
+  transform: scale(0.95);
+}
+
+.chassisMountGroup {
+  pointer-events: none;
+  filter: drop-shadow(0 4px 8px rgba(0, 0, 0, 0.6));
+}
+
+.meshNodeGroup {
+  pointer-events: none;
+}
+
+.meshPulseSync {
+  animation: syncPulse 1.2s infinite alternate ease-in-out;
+}
+
+@keyframes syncPulse {
+  from { opacity: 0.7; }
+  to { opacity: 1; filter: drop-shadow(0 0 8px #34d399); }
+}
+
+.meshPulseClash {
+  animation: clashFlicker 0.18s infinite alternate ease-in-out;
+}
+
+@keyframes clashFlicker {
+  0% { opacity: 0.7; }
+  100% { opacity: 1; filter: drop-shadow(0 0 12px #ef4444); }
+}
+
+.gearMeshClash {
+  animation: gearShudder 0.18s infinite alternate ease-in-out;
+}
+
+@keyframes gearShudder {
+  0% { transform: translate(0, 0); }
+  50% { transform: translate(-2.5px, 1.5px); }
+  100% { transform: translate(1.5px, -2.5px); }
+}
+
+/* Target Status Header & Interactive Guidance */
+.targetStatusWrap {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.targetStatusLabel {
+  font-size: 0.82rem;
+  font-weight: 800;
+  color: #94a3b8;
+}
+
+.targetStatusPill {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 10px;
+  border-radius: 999px;
+  font-size: 0.76rem;
+  font-weight: 800;
+  border: 1px solid;
+}
+
+.pillPending {
+  background: rgba(245, 158, 11, 0.14);
+  border-color: rgba(245, 158, 11, 0.4);
+  color: #fde047;
+}
+
+.pillSuccess {
+  background: rgba(16, 185, 129, 0.16);
+  border-color: rgba(52, 211, 153, 0.55);
+  color: #6ee7b7;
+}
+
+.pillWrong {
+  background: rgba(239, 68, 68, 0.16);
+  border-color: rgba(248, 113, 113, 0.55);
+  color: #fca5a5;
+}
+
+.pulseDot {
+  color: #f59e0b;
+  animation: dotBlink 1s infinite alternate;
+}
+
+@keyframes dotBlink {
+  from { opacity: 0.3; }
+  to { opacity: 1; }
+}
+
+/* Choice Buttons Grid for selecting gear rotation direction */
+.choiceButtonsGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
+  gap: 10px;
+  width: 100%;
+}
+
+.choiceCardBtn {
+  background: rgba(30, 41, 59, 0.7);
+  border: 2px solid rgba(148, 163, 184, 0.25);
+  border-radius: 12px;
+  padding: 10px 14px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  color: #f1f5f9;
+  cursor: pointer;
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  font-family: inherit;
+  position: relative;
+  user-select: none;
+}
+
+.choiceCardBtn:hover {
+  background: rgba(51, 65, 85, 0.85);
+  border-color: rgba(245, 158, 11, 0.5);
+  transform: translateY(-1px);
+}
+
+.choiceCardIcon {
+  font-size: 1.3rem;
+  font-weight: 900;
+  line-height: 1;
+}
+
+.choiceCardText {
+  font-size: 0.9rem;
+  font-weight: 800;
+  letter-spacing: 0.3px;
+}
+
+.choiceActive {
+  border-color: #f59e0b;
+  background: rgba(245, 158, 11, 0.15);
+  box-shadow: 0 0 12px rgba(245, 158, 11, 0.3);
+}
+
+.choiceSuccess {
+  background: rgba(6, 78, 59, 0.85) !important;
+  border-color: #10b981 !important;
+  color: #ffffff !important;
+  box-shadow: 0 0 16px rgba(16, 185, 129, 0.45);
+}
+
+.choiceWrong {
+  background: rgba(127, 29, 29, 0.85) !important;
+  border-color: #ef4444 !important;
+  color: #ffffff !important;
+  box-shadow: 0 0 16px rgba(239, 68, 68, 0.4);
+}
+
+.choiceBadge {
+  font-size: 0.7rem;
+  font-weight: 900;
+  padding: 2px 7px;
+  border-radius: 6px;
+  background: rgba(0, 0, 0, 0.35);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+/* --------------------------------------------------------------------------
+   Feedback Result Strip & Next Button
+   -------------------------------------------------------------------------- */
+.feedbackResultStrip {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 8px 12px;
+  border-radius: 10px;
+  animation: fadeIn 0.25s ease-out;
+}
+
+.feedbackSuccess {
+  background: rgba(6, 78, 59, 0.5);
+  border: 1px solid #10b981;
+}
+
+.feedbackWrong {
+  background: rgba(127, 29, 29, 0.5);
+  border: 1px solid #ef4444;
+}
+
+.feedbackContent {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 0.82rem;
+  font-weight: 700;
+  line-height: 1.35;
+  flex: 1;
+  min-width: 0;
+}
+
+.btnNextLevel {
+  background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+  border: none;
+  color: #ffffff;
+  font-size: 0.84rem;
+  font-weight: 900;
+  padding: 8px 16px;
+  border-radius: 10px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  box-shadow: 0 0 16px rgba(16, 185, 129, 0.6);
+  transition: all 0.2s ease;
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+
+.btnNextLevel:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 0 24px rgba(52, 211, 153, 0.9);
+}
+
+/* --------------------------------------------------------------------------
+   Victory Modal
+   -------------------------------------------------------------------------- */
+.modalBackdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.85);
+  backdrop-filter: blur(8px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  padding: 16px;
+  animation: fadeIn 0.3s ease-out;
+}
+
+.modalCard {
+  background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%);
+  border: 2px solid #f59e0b;
+  border-radius: 20px;
+  padding: 24px;
+  max-width: 420px;
+  width: 100%;
+  text-align: center;
+  box-shadow: 0 16px 40px rgba(0, 0, 0, 0.9), 0 0 30px rgba(245, 158, 11, 0.4);
+  animation: modalPop 0.35s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+@keyframes modalPop {
+  0% { transform: scale(0.85); opacity: 0; }
+  100% { transform: scale(1); opacity: 1; }
+}
+
+.modalTrophy {
+  font-size: 3rem;
+  margin-bottom: 8px;
+  filter: drop-shadow(0 0 14px #fbbf24);
+  animation: floatTrophy 1.8s infinite alternate ease-in-out;
+}
+
+@keyframes floatTrophy {
+  from { transform: translateY(0); }
+  to { transform: translateY(-6px); }
+}
+
+.modalBadge {
+  display: inline-block;
+  font-size: 0.76rem;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.6px;
+  color: #fbbf24;
+  background: rgba(245, 158, 11, 0.15);
+  border: 1px solid rgba(245, 158, 11, 0.4);
+  padding: 3px 12px;
+  border-radius: 999px;
+  margin-bottom: 8px;
+}
+
+.modalTitle {
+  font-size: 1.25rem;
+  font-weight: 900;
+  color: #ffffff;
+  margin: 0 0 8px;
+}
+
+.modalText {
+  font-size: 0.85rem;
+  color: #cbd5e1;
+  line-height: 1.4;
+  margin-bottom: 18px;
+}
+
+.modalRewardsWrap {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  margin-bottom: 18px;
+}
+
+.modalRewardPill {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  background: rgba(30, 41, 59, 0.9);
+  border: 1px solid rgba(245, 158, 11, 0.35);
+  padding: 5px 12px;
+  border-radius: 10px;
+  font-size: 0.82rem;
+  font-weight: 800;
+  color: #fef08a;
+}
+
+.btnModalFinish {
+  width: 100%;
+  background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+  border: none;
+  color: #ffffff;
+  font-size: 0.95rem;
+  font-weight: 900;
+  padding: 12px;
+  border-radius: 12px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  box-shadow: 0 0 20px rgba(16, 185, 129, 0.6);
+  transition: all 0.2s ease;
+}
+
+.btnModalFinish:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 0 28px rgba(52, 211, 153, 0.9);
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}

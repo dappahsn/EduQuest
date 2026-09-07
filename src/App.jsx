@@ -8,6 +8,7 @@ import ProtectedRoute from './components/auth/ProtectedRoute';
 import LevelUpModal from './components/common/LevelUpModal';
 import RewardModal from './components/common/RewardModal';
 import AchievementToast from './components/common/AchievementToast';
+import EnergyRefillModal from './components/common/EnergyRefillModal';
 
 // Lazy Loaded Pages for Optimal Code Splitting
 const Landing = lazy(() => import('./pages/Landing'));
@@ -26,10 +27,7 @@ const QuestResult = lazy(() => import('./pages/quest/QuestResult'));
 const GameHost = lazy(() => import('./pages/games/GameHost'));
 
 const DailyQuestsView = lazy(() => import('./pages/daily/DailyQuestsView'));
-const CollectionView = lazy(() => import('./pages/collection/CollectionView'));
-const PetsView = lazy(() => import('./pages/pets/PetsView'));
 const AchievementsView = lazy(() => import('./pages/achievements/AchievementsView'));
-const CharacterCustomizer = lazy(() => import('./pages/character/CharacterCustomizer'));
 const ProfileView = lazy(() => import('./pages/profile/ProfileView'));
 const SettingsView = lazy(() => import('./pages/settings/SettingsView'));
 const OnboardingCharacter = lazy(() => import('./pages/onboarding/OnboardingCharacter'));
@@ -156,19 +154,11 @@ export default function App() {
               />
               <Route
                 path="/collection"
-                element={
-                  <ProtectedRoute>
-                    <CollectionView />
-                  </ProtectedRoute>
-                }
+                element={<Navigate to="/world" replace />}
               />
               <Route
                 path="/pets"
-                element={
-                  <ProtectedRoute>
-                    <PetsView />
-                  </ProtectedRoute>
-                }
+                element={<Navigate to="/profile" replace />}
               />
               <Route
                 path="/achievements"
@@ -180,11 +170,7 @@ export default function App() {
               />
               <Route
                 path="/character"
-                element={
-                  <ProtectedRoute>
-                    <CharacterCustomizer />
-                  </ProtectedRoute>
-                }
+                element={<Navigate to="/profile" replace />}
               />
               <Route
                 path="/profile"
@@ -210,6 +196,7 @@ export default function App() {
           <LevelUpModal />
           <RewardModal />
           <AchievementToast />
+          <EnergyRefillModal />
           </AudioProvider>
         </BrowserRouter>
       </GameProvider>

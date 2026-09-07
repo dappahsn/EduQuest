@@ -1,0 +1,509 @@
+/* ==========================================================================
+   SpaceStationLaunch.module.css
+   3D Astro-Flight Arcade & Asteroid Dodge HUD
+   ========================================================================== */
+
+.gameContainer {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  max-height: 100%;
+  border-radius: 24px;
+  overflow: hidden;
+  background: radial-gradient(circle at 50% 30%, #080d1a 0%, #030712 100%);
+  display: flex;
+  flex-direction: column;
+  user-select: none;
+  touch-action: none;
+  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.7), inset 0 1px 0 rgba(255, 255, 255, 0.1);
+  border: 1.5px solid rgba(56, 189, 248, 0.3);
+}
+
+.canvasWrapper {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 1;
+}
+
+/* Red hit flash effect when taking damage */
+.screenDamageFlash {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: radial-gradient(circle, transparent 40%, rgba(239, 68, 68, 0.45) 100%);
+  pointer-events: none;
+  z-index: 20;
+  animation: flashFade 0.35s ease forwards;
+}
+
+@keyframes flashFade {
+  0% { opacity: 1; }
+  100% { opacity: 0; }
+}
+
+/* Hyper boost warp speed effect */
+.hyperBoostWarp {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: radial-gradient(circle, rgba(56, 189, 248, 0.18) 0%, transparent 80%);
+  pointer-events: none;
+  z-index: 15;
+  border: 2px solid rgba(56, 189, 248, 0.5);
+  box-shadow: inset 0 0 50px rgba(56, 189, 248, 0.3);
+  animation: pulseWarp 0.8s infinite alternate;
+}
+
+@keyframes pulseWarp {
+  from { opacity: 0.6; }
+  to { opacity: 1; }
+}
+
+/* ─── Top Telemetry & Scoreboard HUD ─────────────────────────────────────── */
+.topHud {
+  position: relative;
+  z-index: 10;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 12px 18px;
+  background: linear-gradient(180deg, rgba(3, 7, 18, 0.92) 0%, rgba(3, 7, 18, 0.4) 80%, transparent 100%);
+  pointer-events: none;
+}
+
+.hudGroupLeft, .hudGroupRight {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  pointer-events: auto;
+}
+
+.hudBadge {
+  background: rgba(15, 23, 42, 0.85);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(56, 189, 248, 0.3);
+  border-radius: 14px;
+  padding: 6px 12px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.5);
+}
+
+.badgeIcon {
+  font-size: 18px;
+}
+
+.badgeTextCol {
+  display: flex;
+  flex-direction: column;
+}
+
+.badgeLabel {
+  font-size: 9px;
+  font-weight: 800;
+  color: #94a3b8;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.badgeValue {
+  font-size: 15px;
+  font-weight: 900;
+  color: #38bdf8;
+  font-variant-numeric: tabular-nums;
+  text-shadow: 0 0 10px rgba(56, 189, 248, 0.5);
+}
+
+/* Health Hearts */
+.heartsRow {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.heartIcon {
+  font-size: 16px;
+  filter: drop-shadow(0 0 6px rgba(239, 68, 68, 0.6));
+  transition: transform 0.2s ease;
+}
+
+.heartLost {
+  opacity: 0.25;
+  filter: grayscale(1);
+}
+
+/* ─── Distance Flight Progress Bar ───────────────────────────────────────── */
+.progressBarContainer {
+  position: absolute;
+  top: 68px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 10;
+  width: min(85%, 440px);
+  background: rgba(15, 23, 42, 0.85);
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(56, 189, 248, 0.3);
+  border-radius: 16px;
+  padding: 8px 14px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.4);
+  pointer-events: none;
+}
+
+.progressLabelRow {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 11px;
+  font-weight: 800;
+  color: #f8fafc;
+}
+
+.progressTrack {
+  position: relative;
+  width: 100%;
+  height: 8px;
+  background: #0f172a;
+  border-radius: 8px;
+  overflow: hidden;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.progressFill {
+  height: 100%;
+  background: linear-gradient(90deg, #0284c7 0%, #38bdf8 70%, #22c55e 100%);
+  border-radius: 8px;
+  transition: width 0.1s linear;
+  box-shadow: 0 0 10px #38bdf8;
+}
+
+/* ─── Center Action Toast & Combo ────────────────────────────────────────── */
+.centerAlertToast {
+  position: absolute;
+  top: 120px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 10;
+  background: rgba(15, 23, 42, 0.9);
+  backdrop-filter: blur(12px);
+  border: 1.5px solid #38bdf8;
+  padding: 6px 18px;
+  border-radius: 20px;
+  color: #ffffff;
+  font-size: 12px;
+  font-weight: 800;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.6), 0 0 15px rgba(56, 189, 248, 0.3);
+  pointer-events: none;
+  animation: slideDownAlert 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+  white-space: nowrap;
+}
+
+@keyframes slideDownAlert {
+  from { transform: translate(-50%, -10px); opacity: 0; }
+  to { transform: translate(-50%, 0); opacity: 1; }
+}
+
+/* ─── Touch / On-Screen Steering Guide ────────────────────────────────────── */
+.steeringGuideOverlay {
+  position: absolute;
+  bottom: 24px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 10;
+  background: rgba(15, 23, 42, 0.7);
+  backdrop-filter: blur(8px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 20px;
+  padding: 6px 16px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: #94a3b8;
+  font-size: 11px;
+  font-weight: 700;
+  pointer-events: none;
+}
+
+/* Mobile Virtual D-Pad Touch Zone */
+.touchControlOverlay {
+  position: absolute;
+  bottom: 16px;
+  left: 0;
+  right: 0;
+  padding: 0 20px;
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  z-index: 10;
+  pointer-events: none;
+}
+
+.touchDpad {
+  display: grid;
+  grid-template-columns: repeat(3, 46px);
+  grid-template-rows: repeat(3, 46px);
+  gap: 6px;
+  pointer-events: auto;
+}
+
+.touchBtn {
+  background: rgba(30, 41, 59, 0.85);
+  border: 1.5px solid rgba(56, 189, 248, 0.35);
+  border-radius: 12px;
+  color: #e2e8f0;
+  font-size: 18px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  user-select: none;
+  -webkit-tap-highlight-color: transparent;
+  transition: all 0.15s ease;
+}
+
+.touchBtn:hover {
+  background: rgba(56, 189, 248, 0.3);
+  color: #38bdf8;
+}
+
+.touchBtn:active {
+  transform: scale(0.92);
+  background: #0284c7;
+  color: #ffffff;
+}
+
+/* ─── Modals: Start, Game Over, Victory ───────────────────────────────────── */
+.modalOverlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(3, 7, 18, 0.88);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 50;
+  padding: 16px;
+  animation: fadeIn 0.3s ease;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+.modalCard {
+  background: linear-gradient(145deg, #0f172a 0%, #1e293b 100%);
+  border: 1.5px solid rgba(56, 189, 248, 0.45);
+  border-radius: 24px;
+  padding: 24px;
+  max-width: 460px;
+  width: 100%;
+  box-shadow: 0 20px 50px rgba(0, 0, 0, 0.75), 0 0 30px rgba(56, 189, 248, 0.3);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 14px;
+  text-align: center;
+  animation: scaleUp 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+@keyframes scaleUp {
+  from { transform: scale(0.88); opacity: 0; }
+  to { transform: scale(1); opacity: 1; }
+}
+
+.modalIcon {
+  font-size: 52px;
+  line-height: 1;
+}
+
+.modalTitle {
+  font-size: 20px;
+  font-weight: 900;
+  color: #ffffff;
+  margin: 0;
+}
+
+.modalDesc {
+  font-size: 13px;
+  color: #94a3b8;
+  line-height: 1.4;
+  margin: 0;
+}
+
+.instructionBox {
+  width: 100%;
+  background: rgba(15, 23, 42, 0.65);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 16px;
+  padding: 12px 14px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  text-align: left;
+}
+
+.instItem {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 12px;
+  font-weight: 800;
+  color: #f8fafc;
+}
+
+.instItemIcon {
+  font-size: 18px;
+}
+
+.primaryActionBtn {
+  background: linear-gradient(135deg, #0284c7 0%, #0369a1 100%);
+  color: #ffffff;
+  border: none;
+  border-radius: 16px;
+  padding: 12px 28px;
+  font-size: 15px;
+  font-weight: 900;
+  cursor: pointer;
+  box-shadow: 0 4px 18px rgba(2, 132, 199, 0.5);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  width: 100%;
+  transition: all 0.2s ease;
+}
+
+.primaryActionBtn:hover {
+  filter: brightness(1.1);
+  transform: translateY(-2px);
+  box-shadow: 0 6px 24px rgba(2, 132, 199, 0.65);
+}
+
+.secondaryActionBtn {
+  background: rgba(30, 41, 59, 0.85);
+  color: #cbd5e1;
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  border-radius: 16px;
+  padding: 12px 24px;
+  font-size: 14px;
+  font-weight: 800;
+  cursor: pointer;
+  width: 100%;
+  transition: all 0.2s ease;
+}
+
+.secondaryActionBtn:hover {
+  background: rgba(51, 65, 85, 0.95);
+  color: #ffffff;
+}
+
+/* Rewards Row in Victory */
+.rewardBadgesRow {
+  display: flex;
+  gap: 12px;
+  justify-content: center;
+  width: 100%;
+  margin: 4px 0;
+}
+
+.rewardBadge {
+  flex: 1;
+  background: rgba(15, 23, 42, 0.75);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 14px;
+  padding: 10px 8px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+}
+
+.rewardBadgeIcon {
+  font-size: 20px;
+}
+
+.rewardBadgeValue {
+  font-size: 16px;
+  font-weight: 900;
+  color: #38bdf8;
+}
+
+.rewardBadgeTitle {
+  font-size: 10px;
+  font-weight: 700;
+  color: #94a3b8;
+  text-transform: uppercase;
+}
+
+.cardPreviewBox {
+  width: 100%;
+  background: rgba(2, 132, 199, 0.14);
+  border: 1.5px dashed #38bdf8;
+  border-radius: 16px;
+  padding: 10px 14px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  text-align: left;
+}
+
+.cardThumbnail {
+  width: 54px;
+  height: 54px;
+  border-radius: 10px;
+  object-fit: cover;
+  border: 1.5px solid #38bdf8;
+}
+
+/* ─── Responsive Adjustments ─────────────────────────────────────────────── */
+@media (max-width: 600px) {
+  .topHud {
+    padding: 8px 12px;
+  }
+  .hudBadge {
+    padding: 4px 8px;
+    gap: 6px;
+  }
+  .badgeValue {
+    font-size: 13px;
+  }
+  .badgeLabel {
+    font-size: 8px;
+  }
+  .progressBarContainer {
+    top: 56px;
+    width: 90%;
+    padding: 6px 10px;
+  }
+  .centerAlertToast {
+    top: 104px;
+    font-size: 11px;
+    padding: 4px 12px;
+  }
+  .touchDpad {
+    grid-template-columns: repeat(3, 40px);
+    grid-template-rows: repeat(3, 40px);
+  }
+  .steeringGuideOverlay {
+    display: none;
+  }
+}

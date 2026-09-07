@@ -51,8 +51,8 @@ export default function ForgotPassword() {
           title={isId ? 'Akses Akunmu Selalu Terlindungi' : 'Your Account is Always Protected'}
           description={
             isId
-              ? 'Jangan cemas petualang, kami siap membantu memulihkan akses ke seluruh pencapaian, koin emas, dan hewan sahabatmu!'
-              : 'Don’t worry explorer, we will help restore access to all your badges, gold coins, and companion pets!'
+              ? 'Jangan cemas petualang, kami siap membantu memulihkan akses ke seluruh pencapaian, koin emas, dan profil akunmu!'
+              : 'Don’t worry explorer, we will help restore access to all your badges, gold coins, and explorer profile!'
           }
           features={[
             { icon: 'mark_email_read', text: isId ? 'Kirim Tautan Verifikasi' : 'Instant Email Link' },

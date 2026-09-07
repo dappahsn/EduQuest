@@ -1,235 +1,308 @@
 import React from 'react';
+import { Link } from 'react-router-dom';
 import { useGame } from '../../context/GameContext';
 import GameHeader from '../../components/navigation/GameHeader';
 import BottomNavDock from '../../components/navigation/BottomNavDock';
 import { isAllDailyQuestsCompleted } from '../../lib/dailyQuests';
+import styles from './DailyQuestsView.module.css';
 
 export default function DailyQuestsView() {
   const {
-    dailyQuests,
+    dailyQuests = [],
     dailyQuestsDate,
     dailyChestClaimed,
     claimDailyQuestReward,
-    claimDailyChest
+    claimDailyChest,
+    streakDays
   } = useGame();
 
+  const completedCount = (dailyQuests || []).filter((q) => q.completed).length;
+  const totalCount = (dailyQuests || []).length || 3;
   const allCompleted = isAllDailyQuestsCompleted(dailyQuests);
+  const overallPercent = Math.min(100, Math.round((completedCount / totalCount) * 100));
+
+  const getCategoryTheme = (category) => {
+    switch (category) {
+      case 'math':
+        return {
+          iconClass: styles.questIconMath,
+          fillClass: styles.fillMath,
+          label: 'Matematika & Logika',
+          dest: '/world/lembah-angka'
+        };
+      case 'science':
+        return {
+          iconClass: styles.questIconScience,
+          fillClass: styles.fillScience,
+          label: 'Sains & Eksplorasi',
+          dest: '/world/hutan-sains'
+        };
+      case 'story':
+        return {
+          iconClass: styles.questIconStory,
+          fillClass: styles.fillStory,
+          label: 'Bahasa & Cerita',
+          dest: '/world/negeri-cerita'
+        };
+      default:
+        return {
+          iconClass: styles.questIconMath,
+          fillClass: styles.fillMath,
+          label: 'Misi Petualang',
+          dest: '/world'
+        };
+    }
+  };
 
   return (
-    <div style={{
-      minHeight: '100vh',
-      backgroundColor: 'var(--color-surface)',
-      paddingTop: '80px',
-      paddingBottom: '96px',
-      display: 'flex',
-      flexDirection: 'column'
-    }}>
+    <div className={styles.container}>
       <GameHeader />
 
-      <main style={{
-        maxWidth: '520px',
-        width: '100%',
-        margin: '0 auto',
-        padding: '0 var(--space-md)',
-        display: 'flex',
-        flexDirection: 'column',
-        gap: 'var(--space-md)'
-      }}>
-        {/* Top Header */}
-        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-          <div>
-            <span style={{ fontSize: '11px', fontWeight: 800, color: 'var(--color-primary)', textTransform: 'uppercase' }}>
-              Reset Harian (UTC: {dailyQuestsDate})
-            </span>
-            <h1 style={{ fontSize: '22px', fontWeight: 800, color: 'var(--color-text-main)', margin: 0 }}>
-              Misi Harian Petualang
-            </h1>
-          </div>
-          <div style={{
-            backgroundColor: 'var(--color-surface-container-high)',
-            padding: '4px 12px',
-            borderRadius: 'var(--radius-full)',
-            fontSize: '12px',
-            fontWeight: 800,
-            color: 'var(--color-text-main)',
-            display: 'flex',
-            alignItems: 'center',
-            gap: '4px'
-          }}>
-            <span className="material-symbols-outlined" style={{ fontSize: '16px', color: 'var(--color-tertiary)' }}>timer</span>
-            <span>24 Jam</span>
-          </div>
-        </div>
+      <main className={styles.main}>
+        {/* =======================================================
+            LEFT COLUMN: CHEST SHOWCASE & QUICK HUB (Desktop Sticky)
+            ======================================================= */}
+        <aside className={styles.leftColumn}>
+          {/* Main Daily Chest Card */}
+          <div
+            className={`${styles.chestCard} ${
+              dailyChestClaimed
+                ? styles.chestCardClaimed
+                : allCompleted
+                ? styles.chestCardReady
+                : ''
+            }`}
+          >
+            <div className={styles.chestAmbientAura} />
 
-        {/* Daily Chest Centerpiece Card */}
-        <div style={{
-          backgroundColor: 'var(--color-surface-bright)',
-          borderRadius: 'var(--radius-lg)',
-          padding: 'var(--space-md)',
-          boxShadow: 'var(--shadow-card)',
-          border: '2px solid var(--color-primary-fixed)',
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'space-between',
-          position: 'relative',
-          overflow: 'hidden'
-        }}>
-          <div style={{ display: 'flex', alignItems: 'center', gap: 'var(--space-sm)' }}>
             <div
-              className={allCompleted && !dailyChestClaimed ? 'animate-chest-wobble' : ''}
-              style={{
-                width: '60px',
-                height: '60px',
-                borderRadius: '50%',
-                backgroundColor: allCompleted ? 'var(--color-secondary-container)' : 'var(--color-surface-container-high)',
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                fontSize: '34px',
-                boxShadow: allCompleted && !dailyChestClaimed ? '0 0 24px rgba(16, 185, 129, 0.5)' : 'none',
-                transition: 'box-shadow 0.3s ease'
-              }}
+              className={`${styles.chestAvatarCircle} ${
+                allCompleted && !dailyChestClaimed ? 'animate-chest-wobble ' + styles.chestAvatarReady : ''
+              } ${dailyChestClaimed ? styles.chestAvatarClaimed : ''}`}
             >
-              {dailyChestClaimed ? '✨' : '🎁'}
+              {dailyChestClaimed ? '✨' : allCompleted ? '🎁' : '🧰'}
             </div>
-            <div>
-              <span style={{ fontSize: '11px', fontWeight: 800, color: 'var(--color-tertiary-container)', textTransform: 'uppercase' }}>
-                Hadiah Utama Harian
-              </span>
-              <h3 style={{ fontSize: '16px', fontWeight: 800, color: 'var(--color-text-main)', margin: '2px 0 0' }}>
-                {dailyChestClaimed ? 'Peti Harian Sudah Dibuka' : allCompleted ? 'Peti Siap Dibuka! ✨' : 'Peti Mistis Harian'}
-              </h3>
-              <p style={{ fontSize: '12px', color: 'var(--color-text-muted)', margin: '2px 0 0' }}>
-                {dailyChestClaimed ? 'Kembali lagi besok untuk hadiah baru!' : 'Selesaikan ketiga misi harian untuk membuka.'}
-              </p>
+
+            <span
+              className={`${styles.chestBadgeTag} ${
+                dailyChestClaimed
+                  ? styles.tagClaimed
+                  : allCompleted
+                  ? styles.tagReady
+                  : styles.tagPending
+              }`}
+            >
+              {dailyChestClaimed
+                ? 'Terklaim ✓'
+                : allCompleted
+                ? 'Siap Dibuka! ✨'
+                : 'Peti Mistis Harian'}
+            </span>
+
+            <h2 className={styles.chestTitle}>
+              {dailyChestClaimed
+                ? 'Peti Harian Sudah Terbuka'
+                : allCompleted
+                ? 'Peti Harian Siap Dibuka!'
+                : 'Peti Hadiah Harian'}
+            </h2>
+
+            <p className={styles.chestDesc}>
+              {dailyChestClaimed
+                ? 'Kembali lagi besok untuk rangkaian misi dan peti hadiah baru!'
+                : allCompleted
+                ? 'Hebat! Semua misi harian selesai. Buka peti sekarang untuk mengambil hadiahmu!'
+                : 'Selesaikan ketiga misi harian untuk membuka peti hadiah mistis ini.'}
+            </p>
+
+            {/* Progress Bar inside Chest Card */}
+            <div className={styles.chestProgressBarContainer}>
+              <div className={styles.progressBarLabel}>
+                <span>Progres Misi</span>
+                <span>{completedCount} / {totalCount} Selesai ({overallPercent}%)</span>
+              </div>
+              <div className={styles.progressBarTrack}>
+                <div
+                  className={styles.progressBarFill}
+                  style={{ width: `${overallPercent}%` }}
+                />
+              </div>
             </div>
+
+            {/* Rewards Breakdown Pills */}
+            <div className={styles.rewardPillsList}>
+              <div className={styles.rewardPillItem} title="Poin Pengalaman">
+                <span>🌟</span>
+                <span>+200 XP</span>
+              </div>
+              <div className={styles.rewardPillItem} title="Koin EduQuest">
+                <span>🪙</span>
+                <span>+150 Koin</span>
+              </div>
+              <div className={styles.rewardPillItem} title="Pemulihan Energi">
+                <span>⚡</span>
+                <span>+2 Energi</span>
+              </div>
+              <div className={styles.rewardPillItem} title="Badge Spesial">
+                <span>🎖️</span>
+                <span>Bintang Harian</span>
+              </div>
+            </div>
+
+            {/* Action Button */}
+            {!dailyChestClaimed && allCompleted && (
+              <button
+                onClick={claimDailyChest}
+                className={`animate-celebrate-pop ${styles.claimChestBtn}`}
+              >
+                Buka Peti Harian! 🎁
+              </button>
+            )}
+
+            {dailyChestClaimed && (
+              <div className={styles.claimedBadge}>
+                <span className="material-symbols-outlined" style={{ fontSize: '18px' }}>check_circle</span>
+                <span>Hadiah Hari Ini Sudah Diambil</span>
+              </div>
+            )}
           </div>
 
-          {!dailyChestClaimed && allCompleted && (
-            <button
-              onClick={claimDailyChest}
-              className="animate-celebrate-pop"
-              style={{
-                backgroundColor: 'var(--color-secondary)',
-                color: 'var(--color-on-secondary)',
-                border: 'none',
-                padding: '10px 18px',
-                borderRadius: 'var(--radius-full)',
-                fontWeight: 800,
-                fontSize: '13px',
-                cursor: 'pointer',
-                boxShadow: 'var(--shadow-tactile-secondary)'
-              }}
-            >
-              Buka Peti! 🎁
-            </button>
-          )}
-        </div>
-
-        {/* 3 Daily Quest Cards */}
-        <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--space-sm)' }}>
-          {dailyQuests.map((quest) => {
-            const percent = Math.min(100, Math.round((quest.currentCount / quest.targetCount) * 100));
-            return (
-              <div
-                key={quest.id}
-                style={{
-                  backgroundColor: 'var(--color-surface-container-lowest)',
-                  borderRadius: 'var(--radius-lg)',
-                  padding: 'var(--space-md)',
-                  boxShadow: 'var(--shadow-card)',
-                  display: 'flex',
-                  flexDirection: 'column',
-                  gap: '8px',
-                  border: quest.completed ? '2px solid var(--color-secondary-container)' : '2px solid transparent'
-                }}
-              >
-                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                  <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                    <div style={{
-                      width: '36px',
-                      height: '36px',
-                      borderRadius: 'var(--radius-md)',
-                      backgroundColor: 'var(--color-primary-fixed)',
-                      color: 'var(--color-primary)',
-                      display: 'flex',
-                      alignItems: 'center',
-                      justifyContent: 'center'
-                    }}>
-                      <span className="material-symbols-outlined" style={{ fontSize: '20px' }}>{quest.icon}</span>
-                    </div>
-                    <div>
-                      <h4 style={{ fontSize: '15px', fontWeight: 800, color: 'var(--color-text-main)', margin: 0 }}>
-                        {quest.title}
-                      </h4>
-                      <span style={{ fontSize: '12px', color: 'var(--color-text-muted)' }}>
-                        {quest.description}
-                      </span>
-                    </div>
-                  </div>
-
-                  <div style={{ display: 'flex', alignItems: 'center', gap: '4px', fontSize: '12px', fontWeight: 800, color: 'var(--color-primary)' }}>
-                    <span>+{quest.rewardXp} XP</span>
-                  </div>
-                </div>
-
-                {/* Progress bar */}
-                <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-                  <div style={{
-                    flex: 1,
-                    height: '8px',
-                    backgroundColor: 'var(--color-surface-container)',
-                    borderRadius: 'var(--radius-full)',
-                    overflow: 'hidden'
-                  }}>
-                    <div style={{
-                      height: '100%',
-                      backgroundColor: quest.completed ? 'var(--color-secondary)' : 'var(--color-primary)',
-                      width: `${percent}%`,
-                      transition: 'width 0.4s ease'
-                    }} />
-                  </div>
-                  <span style={{ fontSize: '12px', fontWeight: 800, color: 'var(--color-text-main)' }}>
-                    {quest.currentCount} / {quest.targetCount}
-                  </span>
-                </div>
-
-                {/* Claim Button */}
-                {quest.completed && !quest.claimed && (
-                  <button
-                    onClick={() => claimDailyQuestReward(quest.id)}
-                    style={{
-                      alignSelf: 'flex-end',
-                      backgroundColor: 'var(--color-tertiary)',
-                      color: 'var(--color-on-tertiary)',
-                      padding: '6px 14px',
-                      borderRadius: 'var(--radius-full)',
-                      border: 'none',
-                      fontSize: '12px',
-                      fontWeight: 800,
-                      cursor: 'pointer',
-                      boxShadow: 'var(--shadow-tactile-tertiary)',
-                      marginTop: '4px'
-                    }}
-                  >
-                    Klaim Hadiah (+{quest.rewardXp} XP) ✨
-                  </button>
-                )}
-
-                {quest.claimed && (
-                  <span style={{
-                    alignSelf: 'flex-end',
-                    fontSize: '12px',
-                    fontWeight: 700,
-                    color: 'var(--color-secondary)'
-                  }}>
-                    ✓ Hadiah Sudah Diklaim
-                  </span>
-                )}
+          {/* Quick Hub Card: Streak & Direct World Jump */}
+          <div className={styles.quickHubCard}>
+            <div className={styles.quickHubHeader}>
+              <h3 className={styles.quickHubTitle}>
+                <span className="material-symbols-outlined" style={{ fontSize: '18px', color: '#f59e0b' }}>
+                  local_fire_department
+                </span>
+                Aktivitas Petualang
+              </h3>
+              <div className={styles.streakBadge}>
+                <span>🔥</span>
+                <span>{streakDays || 1} Hari Beruntun</span>
               </div>
-            );
-          })}
-        </div>
+            </div>
+
+            <p className={styles.quickHubText}>
+              Selesaikan misi harian setiap hari untuk mengumpulkan ribuan XP dan menjaga api petualanganmu tetap menyala!
+            </p>
+
+            <Link to="/world" className={styles.goToWorldBtn}>
+              <span className="material-symbols-outlined" style={{ fontSize: '18px' }}>
+                travel_explore
+              </span>
+              <span>Jelajahi Peta Galaksi</span>
+            </Link>
+          </div>
+        </aside>
+
+        {/* =======================================================
+            RIGHT COLUMN: HEADER & QUESTS LIST
+            ======================================================= */}
+        <section className={styles.rightColumn}>
+          {/* Header Bar */}
+          <header className={styles.pageHeader}>
+            <div className={styles.headerLeft}>
+              <span className={styles.headerSubtitle}>
+                Reset Harian (UTC: {dailyQuestsDate || 'Hari Ini'})
+              </span>
+              <h1 className={styles.headerTitle}>Misi Harian Petualang</h1>
+            </div>
+
+            <div className={styles.headerRight}>
+              <div className={styles.timerCapsule} title="Waktu Tersisa Sebelum Reset Harian">
+                <span className="material-symbols-outlined" style={{ fontSize: '16px', color: '#0284c7' }}>
+                  schedule
+                </span>
+                <span>24 Jam</span>
+              </div>
+            </div>
+          </header>
+
+          {/* Quests List */}
+          <div className={styles.questsList}>
+            {dailyQuests.map((quest) => {
+              const theme = getCategoryTheme(quest.category);
+              const percent = Math.min(100, Math.round((quest.currentCount / quest.targetCount) * 100));
+
+              return (
+                <div
+                  key={quest.id}
+                  className={`${styles.questCard} ${quest.completed ? styles.questCardCompleted : ''}`}
+                >
+                  {/* Top Row: Icon, Title, Rewards */}
+                  <div className={styles.questTopRow}>
+                    <div className={styles.questInfoGroup}>
+                      <div className={`${styles.questIconBox} ${theme.iconClass}`}>
+                        <span className="material-symbols-outlined" style={{ fontSize: '24px' }}>
+                          {quest.icon}
+                        </span>
+                      </div>
+
+                      <div className={styles.questDetails}>
+                        <span className={styles.questCategoryPill}>{theme.label}</span>
+                        <h3 className={styles.questCardTitle}>{quest.title}</h3>
+                        <p className={styles.questCardDesc}>{quest.description}</p>
+                      </div>
+                    </div>
+
+                    <div className={styles.rewardBadgesGroup}>
+                      <span className={styles.xpBadge}>+{quest.rewardXp} XP</span>
+                      {quest.rewardCoins && (
+                        <span className={styles.coinBadge}>+{quest.rewardCoins} 🪙</span>
+                      )}
+                    </div>
+                  </div>
+
+                  {/* Progress Row */}
+                  <div className={styles.questProgressRow}>
+                    <div className={styles.questProgressTrack}>
+                      <div
+                        className={`${styles.questProgressFill} ${theme.fillClass}`}
+                        style={{ width: `${percent}%` }}
+                      />
+                    </div>
+                    <span className={styles.questCounterText}>
+                      {quest.currentCount} / {quest.targetCount}
+                    </span>
+                  </div>
+
+                  {/* Actions Row */}
+                  <div className={styles.questActionRow}>
+                    {quest.completed && !quest.claimed && (
+                      <button
+                        onClick={() => claimDailyQuestReward(quest.id)}
+                        className={styles.claimRewardBtn}
+                      >
+                        <span className="material-symbols-outlined" style={{ fontSize: '17px' }}>
+                          redeem
+                        </span>
+                        <span>Klaim Hadiah (+{quest.rewardXp} XP) ✨</span>
+                      </button>
+                    )}
+
+                    {quest.claimed && (
+                      <div className={styles.claimedBadge}>
+                        <span className="material-symbols-outlined" style={{ fontSize: '17px' }}>
+                          check_circle
+                        </span>
+                        <span>Hadiah Sudah Diklaim</span>
+                      </div>
+                    )}
+
+                    {!quest.completed && (
+                      <Link to={theme.dest} className={styles.startQuestBtn}>
+                        <span>Mulai Misi</span>
+                        <span className="material-symbols-outlined" style={{ fontSize: '16px' }}>
+                          arrow_forward
+                        </span>
+                      </Link>
+                    )}
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+        </section>
       </main>
 
       <BottomNavDock />

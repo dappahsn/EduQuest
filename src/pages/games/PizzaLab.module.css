@@ -1,0 +1,645 @@
+/* ==========================================================================
+   PIZZA LAB (Misi 02 - Pecahan) - RICH 3D KITCHEN EXPERIENCE
+   ========================================================================== */
+
+/* Main Container */
+.pizzaLabContainer {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  gap: 14px;
+}
+
+/* 1. Header Navigation Bar */
+.subHeaderBar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.missionBadge {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: rgba(255, 255, 255, 0.95);
+  padding: 6px 14px;
+  border-radius: 9999px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+  border: 1.5px solid #fed7aa;
+}
+
+.missionBadgeText {
+  font-size: 12.5px;
+  font-weight: 800;
+  color: #7c2d12;
+}
+
+.missionBadgeHighlight {
+  font-size: 12.5px;
+  font-weight: 900;
+  color: #ea580c;
+}
+
+.scoreBadge {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  background: rgba(255, 255, 255, 0.95);
+  padding: 6px 14px;
+  border-radius: 9999px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+  border: 1.5px solid #fed7aa;
+}
+
+.scoreBadgeText {
+  font-size: 12.5px;
+  font-weight: 800;
+  color: #7c2d12;
+}
+
+.scoreValue {
+  color: #ea580c;
+  font-weight: 900;
+}
+
+/* 2. Chef Milo's Order Ticket */
+.chefOrderCard {
+  position: relative;
+  background: linear-gradient(135deg, #fff7ed 0%, #ffedd5 100%);
+  border: 2px solid #fdba74;
+  border-radius: 20px;
+  padding: 14px 18px;
+  box-shadow: 0 8px 20px -4px rgba(234, 88, 12, 0.15), 0 2px 0 #fb923c;
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  overflow: hidden;
+}
+
+.chefOrderCard::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 4px;
+  background: linear-gradient(90deg, #ea580c, #f59e0b, #ea580c);
+}
+
+.chefAvatarCircle {
+  width: 52px;
+  height: 52px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #f97316 0%, #ea580c 100%);
+  border: 3px solid #ffffff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 26px;
+  box-shadow: 0 4px 12px rgba(234, 88, 12, 0.35);
+  flex-shrink: 0;
+  position: relative;
+}
+
+.chefToqueBadge {
+  position: absolute;
+  top: -6px;
+  right: -6px;
+  font-size: 16px;
+}
+
+.orderContent {
+  flex: 1;
+  min-width: 0;
+}
+
+.orderTag {
+  font-size: 11px;
+  font-weight: 900;
+  text-transform: uppercase;
+  color: #c2410c;
+  letter-spacing: 0.06em;
+  margin: 0;
+}
+
+.orderTitle {
+  font-size: 15px;
+  font-weight: 800;
+  margin: 3px 0 0;
+  color: #431407;
+  line-height: 1.35;
+}
+
+.fractionTargetPlate {
+  background: linear-gradient(135deg, #ffffff 0%, #fff7ed 100%);
+  border: 2px solid #f97316;
+  padding: 8px 18px;
+  border-radius: 9999px;
+  box-shadow: 0 4px 12px rgba(234, 88, 12, 0.2);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  flex-shrink: 0;
+}
+
+.fractionTargetPlateLabel {
+  font-size: 10px;
+  font-weight: 800;
+  color: #9a3412;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.fractionTargetPlateValue {
+  font-size: 19px;
+  font-weight: 900;
+  color: #ea580c;
+  letter-spacing: -0.02em;
+}
+
+/* 3. Authentic 3D Kitchen Table Arena */
+.kitchenArena {
+  position: relative;
+  background: radial-gradient(ellipse at 50% 20%, #fffbeb 0%, #fef3c7 45%, #fed7aa 80%, #fdba74 100%);
+  border-radius: 28px;
+  padding: 24px 16px 20px;
+  box-shadow: 0 16px 36px -10px rgba(154, 52, 18, 0.25), 0 0 0 3px #fed7aa;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 16px;
+  overflow: hidden;
+}
+
+/* Kitchen Table Ambiance Ingredients */
+.kitchenDeco1,
+.kitchenDeco2,
+.kitchenDeco3,
+.kitchenDeco4 {
+  position: absolute;
+  pointer-events: none;
+  opacity: 0.75;
+  filter: drop-shadow(0 4px 6px rgba(0, 0, 0, 0.15));
+}
+
+.kitchenDeco1 {
+  top: 14px;
+  left: 18px;
+  font-size: 28px;
+  transform: rotate(-15deg);
+}
+
+.kitchenDeco2 {
+  top: 16px;
+  right: 20px;
+  font-size: 26px;
+  transform: rotate(12deg);
+}
+
+.kitchenDeco3 {
+  bottom: 24px;
+  left: 18px;
+  font-size: 24px;
+  transform: rotate(20deg);
+}
+
+.kitchenDeco4 {
+  bottom: 24px;
+  right: 20px;
+  font-size: 26px;
+  transform: rotate(-10deg);
+}
+
+/* Rising Hot Steam Animation */
+.steamContainer {
+  position: absolute;
+  top: 8px;
+  display: flex;
+  gap: 30px;
+  pointer-events: none;
+  z-index: 10;
+}
+
+.steamParticle1 {
+  font-size: 24px;
+  opacity: 0.6;
+  animation: steamRise 3s infinite ease-out;
+}
+
+.steamParticle2 {
+  font-size: 28px;
+  opacity: 0.7;
+  animation: steamRise 3.5s infinite ease-out 1s;
+}
+
+.steamParticle3 {
+  font-size: 22px;
+  opacity: 0.5;
+  animation: steamRise 2.8s infinite ease-out 1.8s;
+}
+
+@keyframes steamRise {
+  0% { transform: translateY(12px) scale(0.7); opacity: 0; }
+  35% { opacity: 0.7; }
+  100% { transform: translateY(-32px) scale(1.3); opacity: 0; }
+}
+
+/* 4. The 3D Wooden Pizza Peel & Baking Stone */
+.pizzaStage3DWrap {
+  position: relative;
+  width: 310px;
+  height: 310px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  perspective: 900px;
+  margin: 6px 0;
+}
+
+/* Realistic Wooden Pizza Peel Cutting Board */
+.woodenPeelBoard {
+  position: absolute;
+  width: 304px;
+  height: 304px;
+  border-radius: 50%;
+  background: radial-gradient(circle at 35% 30%, #b45309 0%, #92400e 55%, #78350f 100%);
+  border: 4px solid #d97706;
+  box-shadow: inset 0 3px 0 rgba(254, 243, 199, 0.4),
+              0 14px 0 #451a03,
+              0 24px 35px rgba(69, 26, 3, 0.45);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transform: rotateX(12deg);
+  transition: transform 0.3s ease;
+}
+
+/* Wooden Peel Handle extending downward */
+.peelHandle {
+  position: absolute;
+  bottom: -44px;
+  width: 44px;
+  height: 56px;
+  background: linear-gradient(90deg, #78350f 0%, #b45309 50%, #78350f 100%);
+  border: 3px solid #d97706;
+  border-radius: 0 0 16px 16px;
+  box-shadow: 0 12px 0 #451a03, 0 16px 20px rgba(0, 0, 0, 0.3);
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  padding-bottom: 6px;
+}
+
+.peelHole {
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  background: #451a03;
+  box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.8);
+}
+
+/* Metal Baking Pan inside the board */
+.metalBakingPan {
+  width: 278px;
+  height: 278px;
+  border-radius: 50%;
+  background: radial-gradient(circle, #334155 0%, #1e293b 70%, #0f172a 100%);
+  border: 3.5px solid #64748b;
+  box-shadow: inset 0 6px 14px rgba(0, 0, 0, 0.7), 0 2px 4px rgba(255, 255, 255, 0.2);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  overflow: visible;
+}
+
+/* 4 Slices Grid Container */
+.pizzaSlicesGrid {
+  position: relative;
+  width: 254px;
+  height: 254px;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  grid-template-rows: 1fr 1fr;
+  gap: 6px;
+  padding: 4px;
+}
+
+/* Individual 3D Pizza Slice Button */
+.sliceButton3D {
+  position: relative;
+  background: transparent;
+  border: none;
+  padding: 0;
+  margin: 0;
+  cursor: pointer;
+  outline: none;
+  aspect-ratio: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: transform 0.25s cubic-bezier(0.34, 1.56, 0.64, 1),
+              filter 0.25s ease;
+  overflow: visible;
+}
+
+/* Hover Lift Effect */
+.sliceButton3D:hover:not(:disabled) {
+  filter: drop-shadow(0 14px 18px rgba(0, 0, 0, 0.35)) drop-shadow(0 0 10px rgba(245, 158, 11, 0.5));
+}
+
+.slice0:hover:not(:disabled) {
+  transform: translate(-6px, -6px) scale(1.03);
+}
+
+.slice1:hover:not(:disabled) {
+  transform: translate(6px, -6px) scale(1.03);
+}
+
+.slice2:hover:not(:disabled) {
+  transform: translate(-6px, 6px) scale(1.03);
+}
+
+.slice3:hover:not(:disabled) {
+  transform: translate(6px, 6px) scale(1.03);
+}
+
+/* Active Pressed Effect */
+.sliceButton3D:active:not(:disabled) {
+  transform: scale(0.97);
+}
+
+/* SELECTED 3D ELEVATION (The "Pull" Effect!) */
+.sliceSelected {
+  z-index: 20;
+}
+
+.slice0.sliceSelected {
+  transform: translate(-14px, -18px) scale(1.08) !important;
+  filter: drop-shadow(-8px 18px 22px rgba(0, 0, 0, 0.5)) drop-shadow(0 0 18px rgba(16, 185, 129, 0.7)) !important;
+}
+
+.slice1.sliceSelected {
+  transform: translate(14px, -18px) scale(1.08) !important;
+  filter: drop-shadow(8px 18px 22px rgba(0, 0, 0, 0.5)) drop-shadow(0 0 18px rgba(16, 185, 129, 0.7)) !important;
+}
+
+.slice2.sliceSelected {
+  transform: translate(-14px, 16px) scale(1.08) !important;
+  filter: drop-shadow(-8px 18px 22px rgba(0, 0, 0, 0.5)) drop-shadow(0 0 18px rgba(16, 185, 129, 0.7)) !important;
+}
+
+.slice3.sliceSelected {
+  transform: translate(14px, 16px) scale(1.08) !important;
+  filter: drop-shadow(8px 18px 22px rgba(0, 0, 0, 0.5)) drop-shadow(0 0 18px rgba(16, 185, 129, 0.7)) !important;
+}
+
+.sliceSvg {
+  width: 100%;
+  height: 100%;
+  display: block;
+  overflow: visible;
+}
+
+/* Floating "Dipilih" Badge on Lifted Slice */
+.selectedSliceBadge {
+  position: absolute;
+  top: 15%;
+  background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+  color: #ffffff;
+  padding: 3px 10px;
+  border-radius: 9999px;
+  font-size: 11px;
+  font-weight: 900;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  box-shadow: 0 4px 12px rgba(16, 185, 129, 0.5);
+  border: 1.5px solid #a7f3d0;
+  pointer-events: none;
+  animation: popBadge 0.25s cubic-bezier(0.34, 1.56, 0.64, 1);
+  z-index: 25;
+}
+
+@keyframes popBadge {
+  from { transform: scale(0.5); opacity: 0; }
+  to { transform: scale(1); opacity: 1; }
+}
+
+/* 5. Serving Platter & Live Fraction Bar */
+.servingPlatterBar {
+  width: 100%;
+  background: rgba(255, 255, 255, 0.95);
+  backdrop-filter: blur(8px);
+  border: 2px solid #fed7aa;
+  border-radius: 18px;
+  padding: 10px 16px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.06);
+}
+
+.servingPlatterLeft {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.servingPlatterIcon {
+  font-size: 22px;
+}
+
+.servingPlatterTitle {
+  font-size: 13px;
+  font-weight: 800;
+  color: #431407;
+  margin: 0;
+}
+
+.servingPlatterSub {
+  font-size: 11.5px;
+  font-weight: 700;
+  color: #c2410c;
+  margin: 1px 0 0;
+}
+
+/* Mini visual slices on platter */
+.miniSlicesSlots {
+  display: flex;
+  gap: 6px;
+  align-items: center;
+}
+
+.miniSliceSlot {
+  width: 28px;
+  height: 28px;
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 15px;
+  transition: all 0.25s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+.miniSliceFilled {
+  background: linear-gradient(135deg, #ffedd5 0%, #fed7aa 100%);
+  border: 1.5px solid #f97316;
+  box-shadow: 0 2px 6px rgba(234, 88, 12, 0.3);
+  transform: scale(1.1);
+}
+
+.miniSliceEmpty {
+  background: #f1f5f9;
+  border: 1.5px dashed #cbd5e1;
+  color: #94a3b8;
+  font-size: 11px;
+}
+
+/* Feedback Message Banner */
+.feedbackMessageBanner {
+  width: 100%;
+  padding: 10px 16px;
+  border-radius: 14px;
+  font-weight: 800;
+  font-size: 13.5px;
+  text-align: center;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.08);
+}
+
+.feedbackCorrect {
+  background: linear-gradient(135deg, #dcfce7 0%, #bbf7d0 100%);
+  color: #15803d;
+  border: 1.5px solid #86efac;
+}
+
+.feedbackWrong {
+  background: linear-gradient(135deg, #fee2e2 0%, #fecaca 100%);
+  color: #b91c1c;
+  border: 1.5px solid #fca5a5;
+}
+
+/* 6. Utility Action Buttons (Hint, Reset) */
+.utilityButtonsRow {
+  display: flex;
+  gap: 12px;
+  width: 100%;
+}
+
+.utilityBtn {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  background-color: #ffffff;
+  color: #431407;
+  padding: 11px 16px;
+  border-radius: 9999px;
+  border: 1.5px solid #fed7aa;
+  font-weight: 800;
+  font-size: 13.5px;
+  cursor: pointer;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.04);
+  transition: all 0.15s ease;
+}
+
+.utilityBtn:hover {
+  background-color: #fff7ed;
+  border-color: #fdba74;
+  transform: translateY(-1px);
+}
+
+/* Hint Card */
+.hintCard {
+  background: linear-gradient(135deg, #ffedd5 0%, #fff7ed 100%);
+  border: 1.5px solid #fdba74;
+  padding: 12px 16px;
+  border-radius: 16px;
+  display: flex;
+  gap: 10px;
+  align-items: flex-start;
+  box-shadow: 0 4px 12px rgba(234, 88, 12, 0.1);
+}
+
+.hintCardTitle {
+  font-size: 13px;
+  font-weight: 900;
+  color: #7c2d12;
+  margin: 0 0 2px;
+}
+
+.hintCardText {
+  font-size: 12.5px;
+  color: #431407;
+  margin: 0;
+  line-height: 1.4;
+}
+
+/* 7. Action Button "Sajikan Pizza" */
+.servePizzaBtn {
+  width: 100%;
+  padding: 15px;
+  border-radius: 9999px;
+  background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+  color: #ffffff;
+  font-weight: 900;
+  font-size: 16px;
+  border: none;
+  cursor: pointer;
+  box-shadow: 0 8px 20px rgba(16, 185, 129, 0.4), 0 4px 0 #047857;
+  transition: all 0.18s cubic-bezier(0.34, 1.56, 0.64, 1);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+}
+
+.servePizzaBtn:hover:not(:disabled) {
+  transform: translateY(-2px);
+  box-shadow: 0 12px 26px rgba(16, 185, 129, 0.55), 0 5px 0 #047857;
+}
+
+.servePizzaBtn:active:not(:disabled) {
+  transform: translateY(2px);
+  box-shadow: 0 2px 6px rgba(16, 185, 129, 0.3), 0 1px 0 #047857;
+}
+
+.servePizzaBtnDisabled {
+  background: #e2e8f0;
+  color: #94a3b8;
+  cursor: not-allowed;
+  box-shadow: none;
+}
+
+.nextQuestBtn {
+  width: 100%;
+  padding: 15px;
+  border-radius: 9999px;
+  background: linear-gradient(135deg, #f97316 0%, #ea580c 100%);
+  color: #ffffff;
+  font-weight: 900;
+  font-size: 16px;
+  border: none;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  box-shadow: 0 8px 20px rgba(234, 88, 12, 0.45), 0 4px 0 #9a3412;
+  transition: all 0.18s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+.nextQuestBtn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 12px 26px rgba(234, 88, 12, 0.6), 0 5px 0 #9a3412;
+}
+
+.nextQuestBtn:active {
+  transform: translateY(2px);
+  box-shadow: 0 2px 6px rgba(234, 88, 12, 0.3), 0 1px 0 #9a3412;
+}

@@ -104,6 +104,14 @@ export const GAMES = [
     difficulty: 1,
     instructions: 'Susun kepingan kata menjadi kalimat bahasa Indonesia yang padu dan bermakna!',
     maxScore: 100
+  },
+  {
+    id: 'butterfly-metamorphosis',
+    title: 'Metamorfosis Kupu-Kupu',
+    subject: 'Sains',
+    difficulty: 2,
+    instructions: 'Urutkan tahapan metamorfosis, beri makan ulat, dan bentangkan sayap kupu-kupu indah!',
+    maxScore: 100
   }
 ];
 
@@ -155,7 +163,7 @@ export const DISCOVERIES = [
     title: 'Susunan Kalimat Bahasa',
     concept: 'Kalimat yang baik minimal memiliki Subjek (pelaku) dan Predikat (tindakan).',
     funFact: 'Bahasa Indonesia dituturkan oleh lebih dari 300 juta orang di seluruh dunia!',
-    cardUnlockId: 'card-archipelago'
+    cardUnlockId: 'card-sastra'
   },
   {
     id: 'discovery-dongeng',
@@ -165,11 +173,11 @@ export const DISCOVERIES = [
     cardUnlockId: 'card-archipelago'
   },
   {
-    id: 'discovery-aksara',
-    title: 'Jejak Aksara Bersejarah',
-    concept: 'Aksara adalah simbol visual untuk merekam bunyi bahasa sejak ribuan tahun lalu.',
-    funFact: 'Nusantara memiliki lebih dari 12 rumpun aksara daerah tradisional yang sangat indah!',
-    cardUnlockId: 'card-archipelago'
+    id: 'discovery-pantun',
+    title: 'Keindahan Bait & Rima Pantun',
+    concept: 'Pantun menyampaikan nasihat budi pekerti melalui keselarasan sampiran, isi, dan rima a-b-a-b.',
+    funFact: 'Pantun adalah warisan sastra asli kepulauan Nusantara yang resmi diakui dunia oleh UNESCO!',
+    cardUnlockId: 'card-pantun'
   },
   {
     id: 'discovery-algoritma',
@@ -212,6 +220,13 @@ export const DISCOVERIES = [
     concept: 'Bumi memiliki atmosfer pelindung dan suhu yang sempurna untuk air dalam bentuk cair.',
     funFact: 'Planet Bumi adalah satu-satunya planet yang tidak dinamai dari dewa Romawi atau Yunani!',
     cardUnlockId: 'card-earth'
+  },
+  {
+    id: 'discovery-metamorfosis',
+    title: 'Metamorfosis Sempurna Kupu-Kupu',
+    concept: 'Transformasi fisik lengkap dari telur, larva ulat pemakan daun, kepompong pupa istirahat, hingga imago dewasa bersayap elok.',
+    funFact: 'Kupu-kupu mengecap nektar manis menggunakan kakinya dan sangat berjasa membantu penyerbukan bunga!',
+    cardUnlockId: 'card-butterfly'
   }
 ];
 
@@ -258,7 +273,7 @@ export const QUESTS = [
     title: 'Misteri Fotosintesis Daun',
     storyIntro: 'Pohon Purba Hutan kehilangan klorofilnya. Satukan tiga elemen penting agar berbuah kembali.',
     discoveryId: 'discovery-fotosintesis',
-    gameId: 'pizza-lab',
+    gameId: 'photosynthesis-lab',
     xpReward: 140,
     coinsReward: 45,
     orderIndex: 1
@@ -266,23 +281,23 @@ export const QUESTS = [
   {
     id: 'sains-02',
     regionId: 'hutan-sains',
-    title: 'Rantai Makanan Rimba',
-    storyIntro: 'Keseimbangan rimba terganggu! Rangkai mata rantai makanan dari rerumputan hingga elang hutan.',
-    discoveryId: 'discovery-rantai-makanan',
-    gameId: 'number-catcher',
-    xpReward: 160,
-    coinsReward: 55,
+    title: 'Metamorfosis Kupu-Kupu',
+    storyIntro: 'Ungkap keajaiban transformasi ulat daun menjadi kepompong hingga kupu-kupu bersayap elok pemikat flora rimba!',
+    discoveryId: 'discovery-metamorfosis',
+    gameId: 'butterfly-metamorphosis',
+    xpReward: 140,
+    coinsReward: 45,
     orderIndex: 2
   },
   {
     id: 'sains-03',
     regionId: 'hutan-sains',
-    title: 'Hutan Hujan Tropis Nusantara',
-    storyIntro: 'Ungkap rahasia tanaman obat langka di kanopi tertinggi Hutan Hujan Tropis.',
+    title: 'Penjelajah Flora Langka',
+    storyIntro: 'Dokumentasikan tanaman karnivora kantong semar dan bunga raksasa Padma Rafflesia di jantung rimba nusantara.',
     discoveryId: 'discovery-hutan-hujan',
-    gameId: 'solar-system',
-    xpReward: 190,
-    coinsReward: 65,
+    gameId: 'rare-flora-explorer',
+    xpReward: 160,
+    coinsReward: 45,
     orderIndex: 3
   },
 
@@ -791,6 +806,30 @@ export const KNOWLEDGE_CARDS = [
       'Indonesia adalah negara kepulauan terbesar di dunia dengan lebih dari 17.000 pulau.',
       'Memiliki lebih dari 700 bahasa daerah yang diikat oleh satu bahasa persatuan: Bahasa Indonesia.',
       'Semboyan Bhinneka Tunggal Ika bermakna berbeda-beda tetapi tetap satu jua.'
+    ]
+  },
+  {
+    id: 'card-sastra',
+    title: 'Mahakarya Sastra & SPOK Nusantara',
+    category: 'Bahasa',
+    rarity: 'legendary',
+    illustrationUrl: 'https://images.unsplash.com/photo-1456513080510-7bf3a84b82f8?auto=format&fit=crop&w=600&q=80',
+    facts: [
+      'Struktur kalimat dasar bahasa Indonesia terdiri dari Subjek, Predikat, Objek, dan Keterangan.',
+      'Cerita rakyat nusantara mengajarkan kecerdikan akal budi dan kebaikan moral melintasi generasi.',
+      'Susunan kalimat yang runtut memancarkan kejelasan pesan dan keindahan rasa dalam bertutur kata.'
+    ]
+  },
+  {
+    id: 'card-pantun',
+    title: 'Bait Pantun & Puisi Rakyat Nusantara',
+    category: 'Bahasa',
+    rarity: 'legendary',
+    illustrationUrl: 'https://images.unsplash.com/photo-1455390582262-044cdead277a?auto=format&fit=crop&w=600&q=80',
+    facts: [
+      'Pantun merupakan karya sastra lisan Nusantara yang diakui UNESCO sebagai Warisan Budaya Takbenda Dunia.',
+      'Satu bait pantun terdiri dari 4 baris: baris 1-2 adalah sampiran dan baris 3-4 adalah isi yang bermakna nasihat.',
+      'Pola sajak pantun memiliki rima bersilang a-b-a-b yang indah didengar saat dibacakan berbalas.'
     ]
   }
 ];

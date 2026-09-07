@@ -16,12 +16,12 @@ export const INITIAL_ACHIEVEMENTS = [
     rewardCoins: 25
   },
   {
-    id: 'first_pet',
-    code: 'PET_COMPANION',
-    title: 'Sahabat Belajar',
-    description: 'Pilih dan rawat satu hewan sahabat penjelajah.',
+    id: 'first_profile',
+    code: 'CUSTOM_PROFILE',
+    title: 'Identitas Petualang',
+    description: 'Atur profil dan pilih karakter petualang favoritmu.',
     tier: 'Perunggu',
-    icon: 'pets',
+    icon: 'badge',
     target: 1,
     rewardXp: 100,
     rewardCoins: 25
@@ -90,13 +90,13 @@ export function checkAchievementsProgress(gameState) {
   const cardsCount = (gameState.unlockedCardIds || []).length;
   const streak = gameState.streakDays || 1;
   const visitedRegions = (gameState.visitedRegionIds || ['lembah-angka']).length;
-  const hasPet = !!gameState.activePetId;
+  const hasProfile = !!(gameState.playerName && gameState.characterConfig?.avatar);
   const hasCustomized = !!gameState.characterConfig?.hasCustomized;
 
   INITIAL_ACHIEVEMENTS.forEach((ach) => {
     let current = 0;
     if (ach.id === 'first_quest') current = completedQuestsCount;
-    if (ach.id === 'first_pet') current = hasPet ? 1 : 0;
+    if (ach.id === 'first_profile') current = hasProfile ? 1 : 0;
     if (ach.id === 'math_master') current = completedQuestsCount;
     if (ach.id === 'card_collector') current = cardsCount;
     if (ach.id === 'streak_7') current = streak;

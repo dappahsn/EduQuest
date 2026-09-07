@@ -1,551 +1,435 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useGame } from '../../context/GameContext';
-import CharacterAvatar from '../../components/character/CharacterAvatar';
+import { useAudio } from '../../context/AudioContext';
 import BottomNavDock from '../../components/navigation/BottomNavDock';
-import { CATALOG_ITEMS, COLOR_SWATCHES, HAIR_STYLES } from '../../lib/catalog';
+import styles from './CharacterCustomizer.module.css';
+
+import { AVAILABLE_CHARACTERS } from '../../data/characters';
+export { AVAILABLE_CHARACTERS };
 
 export default function CharacterCustomizer() {
   const navigate = useNavigate();
-  const {
-    characterConfig,
-    updateCharacter,
-    coins,
-    level,
-    showToast,
-    unlockedItemIds
-  } = useGame();
+  const { characterConfig, updateCharacter, coins, level, showToast } = useGame();
+  const { playSfx } = useAudio();
 
-  const [activeTab, setActiveTab] = useState('accessories'); // accessories | outfits | backpacks | shoes
-  const [currentConfig, setCurrentConfig] = useState(characterConfig);
-  const [rotationDeg, setRotationDeg] = useState(0);
-  const [isPosing, setIsPosing] = useState(false);
+  // Gender filter: 'all' | 'boy' | 'girl'
+  const [filterGender, setFilterGender] = useState('all');
 
-  const categories = [
-    { id: 'accessories', label: 'Topi & Rambut', icon: 'face_retouching_natural' },
-    { id: 'outfits', label: 'Kostum', icon: 'apparel' },
-    { id: 'backpacks', label: 'Tas Eksplorasi', icon: 'backpack' },
-    { id: 'shoes', label: 'Sepatu', icon: 'roller_skating' }
-  ];
+  // Currently selected character ID
+  const [selectedId, setSelectedId] = useState(() => {
+    const equipped = characterConfig?.avatar || 'raka_explorer';
+    const found = AVAILABLE_CHARACTERS.find((c) => c.id === equipped);
+    return found ? found.id : AVAILABLE_CHARACTERS[0].id;
+  });
 
-  function handleRotate(delta) {
-    setRotationDeg((prev) => prev + delta);
-  }
+  const [spinDeg, setSpinDeg] = useState(0);
+  const [isFlipping, setIsFlipping] = useState(false);
+  const [isGleaming, setIsGleaming] = useState(false);
 
-  function handlePose() {
-    setIsPosing(true);
-    showToast('Raka bergaya ceria! ⭐');
-    setTimeout(() => setIsPosing(false), 600);
-  }
+  // Filtered roster based on selected category
+  const displayedCharacters = filterGender === 'all'
+    ? AVAILABLE_CHARACTERS
+    : AVAILABLE_CHARACTERS.filter((c) => c.gender === filterGender);
 
-  function handleColorChange(colorId) {
-    setCurrentConfig((prev) => ({
-      ...prev,
-      outfitColor: colorId
-    }));
-    showToast('Warna pakaian diubah!');
-  }
+  const currentCharacter = AVAILABLE_CHARACTERS.find((c) => c.id === selectedId) || AVAILABLE_CHARACTERS[0];
 
-  function handleSelectOption(item) {
-    if (item.slot === 'accessories') {
-      setCurrentConfig((prev) => ({
-        ...prev,
-        accessories: prev.accessories === item.id ? 'none' : item.id
-      }));
-    } else if (item.slot === 'outfit') {
-      setCurrentConfig((prev) => ({
-        ...prev,
-        outfit: prev.outfit === item.id ? 'outfit-scout' : item.id
-      }));
-    } else if (item.slot === 'backpack') {
-      setCurrentConfig((prev) => ({
-        ...prev,
-        backpack: prev.backpack === item.id ? 'none' : item.id
-      }));
-    } else if (item.slot === 'shoes') {
-      setCurrentConfig((prev) => ({
-        ...prev,
-        shoes: prev.shoes === item.id ? 'shoes-sneakers' : item.id
-      }));
-    }
-  }
+  const isCurrentlyEquipped =
+    (characterConfig?.avatar === currentCharacter.id) ||
+    (!characterConfig?.avatar && currentCharacter.id === 'raka_explorer') ||
+    (characterConfig?.avatar === 'boy_raka' && currentCharacter.id === 'raka_explorer') ||
+    (characterConfig?.avatar === 'girl_tara' && currentCharacter.id === 'tara_adventurer');
 
-  function handleSave() {
-    updateCharacter(currentConfig);
-    navigate('/world');
-  }
+  // Trigger 3D Coin-Spin Animation when switching characters
+  const spinToCharacter = (targetId) => {
+    if (isFlipping || targetId === selectedId) return;
+    setIsFlipping(true);
+    setIsGleaming(true);
 
-  function handleReset() {
-    setCurrentConfig(characterConfig);
-    showToast('Kostum dikembalikan seperti semula.');
-  }
+    if (playSfx) playSfx('coin');
+
+    // First half of coin rotation: spin 90deg edge-on
+    setSpinDeg((prev) => prev + 90);
+
+    // At edge-on point (180ms), switch the character data
+    setTimeout(() => {
+      setSelectedId(targetId);
+      // Second half: complete rotation back to face
+      setSpinDeg((prev) => prev + 90);
+    }, 180);
+
+    // Finish spinning
+    setTimeout(() => {
+      setIsFlipping(false);
+      setIsGleaming(false);
+    }, 400);
+  };
+
+  const handleNext = () => {
+    if (isFlipping) return;
+    const currentIdx = displayedCharacters.findIndex((c) => c.id === currentCharacter.id);
+    const nextIdx = (currentIdx + 1) % displayedCharacters.length;
+    spinToCharacter(displayedCharacters[nextIdx].id);
+  };
+
+  const handlePrev = () => {
+    if (isFlipping) return;
+    const currentIdx = displayedCharacters.findIndex((c) => c.id === currentCharacter.id);
+    const prevIdx = (currentIdx - 1 + displayedCharacters.length) % displayedCharacters.length;
+    spinToCharacter(displayedCharacters[prevIdx].id);
+  };
+
+  // Save selected character to game state
+  const handleEquip = () => {
+    if (isCurrentlyEquipped) return;
+
+    if (playSfx) playSfx('achievement');
+
+    updateCharacter({
+      avatar: currentCharacter.id,
+      avatarImage: currentCharacter.image,
+      playerName: currentCharacter.gender === 'girl' ? 'Tara' : 'Raka',
+      gender: currentCharacter.gender,
+      hasCustomized: true
+    });
+
+    showToast(`✨ Karakter ${currentCharacter.name} berhasil dipilih! Siap beraksi! 🚀`);
+  };
+
+  // Support desktop keyboard navigation (ArrowLeft & ArrowRight)
+  useEffect(() => {
+    const handleKeyDown = (e) => {
+      if (['INPUT', 'TEXTAREA'].includes(document.activeElement?.tagName)) return;
+      if (e.key === 'ArrowRight') {
+        handleNext();
+      } else if (e.key === 'ArrowLeft') {
+        handlePrev();
+      }
+    };
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [displayedCharacters, currentCharacter, isFlipping]);
+
+  const renderActionButtons = () => (
+    <>
+      {isCurrentlyEquipped ? (
+        <div className={styles.equippedStatusBox}>
+          <span className="material-symbols-outlined" style={{ fontSize: '20px' }}>
+            check_circle
+          </span>
+          <span>Karakter Sedang Digunakan</span>
+        </div>
+      ) : (
+        <button
+          type="button"
+          onClick={handleEquip}
+          className={styles.primaryEquipBtn}
+        >
+          <span className="material-symbols-outlined" style={{ fontSize: '20px' }}>
+            stars
+          </span>
+          <span>Gunakan {currentCharacter.name}</span>
+        </button>
+      )}
+
+      <Link
+        to="/world"
+        className={styles.secondaryExploreBtn}
+      >
+        <span className="material-symbols-outlined" style={{ fontSize: '18px' }}>
+          explore
+        </span>
+        <span>Jelajahi Peta Dunia</span>
+      </Link>
+    </>
+  );
 
   return (
-    <div style={{
-      minHeight: '100vh',
-      backgroundColor: 'var(--color-surface)',
-      paddingTop: '20px',
-      paddingBottom: '100px',
-      display: 'flex',
-      flexDirection: 'column'
-    }}>
-      <main style={{
-        maxWidth: '520px',
-        width: '100%',
-        margin: '0 auto',
-        padding: '0 var(--space-md)',
-        display: 'flex',
-        flexDirection: 'column',
-        gap: 'var(--space-md)'
-      }}>
-        {/* Top Utility Sub-Header (Sesuai Stitch) */}
-        <section style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: 'var(--space-xs) 0' }}>
-          <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-            <Link
-              to="/world"
-              style={{
-                width: '40px',
-                height: '40px',
-                borderRadius: '50%',
-                backgroundColor: 'var(--color-surface-container-highest)',
-                color: 'var(--color-text-main)',
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                textDecoration: 'none'
-              }}
-            >
-              <span className="material-symbols-outlined" style={{ fontSize: '20px' }}>arrow_back</span>
+    <div className={styles.container}>
+      <main className={styles.main}>
+        {/* Top Header */}
+        <section className={styles.topHeader}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '14px' }}>
+            <Link to="/world" className={styles.backBtn} title="Kembali ke Peta Dunia">
+              <span className="material-symbols-outlined" style={{ fontSize: '22px' }}>arrow_back</span>
             </Link>
-            <div>
-              <span style={{ fontSize: '11px', fontWeight: 800, color: 'var(--color-primary)', textTransform: 'uppercase' }}>
-                Kamar Ganti
+            <div className={styles.headerTitleWrapper}>
+              <span className={styles.headerEyebrow}>
+                PILIH PETUALANGMU
               </span>
-              <h1 style={{ fontSize: '18px', fontWeight: 800, color: 'var(--color-text-main)', margin: 0 }}>
-                Kustomisasi Petualang
+              <h1 className={styles.headerTitle}>
+                Koleksi Karakter
               </h1>
             </div>
           </div>
 
-          <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
-            <div style={{
-              backgroundColor: 'var(--color-surface-container-high)',
-              padding: '4px 10px',
-              borderRadius: 'var(--radius-full)',
-              display: 'flex',
-              alignItems: 'center',
-              gap: '4px',
-              fontSize: '12px',
-              fontWeight: 800
-            }}>
-              <span className="material-symbols-outlined" style={{ fontSize: '16px', color: 'var(--color-primary)' }}>diamond</span>
+          <div className={styles.headerBadges}>
+            <div className={styles.coinBadge}>
+              <span>🪙</span>
               <span>{coins}</span>
             </div>
-            <div style={{
-              backgroundColor: 'var(--color-tertiary-container)',
-              color: 'var(--color-on-tertiary-container)',
-              padding: '4px 10px',
-              borderRadius: 'var(--radius-full)',
-              fontSize: '12px',
-              fontWeight: 800
-            }}>
+            <div className={styles.levelBadge}>
               Lv. {level}
             </div>
           </div>
         </section>
 
-        {/* Hero Stage / Character Showcase Area (Sesuai Stitch) */}
-        <section style={{
-          position: 'relative',
-          borderRadius: 'var(--radius-lg)',
-          backgroundColor: 'var(--color-surface-container-low)',
-          padding: 'var(--space-md)',
-          boxShadow: 'var(--shadow-card)',
-          display: 'flex',
-          flexDirection: 'column',
-          alignItems: 'center'
-        }}>
-          {/* Stage Tag */}
-          <div style={{
-            backgroundColor: 'var(--color-surface-container-highest)',
-            padding: '4px 14px',
-            borderRadius: 'var(--radius-full)',
-            fontSize: '12px',
-            fontWeight: 800,
-            display: 'inline-flex',
-            alignItems: 'center',
-            gap: '6px',
-            marginBottom: 'var(--space-xs)'
-          }}>
-            <span className="material-symbols-outlined" style={{ color: 'var(--color-tertiary)', fontSize: '16px' }}>stars</span>
-            <span>Raka si Penjelajah Bintang</span>
-            <span style={{ width: '8px', height: '8px', borderRadius: '50%', backgroundColor: 'var(--color-secondary-container)' }} />
+        {/* Content Layout: 2 Columns on Desktop, Single Column on Mobile */}
+        <div className={styles.contentLayout}>
+          {/* Left Column: 3D Coin Showcase & Action CTA */}
+          <div className={styles.showcaseColumn}>
+            <section className={styles.showcaseCard}>
+              {/* Badge Tag */}
+              <div
+                className={styles.badgePill}
+                style={{
+                  backgroundColor: `${currentCharacter.themeColor}18`,
+                  color: currentCharacter.themeColor
+                }}
+              >
+                <span className="material-symbols-outlined" style={{ fontSize: '16px' }}>
+                  {currentCharacter.badgeIcon}
+                </span>
+                <span>{currentCharacter.badge}</span>
+                {isCurrentlyEquipped && (
+                  <span className={styles.activeEquippedTag}>
+                    AKTIF
+                  </span>
+                )}
+              </div>
+
+              {/* 3D Coin Stage with Left & Right Interactive Buttons */}
+              <div className={styles.coinStage}>
+                {/* Left Coin Navigation Button */}
+                <button
+                  type="button"
+                  onClick={handlePrev}
+                  disabled={isFlipping}
+                  title="Karakter Sebelumnya (←)"
+                  className={`${styles.navArrowBtn} ${styles.navArrowLeft}`}
+                >
+                  <span className="material-symbols-outlined" style={{ fontSize: '24px', fontWeight: 800 }}>
+                    chevron_left
+                  </span>
+                </button>
+
+                {/* Right Coin Navigation Button */}
+                <button
+                  type="button"
+                  onClick={handleNext}
+                  disabled={isFlipping}
+                  title="Karakter Berikutnya (→)"
+                  className={`${styles.navArrowBtn} ${styles.navArrowRight}`}
+                >
+                  <span className="material-symbols-outlined" style={{ fontSize: '24px', fontWeight: 800 }}>
+                    chevron_right
+                  </span>
+                </button>
+
+                {/* Center Spinning Gold Coin */}
+                <div
+                  className={styles.coinFrame}
+                  style={{
+                    transform: `rotateY(${spinDeg}deg)`,
+                    boxShadow: isGleaming
+                      ? '0 0 35px 8px rgba(251, 191, 36, 0.7), 0 16px 36px -8px rgba(2, 132, 199, 0.4)'
+                      : '0 16px 36px -8px rgba(2, 132, 199, 0.35), 0 0 0 4px #fbbf24, 0 0 0 8px rgba(254, 240, 138, 0.8)'
+                  }}
+                >
+                  <img
+                    src={currentCharacter.image}
+                    alt={currentCharacter.name}
+                    className={styles.avatarImg}
+                  />
+
+                  {isGleaming && (
+                    <div className={styles.coinGleam} />
+                  )}
+                </div>
+              </div>
+
+              {/* Character Identity */}
+              <div className={styles.charDetails}>
+                <h2 className={styles.charName}>
+                  {currentCharacter.name}
+                </h2>
+                <span
+                  className={styles.charTitle}
+                  style={{ color: currentCharacter.themeColor }}
+                >
+                  {currentCharacter.title}
+                </span>
+                <p className={styles.charTagline}>
+                  {currentCharacter.tagline}
+                </p>
+              </div>
+            </section>
+
+            {/* Desktop Actions (Sticky with Showcase Column) */}
+            <div className={styles.desktopActions}>
+              {renderActionButtons()}
+              <div className={styles.keyboardHint}>
+                <span>💡</span>
+                <span>Gunakan tombol panah <b>←</b> dan <b>→</b> di keyboard untuk beralih karakter</span>
+              </div>
+            </div>
           </div>
 
-          {/* 3D Character Display & Rotation Buttons */}
-          <div style={{ position: 'relative', width: '100%', maxWidth: '280px', height: '240px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-            <button
-              onClick={() => handleRotate(-30)}
-              style={{
-                position: 'absolute',
-                left: 0,
-                zIndex: 20,
-                width: '40px',
-                height: '40px',
-                borderRadius: '50%',
-                backgroundColor: 'var(--color-surface-container-lowest)',
-                border: 'none',
-                boxShadow: 'var(--shadow-card)',
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                cursor: 'pointer'
-              }}
-            >
-              <span className="material-symbols-outlined">chevron_left</span>
-            </button>
-
-            <button
-              onClick={() => handleRotate(30)}
-              style={{
-                position: 'absolute',
-                right: 0,
-                zIndex: 20,
-                width: '40px',
-                height: '40px',
-                borderRadius: '50%',
-                backgroundColor: 'var(--color-surface-container-lowest)',
-                border: 'none',
-                boxShadow: 'var(--shadow-card)',
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                cursor: 'pointer'
-              }}
-            >
-              <span className="material-symbols-outlined">chevron_right</span>
-            </button>
-
-            {/* Character feedback speech bubble on pose */}
-            {isPosing && (
-              <div
-                className="animate-pop-in"
-                style={{
-                  position: 'absolute',
-                  top: '-14px',
-                  zIndex: 30,
-                  backgroundColor: 'var(--color-surface-container-lowest)',
-                  padding: '4px 14px',
-                  borderRadius: 'var(--radius-full)',
-                  boxShadow: 'var(--shadow-card)',
+          {/* Right Column: Interactive Character Gallery & Roster Panel */}
+          <div className={styles.rosterColumn}>
+            <div className={styles.rosterPanel}>
+              {/* Desktop Roster Header */}
+              <div className={styles.desktopRosterHeader}>
+                <div>
+                  <h3 style={{ fontSize: '18px', fontWeight: 800, color: '#0f172a', margin: 0 }}>
+                    Koleksi Karakter Petualang
+                  </h3>
+                  <p style={{ fontSize: '13px', color: '#64748b', margin: '3px 0 0 0' }}>
+                    Pilih dari 10 petualang cilik seru dengan kostum tematik khas Nusantara & Sains!
+                  </p>
+                </div>
+                <div style={{
                   display: 'flex',
                   alignItems: 'center',
-                  gap: '4px',
+                  gap: '6px',
+                  backgroundColor: '#f1f5f9',
+                  padding: '6px 12px',
+                  borderRadius: '9999px',
                   fontSize: '12px',
                   fontWeight: 800,
-                  color: 'var(--color-primary)',
-                  border: '2px solid var(--color-primary-fixed)'
-                }}
-              >
-                <span>Siap bertualang! 😎✨</span>
-              </div>
-            )}
-
-            {/* Avatar display */}
-            <div style={{
-              transform: `rotateY(${rotationDeg}deg) ${isPosing ? 'translateY(-14px) scale(1.08)' : 'scale(1)'}`,
-              transition: 'transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1)'
-            }}>
-              <CharacterAvatar config={currentConfig} size="hero" />
-            </div>
-
-            {/* Pose Action Button */}
-            <button
-              onClick={handlePose}
-              style={{
-                position: 'absolute',
-                bottom: '-8px',
-                zIndex: 20,
-                backgroundColor: 'var(--color-surface-container-lowest)',
-                padding: '4px 14px',
-                borderRadius: 'var(--radius-full)',
-                border: 'none',
-                boxShadow: 'var(--shadow-card)',
-                fontSize: '12px',
-                fontWeight: 800,
-                cursor: 'pointer',
-                display: 'flex',
-                alignItems: 'center',
-                gap: '4px'
-              }}
-            >
-              <span className="material-symbols-outlined" style={{ color: 'var(--color-secondary)', fontSize: '16px' }}>celebration</span>
-              <span>Pose Keren</span>
-            </button>
-          </div>
-
-          {/* Stats Bar */}
-          <div style={{
-            width: '100%',
-            marginTop: 'var(--space-md)',
-            backgroundColor: 'var(--color-surface-container-high)',
-            borderRadius: 'var(--radius-md)',
-            padding: '8px 14px',
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'space-between'
-          }}>
-            <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
-              <span className="material-symbols-outlined" style={{ color: 'var(--color-secondary)', fontSize: '18px' }}>bolt</span>
-              <div>
-                <span style={{ fontSize: '10px', color: 'var(--color-text-muted)', display: 'block' }}>Bonus Jelajah</span>
-                <span style={{ fontSize: '12px', fontWeight: 800 }}>+15% XP Sains</span>
-              </div>
-            </div>
-
-            <div style={{ height: '24px', width: '1px', backgroundColor: 'var(--color-outline-subtle)' }} />
-
-            <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
-              <span className="material-symbols-outlined" style={{ color: 'var(--color-primary)', fontSize: '18px' }}>speed</span>
-              <div>
-                <span style={{ fontSize: '10px', color: 'var(--color-text-muted)', display: 'block' }}>Kecepatan</span>
-                <span style={{ fontSize: '12px', fontWeight: 800 }}>Jalan Cepat</span>
-              </div>
-            </div>
-          </div>
-        </section>
-
-        {/* Category Tabs (Sesuai Stitch) */}
-        <section>
-          <div style={{ display: 'flex', gap: '8px', overflowX: 'auto', paddingBottom: '4px' }}>
-            {categories.map((cat) => {
-              const isCurrent = activeTab === cat.id;
-              return (
-                <button
-                  key={cat.id}
-                  onClick={() => setActiveTab(cat.id)}
-                  style={{
-                    padding: '8px 14px',
-                    borderRadius: 'var(--radius-full)',
-                    backgroundColor: isCurrent ? 'var(--color-primary-container)' : 'var(--color-surface-container-high)',
-                    color: isCurrent ? 'var(--color-on-primary-container)' : 'var(--color-text-main)',
-                    border: 'none',
-                    fontWeight: 800,
-                    fontSize: '12px',
-                    cursor: 'pointer',
-                    whiteSpace: 'nowrap',
-                    display: 'flex',
-                    alignItems: 'center',
-                    gap: '6px'
-                  }}
-                >
-                  <span className="material-symbols-outlined" style={{ fontSize: '16px' }}>{cat.icon}</span>
-                  <span>{cat.label}</span>
-                </button>
-              );
-            })}
-          </div>
-        </section>
-
-        {/* Color Swatches Bar (Sesuai Stitch) */}
-        <section style={{
-          backgroundColor: 'var(--color-surface-container-low)',
-          padding: '8px 14px',
-          borderRadius: 'var(--radius-md)',
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'space-between'
-        }}>
-          <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
-            <span className="material-symbols-outlined" style={{ color: 'var(--color-primary)', fontSize: '18px' }}>palette</span>
-            <span style={{ fontSize: '12px', fontWeight: 800 }}>Warna Kostum</span>
-          </div>
-
-          <div style={{ display: 'flex', gap: '8px' }}>
-            {COLOR_SWATCHES.map((swatch) => {
-              const isSelected = currentConfig.outfitColor === swatch.id;
-              return (
-                <button
-                  key={swatch.id}
-                  onClick={() => handleColorChange(swatch.id)}
-                  style={{
-                    width: '28px',
-                    height: '28px',
-                    borderRadius: '50%',
-                    backgroundColor: swatch.hex,
-                    border: 'none',
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                    cursor: 'pointer',
-                    transform: isSelected ? 'scale(1.2)' : 'scale(1)',
-                    boxShadow: isSelected ? '0 0 6px rgba(0,0,0,0.3)' : 'none'
-                  }}
-                >
-                  {isSelected && (
-                    <span className="material-symbols-outlined" style={{ color: swatch.textHex, fontSize: '16px' }}>check</span>
-                  )}
-                </button>
-              );
-            })}
-          </div>
-        </section>
-
-        {/* Tactile Items Grid (Sesuai Stitch) */}
-        <section style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: 'var(--space-sm)' }}>
-          {CATALOG_ITEMS.filter((item) => item.category === activeTab).map((item) => {
-            const isUnlocked = unlockedItemIds.includes(item.id) || item.defaultUnlocked;
-            const isEquipped =
-              currentConfig.accessories === item.id ||
-              currentConfig.outfit === item.id ||
-              currentConfig.backpack === item.id ||
-              currentConfig.shoes === item.id;
-
-            return (
-              <div
-                key={item.id}
-                onClick={() => {
-                  if (isUnlocked) handleSelectOption(item);
-                }}
-                style={{
-                  backgroundColor: 'var(--color-surface-container-lowest)',
-                  borderRadius: 'var(--radius-md)',
-                  padding: 'var(--space-sm)',
-                  boxShadow: 'var(--shadow-card)',
-                  cursor: isUnlocked ? 'pointer' : 'default',
-                  opacity: isUnlocked ? 1 : 0.6,
-                  position: 'relative',
-                  border: isEquipped ? '2px solid var(--color-secondary)' : '2px solid transparent'
-                }}
-              >
-                {isEquipped ? (
-                  <div style={{
-                    position: 'absolute',
-                    top: '6px',
-                    right: '6px',
-                    backgroundColor: 'var(--color-secondary)',
-                    color: 'var(--color-on-secondary)',
-                    padding: '2px 8px',
-                    borderRadius: 'var(--radius-full)',
-                    fontSize: '10px',
-                    fontWeight: 800,
-                    display: 'flex',
-                    alignItems: 'center',
-                    gap: '2px'
-                  }}>
-                    <span className="material-symbols-outlined" style={{ fontSize: '12px' }}>check</span>
-                    <span>Dipakai</span>
-                  </div>
-                ) : !isUnlocked ? (
-                  <div style={{
-                    position: 'absolute',
-                    top: '6px',
-                    right: '6px',
-                    backgroundColor: 'var(--color-error-container)',
-                    color: 'var(--color-on-error-container)',
-                    padding: '2px 8px',
-                    borderRadius: 'var(--radius-full)',
-                    fontSize: '10px',
-                    fontWeight: 800,
-                    display: 'flex',
-                    alignItems: 'center',
-                    gap: '2px'
-                  }}>
-                    <span className="material-symbols-outlined" style={{ fontSize: '12px' }}>lock</span>
-                    <span>Terkunci</span>
-                  </div>
-                ) : null}
-
-                <div style={{
-                  width: '100%',
-                  aspectRatio: '1',
-                  borderRadius: 'var(--radius-sm)',
-                  backgroundColor: 'var(--color-surface-container-low)',
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  margin: '4px 0',
-                  overflow: 'hidden',
-                  position: 'relative'
+                  color: '#475569'
                 }}>
-                  {item.previewImage ? (
-                    <img
-                      src={item.previewImage}
-                      alt={item.name}
-                      style={{
-                        width: '100%',
-                        height: '100%',
-                        objectFit: 'cover',
-                        borderRadius: 'var(--radius-sm)'
-                      }}
-                    />
-                  ) : (
-                    <span className="material-symbols-outlined" style={{ fontSize: '36px', color: 'var(--color-primary)' }}>
-                      {item.icon}
-                    </span>
-                  )}
+                  <span>✨</span>
+                  <span>{displayedCharacters.length} Karakter Tersedia</span>
                 </div>
+              </div>
 
-                <div>
-                  <h3 style={{ fontSize: '13px', fontWeight: 800, color: 'var(--color-text-main)', margin: '2px 0' }}>
-                    {item.name}
-                  </h3>
-                  <span style={{ fontSize: '11px', color: isUnlocked ? 'var(--color-secondary)' : 'var(--color-text-muted)', fontWeight: 700 }}>
-                    {item.tierText}
+              {/* Gender Filter Tabs */}
+              <div className={styles.filterTabs}>
+                <button
+                  type="button"
+                  onClick={() => setFilterGender('all')}
+                  className={`${styles.filterBtn} ${filterGender === 'all' ? styles.filterBtnActiveAll : ''}`}
+                >
+                  Semua (10)
+                </button>
+                <button
+                  type="button"
+                  onClick={() => {
+                    setFilterGender('boy');
+                    if (currentCharacter.gender !== 'boy') {
+                      const firstBoy = AVAILABLE_CHARACTERS.find((c) => c.gender === 'boy');
+                      if (firstBoy) spinToCharacter(firstBoy.id);
+                    }
+                  }}
+                  className={`${styles.filterBtn} ${filterGender === 'boy' ? styles.filterBtnActiveBoy : ''}`}
+                >
+                  👦 5 Raka (Cowok)
+                </button>
+                <button
+                  type="button"
+                  onClick={() => {
+                    setFilterGender('girl');
+                    if (currentCharacter.gender !== 'girl') {
+                      const firstGirl = AVAILABLE_CHARACTERS.find((c) => c.gender === 'girl');
+                      if (firstGirl) spinToCharacter(firstGirl.id);
+                    }
+                  }}
+                  className={`${styles.filterBtn} ${filterGender === 'girl' ? styles.filterBtnActiveGirl : ''}`}
+                >
+                  👧 5 Tara (Cewek)
+                </button>
+              </div>
+
+              {/* Character Roster Grid Section */}
+              <section>
+                <div className={styles.rosterHeaderMobile}>
+                  <span style={{ fontSize: '13px', fontWeight: 800, color: '#0f172a' }}>
+                    {filterGender === 'boy' ? 'Koleksi 5 Raka (Cowok)' : filterGender === 'girl' ? 'Koleksi 5 Tara (Cewek)' : 'Pilih dari Koleksi Petualang'}
+                  </span>
+                  <span style={{ fontSize: '11px', fontWeight: 700, color: '#64748b' }}>
+                    {Math.max(1, displayedCharacters.findIndex((c) => c.id === currentCharacter.id) + 1)} dari {displayedCharacters.length}
                   </span>
                 </div>
-              </div>
-            );
-          })}
-        </section>
 
-        {/* Bottom Sticky Action Dock (Sesuai Stitch) */}
-        <section style={{ display: 'flex', flexDirection: 'column', gap: '8px', marginTop: 'var(--space-md)' }}>
-          <button
-            onClick={handleSave}
-            style={{
-              width: '100%',
-              padding: '14px',
-              borderRadius: 'var(--radius-full)',
-              backgroundColor: 'var(--color-tertiary-container)',
-              color: 'var(--color-on-tertiary-container)',
-              border: 'none',
-              fontWeight: 800,
-              fontSize: '15px',
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              gap: '8px',
-              cursor: 'pointer',
-              boxShadow: 'var(--shadow-tactile-tertiary)'
-            }}
-          >
-            <span>Simpan & Mulai Petualangan!</span>
-            <span className="material-symbols-outlined" style={{ fontSize: '20px' }}>arrow_forward</span>
-          </button>
+                <div className={styles.characterGrid}>
+                  {displayedCharacters.map((char) => {
+                    const isSelected = char.id === currentCharacter.id;
+                    const isEquipped =
+                      (characterConfig?.avatar === char.id) ||
+                      (!characterConfig?.avatar && char.id === 'raka_explorer') ||
+                      (characterConfig?.avatar === 'boy_raka' && char.id === 'raka_explorer') ||
+                      (characterConfig?.avatar === 'girl_tara' && char.id === 'tara_adventurer');
 
-          <button
-            onClick={handleReset}
-            style={{
-              width: '100%',
-              padding: '10px',
-              borderRadius: 'var(--radius-full)',
-              backgroundColor: 'var(--color-surface-container-high)',
-              color: 'var(--color-text-muted)',
-              border: 'none',
-              fontWeight: 800,
-              fontSize: '13px',
-              cursor: 'pointer',
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              gap: '4px'
-            }}
-          >
-            <span className="material-symbols-outlined" style={{ fontSize: '16px' }}>restart_alt</span>
-            <span>Reset Kostum Semula</span>
-          </button>
-        </section>
+                    return (
+                      <button
+                        key={char.id}
+                        type="button"
+                        onClick={() => spinToCharacter(char.id)}
+                        title={char.name}
+                        className={`${styles.charCard} ${isSelected ? styles.charCardSelected : ''}`}
+                      >
+                        <div
+                          className={styles.avatarWrapper}
+                          style={{
+                            border: isSelected
+                              ? '3px solid #f59e0b'
+                              : char.gender === 'boy'
+                                ? '2px solid #bae6fd'
+                                : '2px solid #fecdd3',
+                            boxShadow: isSelected
+                              ? '0 6px 14px rgba(245, 158, 11, 0.45), 0 0 0 2px #fef08a'
+                              : '0 2px 6px rgba(15, 23, 42, 0.06)',
+                            backgroundColor: char.gender === 'boy' ? '#e0f2fe' : '#ffe4e6'
+                          }}
+                        >
+                          <img
+                            src={char.image}
+                            alt={char.name}
+                            className={styles.avatarImg}
+                          />
+                          {isEquipped && (
+                            <div className={styles.equippedBadge}>
+                              PAKAI
+                            </div>
+                          )}
+                        </div>
+                        <div className={styles.charLabelWrapper}>
+                          <span
+                            className={styles.cardName}
+                            style={{
+                              fontWeight: isSelected ? 800 : 700,
+                              color: isSelected ? '#0f172a' : '#475569'
+                            }}
+                          >
+                            {char.gender === 'boy' ? 'Raka' : 'Tara'}
+                          </span>
+                          <span
+                            className={styles.cardSubtitle}
+                            style={{
+                              fontWeight: isSelected ? 800 : 600,
+                              color: isSelected ? char.themeColor : '#94a3b8'
+                            }}
+                          >
+                            {char.shortTitle}
+                          </span>
+                          <span className={styles.desktopRolePill}>
+                            {char.gender === 'boy' ? 'Cowok' : 'Cewek'}
+                          </span>
+                        </div>
+                      </button>
+                    );
+                  })}
+                </div>
+              </section>
+            </div>
+
+            {/* Mobile Actions (Only shown on Mobile below roster) */}
+            <div className={styles.mobileActions}>
+              {renderActionButtons()}
+            </div>
+          </div>
+        </div>
       </main>
 
       <BottomNavDock />

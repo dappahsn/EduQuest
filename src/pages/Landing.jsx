@@ -165,9 +165,9 @@ export default function Landing() {
 
             <div className={styles.floatingChip2}>
               <span className="material-symbols-outlined" style={{ color: '#f59e0b', fontSize: '18px' }}>
-                pets
+                face_6
               </span>
-              <span>{isId ? 'Sahabat Petualang' : 'Companion Pets'}</span>
+              <span>{isId ? '10 Karakter Petualang' : '10 Explorer Characters'}</span>
             </div>
           </div>
         </div>
@@ -237,15 +237,15 @@ export default function Landing() {
 
           <div className={styles.featureCard}>
             <div className={styles.featureIconCircle}>
-              <span className="material-symbols-outlined" style={{ fontSize: '24px' }}>pets</span>
+              <span className="material-symbols-outlined" style={{ fontSize: '24px' }}>badge</span>
             </div>
             <h3 className={styles.featureTitle}>
-              {isId ? 'Adopsi & Rawat Hewan Sahabat' : 'Adopt & Care for Pets'}
+              {isId ? '10 Karakter & Profil Keren' : '10 Characters & Explorer Profile'}
             </h3>
             <p className={styles.featureText}>
               {isId
-                ? 'Buka sahabat lucu seperti Kucing Angka, Rubah Cerdik, dan Elang Logika yang menemanimu di setiap perjalanan.'
-                : 'Unlock loyal animal companions that motivate and accompany young explorers on every mission.'}
+                ? 'Pilih 5 karakter Raka dan 5 karakter Tara bertema petualang & sains, pantau progres XP, dan personalisasi profilmu.'
+                : 'Choose from 5 Raka and 5 Tara thematic characters, track your XP journey, and customize your explorer profile.'}
             </p>
           </div>
 

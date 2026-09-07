@@ -1,0 +1,799 @@
+/* ==========================================================================
+   GRAVITY LAB (DAYA TARIK GRAVITASI) - MODULE STYLES
+   ========================================================================== */
+
+.gameContainer {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  max-width: 880px;
+  margin: 0 auto;
+  min-height: calc(100vh - 120px);
+  background: radial-gradient(ellipse at 50% 15%, #0d152e 0%, #060917 65%, #03050c 100%);
+  border-radius: var(--radius-xl, 20px);
+  border: 1px solid rgba(147, 197, 253, 0.15);
+  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.7), 0 0 80px rgba(56, 189, 248, 0.08);
+  overflow: hidden;
+  position: relative;
+  user-select: none;
+}
+
+/* Cosmic Twinkle Stars Background */
+.gameContainer::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background-image: 
+    radial-gradient(1px 1px at 25px 35px, #ffffff, transparent),
+    radial-gradient(1.5px 1.5px at 110px 85px, #93c5fd, transparent),
+    radial-gradient(1px 1px at 230px 145px, #fef08a, transparent),
+    radial-gradient(2px 2px at 360px 55px, #ffffff, transparent),
+    radial-gradient(1px 1px at 490px 195px, #67e8f9, transparent),
+    radial-gradient(1.5px 1.5px at 610px 95px, #ffffff, transparent),
+    radial-gradient(1px 1px at 730px 165px, #f472b6, transparent),
+    radial-gradient(2px 2px at 820px 45px, #ffffff, transparent);
+  background-repeat: repeat;
+  background-size: 400px 300px;
+  opacity: 0.5;
+  pointer-events: none;
+}
+
+/* ---- TOP CONTROL BAR ---- */
+.topBar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 12px 18px;
+  background: rgba(10, 15, 30, 0.85);
+  border-bottom: 1px solid rgba(147, 197, 253, 0.12);
+  backdrop-filter: blur(8px);
+  z-index: 10;
+  gap: 12px;
+}
+
+.sectorBadgeWrap {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.sectorBadge {
+  align-self: flex-start;
+  font-size: 0.65rem;
+  font-weight: 900;
+  letter-spacing: 0.7px;
+  text-transform: uppercase;
+  color: #38bdf8;
+  background: rgba(56, 189, 248, 0.12);
+  border: 1px solid rgba(56, 189, 248, 0.25);
+  padding: 2px 8px;
+  border-radius: 9999px;
+}
+
+.sectorTitle {
+  font-size: 0.95rem;
+  font-weight: 900;
+  color: #f8fafc;
+  margin: 0;
+  letter-spacing: -0.2px;
+}
+
+.topActions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.iconBtn {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 6px 12px;
+  border-radius: 9999px;
+  border: 1px solid rgba(148, 163, 184, 0.2);
+  background: rgba(30, 41, 59, 0.6);
+  color: #cbd5e1;
+  font-size: 0.75rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: background 0.2s ease, border-color 0.2s ease, color 0.2s ease;
+}
+
+.iconBtn:hover {
+  background: rgba(56, 189, 248, 0.15);
+  border-color: rgba(56, 189, 248, 0.4);
+  color: #ffffff;
+}
+
+.iconBtnActive {
+  background: rgba(251, 191, 36, 0.2) !important;
+  border-color: #fbbf24 !important;
+  color: #fef08a !important;
+}
+
+/* ---- STATUS & HINT BANNER ---- */
+.statusBanner {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 16px;
+  background: rgba(15, 23, 42, 0.9);
+  border-bottom: 1px solid rgba(148, 163, 184, 0.1);
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: #94a3b8;
+  z-index: 10;
+}
+
+.statusSuccess {
+  color: #34d399;
+  background: rgba(6, 78, 59, 0.4);
+  border-bottom-color: rgba(16, 185, 129, 0.3);
+}
+
+.statusError {
+  color: #f87171;
+  background: rgba(69, 10, 10, 0.4);
+  border-bottom-color: rgba(239, 68, 68, 0.3);
+}
+
+.hintBanner {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  padding: 10px 16px;
+  background: rgba(120, 53, 15, 0.35);
+  border-bottom: 1px solid rgba(245, 158, 11, 0.3);
+  color: #fef08a;
+  font-size: 0.75rem;
+  font-weight: 600;
+  z-index: 10;
+}
+
+.hintText {
+  flex: 1;
+  line-height: 1.4;
+}
+
+.hintClose {
+  background: none;
+  border: none;
+  color: #fef08a;
+  cursor: pointer;
+  font-size: 0.9rem;
+  padding: 0 4px;
+}
+
+/* ---- LABORATORY MAIN ARENA ---- */
+.arena {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  padding: 14px;
+  position: relative;
+  overflow: hidden;
+  min-height: 380px;
+  gap: 12px;
+}
+
+/* ---- SECTOR 1: DUAL CHAMBER SPRINGS ---- */
+.dualChamberGrid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+  width: 100%;
+}
+
+.chamberCard {
+  background: rgba(15, 23, 42, 0.7);
+  border: 1.5px solid rgba(147, 197, 253, 0.15);
+  border-radius: 16px;
+  padding: 12px;
+  display: flex;
+  flex-direction: column;
+  position: relative;
+  overflow: hidden;
+  backdrop-filter: blur(8px);
+}
+
+.chamberCardEarth {
+  box-shadow: inset 0 0 40px rgba(56, 189, 248, 0.08), 0 6px 20px rgba(0, 0, 0, 0.4);
+  border-color: rgba(56, 189, 248, 0.25);
+}
+
+.chamberCardMoon {
+  box-shadow: inset 0 0 40px rgba(203, 213, 225, 0.06), 0 6px 20px rgba(0, 0, 0, 0.4);
+  border-color: rgba(203, 213, 225, 0.25);
+}
+
+.chamberHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 8px;
+}
+
+.chamberTitleWrap {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.planetMiniThumb {
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  object-fit: cover;
+  box-shadow: 0 0 10px rgba(56, 189, 248, 0.4);
+  border: 1px solid rgba(255, 255, 255, 0.3);
+}
+
+.chamberTitle {
+  font-size: 0.85rem;
+  font-weight: 800;
+  color: #f8fafc;
+  margin: 0;
+}
+
+.gravityPill {
+  font-size: 0.68rem;
+  font-weight: 900;
+  padding: 2px 8px;
+  border-radius: 9999px;
+  letter-spacing: 0.4px;
+}
+
+.gravityPillEarth {
+  background: rgba(56, 189, 248, 0.15);
+  color: #38bdf8;
+  border: 1px solid rgba(56, 189, 248, 0.3);
+}
+
+.gravityPillMoon {
+  background: rgba(251, 191, 36, 0.15);
+  color: #fef08a;
+  border: 1px solid rgba(251, 191, 36, 0.3);
+}
+
+/* Spring Scale Mechanism Container */
+.springRigContainer {
+  flex: 1;
+  min-height: 180px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-start;
+  position: relative;
+  background: rgba(10, 15, 30, 0.5);
+  border-radius: 12px;
+  border: 1px dashed rgba(147, 197, 253, 0.15);
+  padding: 8px 0 12px;
+}
+
+/* Digital LED Display */
+.ledReadout {
+  display: flex;
+  align-items: center;
+  justify-content: space-evenly;
+  width: 90%;
+  background: rgba(2, 6, 23, 0.85);
+  border: 1px solid rgba(56, 189, 248, 0.25);
+  border-radius: 12px;
+  padding: 6px 14px;
+  margin-bottom: 8px;
+}
+
+.ledItem {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+}
+
+.ledLabel {
+  font-size: 0.65rem;
+  font-weight: 800;
+  color: #94a3b8;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.ledValue {
+  font-size: 1.15rem;
+  font-weight: 900;
+  letter-spacing: 0.3px;
+}
+
+.ledValueEarth {
+  color: #38bdf8;
+  text-shadow: 0 0 8px rgba(56, 189, 248, 0.6);
+}
+
+.ledValueMoon {
+  color: #fef08a;
+  text-shadow: 0 0 8px rgba(254, 240, 138, 0.6);
+}
+
+/* Spring Scale SVG */
+.springSvg {
+  width: 100%;
+  max-width: 190px;
+  height: 220px;
+  filter: drop-shadow(0 8px 16px rgba(0, 0, 0, 0.5));
+}
+
+/* ---- SECTOR 2: JUMP & DROP PHYSICS TEST ---- */
+.jumpSimContainer {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+  width: 100%;
+  flex: 1;
+}
+
+.jumpChamber {
+  background: rgba(15, 23, 42, 0.75);
+  border: 1.5px solid rgba(147, 197, 253, 0.2);
+  border-radius: 16px;
+  padding: 12px;
+  display: flex;
+  flex-direction: column;
+  position: relative;
+  height: 270px;
+  overflow: hidden;
+}
+
+.jumpArenaView {
+  flex: 1;
+  position: relative;
+  background: linear-gradient(180deg, rgba(15, 23, 42, 0.9) 0%, rgba(30, 41, 59, 0.4) 100%);
+  border-radius: 10px;
+  border: 1px solid rgba(148, 163, 184, 0.15);
+  overflow: hidden;
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  padding-bottom: 8px;
+}
+
+/* Height Ruler on side */
+.heightRuler {
+  position: absolute;
+  left: 6px;
+  top: 8px;
+  bottom: 8px;
+  width: 32px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  font-size: 0.6rem;
+  font-weight: 800;
+  color: rgba(148, 163, 184, 0.6);
+  border-right: 1px dashed rgba(148, 163, 184, 0.3);
+  pointer-events: none;
+}
+
+.jumpActor {
+  position: absolute;
+  bottom: 8px;
+  width: 44px;
+  height: 44px;
+  object-fit: contain;
+  filter: drop-shadow(0 0 8px rgba(56, 189, 248, 0.4));
+  transition: bottom 0.05s linear;
+}
+
+.jumpPlatform {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 8px;
+  background: rgba(71, 85, 105, 0.6);
+  border-top: 1.5px solid #94a3b8;
+}
+
+.jumpStats {
+  display: flex;
+  justify-content: space-between;
+  padding: 6px 4px 0;
+  font-size: 0.68rem;
+  color: #cbd5e1;
+  font-weight: 700;
+}
+
+/* ---- SECTOR 3: COSMIC SEESAW BALANCE ---- */
+.seesawContainer {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  flex: 1;
+  background: rgba(15, 23, 42, 0.6);
+  border: 1px solid rgba(147, 197, 253, 0.18);
+  border-radius: 16px;
+  padding: 12px;
+  position: relative;
+}
+
+.seesawSvg {
+  width: 100%;
+  max-width: 600px;
+  height: 190px;
+}
+
+.beamAngleDisplay {
+  position: absolute;
+  top: 12px;
+  background: rgba(10, 15, 30, 0.85);
+  border: 1px solid rgba(56, 189, 248, 0.3);
+  border-radius: 9999px;
+  padding: 4px 14px;
+  font-size: 0.75rem;
+  font-weight: 800;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.beamAngleBalanced {
+  border-color: #34d399 !important;
+  color: #34d399 !important;
+  box-shadow: 0 0 12px rgba(52, 211, 153, 0.4);
+}
+
+.beamAngleUnbalanced {
+  color: #fbbf24;
+}
+
+/* ---- OBJECT SELECTOR TRAY ---- */
+.trayWrap {
+  padding: 12px 16px 16px;
+  background: rgba(10, 15, 30, 0.95);
+  border-top: 1px solid rgba(147, 197, 253, 0.15);
+  z-index: 10;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.trayHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.trayTitle {
+  font-size: 0.72rem;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.6px;
+  color: #94a3b8;
+}
+
+.trayInstructions {
+  font-size: 0.68rem;
+  font-weight: 600;
+  color: #38bdf8;
+}
+
+.objectsGrid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 8px;
+}
+
+.objectCard {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 10px;
+  background: rgba(30, 41, 59, 0.7);
+  border: 1.5px solid rgba(148, 163, 184, 0.2);
+  border-radius: 12px;
+  cursor: pointer;
+  text-align: left;
+  transition: background 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.objectCard:hover {
+  background: rgba(56, 189, 248, 0.16);
+  border-color: #38bdf8;
+  box-shadow: 0 4px 14px rgba(56, 189, 248, 0.25);
+}
+
+.objectCardActive {
+  background: rgba(56, 189, 248, 0.25) !important;
+  border-color: #38bdf8 !important;
+  box-shadow: 0 0 16px rgba(56, 189, 248, 0.5) !important;
+}
+
+.objectThumb3d {
+  width: 38px;
+  height: 38px;
+  border-radius: 10px;
+  object-fit: cover;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.6);
+  border: 1.5px solid rgba(255, 255, 255, 0.2);
+  flex-shrink: 0;
+}
+
+.objectEmoji {
+  font-size: 1.5rem;
+  flex-shrink: 0;
+}
+
+.objectMeta {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+}
+
+.objectName {
+  font-size: 0.75rem;
+  font-weight: 800;
+  color: #f8fafc;
+  line-height: 1.2;
+}
+
+.objectMass {
+  font-size: 0.65rem;
+  font-weight: 700;
+  color: #38bdf8;
+}
+
+/* Quiz questions section inside Tray */
+.quizCardWrap {
+  background: rgba(15, 23, 42, 0.85);
+  border: 1px solid rgba(56, 189, 248, 0.3);
+  border-radius: 14px;
+  padding: 10px 14px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.quizQuestion {
+  font-size: 0.78rem;
+  font-weight: 800;
+  color: #f8fafc;
+}
+
+.quizOptionsGrid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 8px;
+}
+
+.quizOptionBtn {
+  padding: 8px 6px;
+  background: rgba(30, 41, 59, 0.8);
+  border: 1.5px solid rgba(148, 163, 184, 0.25);
+  border-radius: 10px;
+  color: #e2e8f0;
+  font-size: 0.75rem;
+  font-weight: 800;
+  cursor: pointer;
+  text-align: center;
+  transition: background 0.2s ease, border-color 0.2s ease;
+}
+
+.quizOptionBtn:hover {
+  background: rgba(56, 189, 248, 0.2);
+  border-color: #38bdf8;
+  color: #ffffff;
+}
+
+.quizOptionBtnSelected {
+  background: rgba(56, 189, 248, 0.35) !important;
+  border-color: #38bdf8 !important;
+  color: #ffffff !important;
+  box-shadow: 0 0 10px rgba(56, 189, 248, 0.4);
+}
+
+/* Bottom Actions Controls */
+.bottomControls {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding-top: 8px;
+  gap: 12px;
+}
+
+.sectorDots {
+  display: flex;
+  gap: 6px;
+}
+
+.sectorDot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: rgba(148, 163, 184, 0.3);
+  transition: all 0.3s ease;
+}
+
+.sectorDotActive {
+  background: #38bdf8;
+  box-shadow: 0 0 8px #38bdf8;
+  width: 20px;
+  border-radius: 9999px;
+}
+
+.sectorDotDone {
+  background: #10b981;
+}
+
+.btnPrimary {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 20px;
+  background: linear-gradient(135deg, #0284c7 0%, #2563eb 100%);
+  color: #ffffff;
+  border: none;
+  border-radius: 9999px;
+  font-size: 0.85rem;
+  font-weight: 800;
+  cursor: pointer;
+  box-shadow: 0 4px 14px rgba(37, 99, 235, 0.4);
+  transition: background 0.2s ease, box-shadow 0.2s ease;
+}
+
+.btnPrimary:hover:not(:disabled) {
+  background: linear-gradient(135deg, #0ea5e9 0%, #3b82f6 100%);
+  box-shadow: 0 6px 20px rgba(59, 130, 246, 0.5);
+}
+
+.btnPrimary:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+/* ---- MODAL OVERLAYS ---- */
+.modalBackdrop {
+  position: absolute;
+  inset: 0;
+  background: rgba(3, 7, 18, 0.85);
+  backdrop-filter: blur(8px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 50;
+  padding: 20px;
+}
+
+.modalCard {
+  background: radial-gradient(circle at 50% 10%, #1e293b 0%, #0f172a 100%);
+  border: 1px solid rgba(56, 189, 248, 0.3);
+  border-radius: 20px;
+  padding: 24px;
+  max-width: 440px;
+  width: 100%;
+  text-align: center;
+  box-shadow: 0 20px 50px rgba(0, 0, 0, 0.8), 0 0 40px rgba(56, 189, 248, 0.2);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+}
+
+.modalIcon {
+  font-size: 3rem;
+}
+
+.modalBadge {
+  font-size: 0.7rem;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.8px;
+  color: #34d399;
+  background: rgba(16, 185, 129, 0.15);
+  padding: 3px 10px;
+  border-radius: 9999px;
+  border: 1px solid rgba(16, 185, 129, 0.3);
+}
+
+.modalTitle {
+  font-size: 1.25rem;
+  font-weight: 900;
+  color: #f8fafc;
+  margin: 0;
+}
+
+.modalDesc {
+  font-size: 0.82rem;
+  color: #94a3b8;
+  line-height: 1.5;
+  margin: 0;
+}
+
+.eduBox {
+  background: rgba(30, 41, 59, 0.7);
+  border: 1px solid rgba(148, 163, 184, 0.15);
+  border-radius: 12px;
+  padding: 10px 14px;
+  text-align: left;
+  width: 100%;
+}
+
+.eduTitle {
+  font-size: 0.7rem;
+  font-weight: 800;
+  color: #38bdf8;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  margin-bottom: 4px;
+}
+
+.eduContent {
+  font-size: 0.75rem;
+  color: #e2e8f0;
+  line-height: 1.4;
+}
+
+.btnModalNext {
+  width: 100%;
+  padding: 12px;
+  background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+  color: #ffffff;
+  border: none;
+  border-radius: 9999px;
+  font-size: 0.9rem;
+  font-weight: 800;
+  cursor: pointer;
+  box-shadow: 0 4px 14px rgba(16, 185, 129, 0.4);
+  margin-top: 6px;
+}
+
+.btnModalNext:hover {
+  filter: brightness(1.05);
+}
+
+.rewardGrid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 8px;
+  width: 100%;
+  margin: 8px 0;
+}
+
+.rewardPill {
+  background: rgba(30, 41, 59, 0.8);
+  border: 1px solid rgba(148, 163, 184, 0.15);
+  border-radius: 10px;
+  padding: 8px 4px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+}
+
+.rewardVal {
+  font-size: 0.95rem;
+  font-weight: 900;
+  color: #fef08a;
+}
+
+.rewardLabel {
+  font-size: 0.6rem;
+  font-weight: 700;
+  color: #94a3b8;
+  text-transform: uppercase;
+}
+
+@media (max-width: 640px) {
+  .dualChamberGrid {
+    grid-template-columns: 1fr;
+  }
+  .objectsGrid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+  .quizOptionsGrid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+  .rewardGrid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}

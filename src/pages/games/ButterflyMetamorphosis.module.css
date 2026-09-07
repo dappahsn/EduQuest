@@ -1,0 +1,827 @@
+/* ButterflyMetamorphosis.module.css */
+/* ==========================================================================
+   METAMORFOSIS KUPU-KUPU - 100% SINGLE SCREEN FULL VIEW (NO SCROLL)
+   Designed to fit completely within 100dvh viewport on mobile & desktop.
+   ========================================================================== */
+
+.gameContainer {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  height: 100%;
+  max-height: 100%;
+  width: 100%;
+  max-width: 680px;
+  margin: 0 auto;
+  position: relative;
+  user-select: none;
+  overflow: hidden;
+  box-sizing: border-box;
+  padding: 2px 0 6px;
+  gap: 8px;
+}
+
+/* ==========================================================================
+   1. COMPACT TOP BAR
+   ========================================================================== */
+.topBar {
+  background: rgba(255, 255, 255, 0.96);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  border: 1.5px solid #a7f3d0;
+  border-radius: 16px;
+  padding: 8px 14px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  box-shadow: 0 4px 14px rgba(16, 185, 129, 0.08);
+  flex-shrink: 0;
+  height: 48px;
+  box-sizing: border-box;
+}
+
+.topBarLeft {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.badgeIcon {
+  width: 32px;
+  height: 32px;
+  border-radius: 10px;
+  background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+  color: #ffffff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 18px;
+  flex-shrink: 0;
+}
+
+.titleGroup {
+  display: flex;
+  flex-direction: column;
+}
+
+.tagline {
+  font-size: 9.5px;
+  font-weight: 800;
+  color: #059669;
+  text-transform: uppercase;
+  letter-spacing: 0.4px;
+  line-height: 1;
+}
+
+.mainTitle {
+  font-size: 15px;
+  font-weight: 900;
+  color: #064e3b;
+  margin: 0;
+  line-height: 1.2;
+}
+
+.topBarRight {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.scorePill {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  padding: 4px 10px;
+  border-radius: 9999px;
+  background: #ecfdf5;
+  border: 1.2px solid #a7f3d0;
+  color: #047857;
+  font-weight: 800;
+  font-size: 12px;
+}
+
+.autoPlayBtn {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  padding: 5px 12px;
+  border-radius: 9999px;
+  background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+  color: #ffffff;
+  border: none;
+  font-weight: 800;
+  font-size: 11.5px;
+  cursor: pointer;
+  box-shadow: 0 3px 10px rgba(16, 185, 129, 0.25);
+  transition: all 0.2s ease;
+  white-space: nowrap;
+}
+
+.autoPlayBtn:hover,
+.autoPlayBtn:active {
+  transform: none !important;
+  box-shadow: 0 5px 14px rgba(16, 185, 129, 0.35);
+}
+
+/* ==========================================================================
+   2. UNIFIED CIRCULAR STAGE (MAXIMIZED ARENA & MINIMAL EMPTY SPACE)
+   ========================================================================== */
+.circleStage {
+  flex: 1;
+  min-height: 0;
+  background: #ffffff;
+  border: 2px solid #bbf7d0;
+  border-radius: 22px;
+  padding: 10px 10px 8px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  box-shadow: 0 8px 28px rgba(16, 185, 129, 0.1);
+  position: relative;
+  overflow: hidden;
+  box-sizing: border-box;
+}
+
+.circleStage::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(circle at 50% 50%, rgba(240, 253, 244, 0.8) 0%, #ffffff 82%);
+  pointer-events: none;
+}
+
+/* Dynamic Mission Card (Clear Objective, Spacious & No Truncation) */
+.missionCard {
+  width: 100%;
+  max-width: 520px;
+  background: linear-gradient(135deg, #f0fdf4 0%, #ffffff 100%);
+  border: 1.8px solid #86efac;
+  border-radius: 16px;
+  padding: 8px 14px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  box-shadow: 0 3px 12px rgba(16, 185, 129, 0.08);
+  flex-shrink: 0;
+  z-index: 5;
+  box-sizing: border-box;
+}
+
+.missionPrompt {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 12.5px;
+  font-weight: 800;
+  color: #065f46;
+  line-height: 1.35;
+  flex: 1;
+  min-width: 0;
+}
+
+.missionPromptIcon {
+  font-size: 18px;
+  flex-shrink: 0;
+}
+
+.missionActionBtn {
+  background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+  color: #ffffff;
+  border: none;
+  border-radius: 9999px;
+  padding: 7px 16px;
+  font-size: 12px;
+  font-weight: 900;
+  cursor: pointer;
+  box-shadow: 0 3px 10px rgba(16, 185, 129, 0.3);
+  white-space: nowrap;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  flex-shrink: 0;
+  transition: transform 0.1s ease, box-shadow 0.15s ease;
+}
+
+.missionActionBtn:active {
+  transform: scale(0.96) !important;
+}
+
+.progressChip {
+  background: rgba(255, 255, 255, 0.3);
+  padding: 2px 7px;
+  border-radius: 9999px;
+  font-size: 11px;
+  font-weight: 900;
+}
+
+/* The Circle Arena - ENLARGED UP TO 450PX TO OCCUPY SPACE (ZERO WASTED GAP) */
+.circleArena {
+  position: relative;
+  width: min(450px, 95vw, calc(100% - 10px));
+  height: min(450px, 95vw, calc(100% - 10px));
+  max-width: 100%;
+  aspect-ratio: 1 / 1;
+  margin: auto auto;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 3;
+}
+
+/* Subtle Orbit Guide Ring - PROPORTIONAL TO ENLARGED ARENA */
+.orbitGuideRing {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 76%;
+  height: 76%;
+  border-radius: 50%;
+  border: 2px dashed rgba(16, 185, 129, 0.32);
+  pointer-events: none;
+}
+
+/* Center Hub */
+.centerHub {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 94px;
+  height: 94px;
+  border-radius: 50%;
+  background: radial-gradient(circle at 40% 35%, #ffffff 0%, #ecfdf5 60%, #d1fae5 100%);
+  border: 2.5px solid #86efac;
+  box-shadow: 0 6px 18px rgba(16, 185, 129, 0.2);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  z-index: 8;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  padding: 4px;
+  box-sizing: border-box;
+}
+
+.centerHub:hover,
+.centerHub:active,
+.centerHub:focus {
+  transform: translate(-50%, -50%) !important;
+  border-color: #10b981;
+  box-shadow: 0 8px 24px rgba(16, 185, 129, 0.3);
+}
+
+.centerHubIcon {
+  font-size: 28px;
+  line-height: 1;
+  margin-bottom: 3px;
+}
+
+.centerHubLabel {
+  font-size: 10px;
+  font-weight: 900;
+  color: #065f46;
+  line-height: 1.15;
+  letter-spacing: -0.2px;
+}
+
+/* ==========================================================================
+   3. FOUR CREATURE NODES (Telur, Ulat, Kepompong, Kupu-kupu)
+   STRICTLY LOCKED POSITIONS - ZERO HORIZONTAL OR VERTICAL SHIFT ON HOVER
+   ========================================================================== */
+.creatureNode,
+.creatureNode:hover,
+.creatureNode:active,
+.creatureNode:focus {
+  position: absolute;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  cursor: pointer;
+  z-index: 10;
+  background: none;
+  border: none;
+  padding: 0;
+  transform-origin: center center;
+  transition: filter 0.2s ease !important;
+}
+
+/* Position 1: TELUR (Top / 12 o'clock) */
+.nodeTelur,
+.nodeTelur:hover,
+.nodeTelur:active,
+.nodeTelur:focus,
+.nodeTelur.creatureNodeActive {
+  top: 0px !important;
+  left: 50% !important;
+  right: auto !important;
+  bottom: auto !important;
+  transform: translate(-50%, 0) !important;
+}
+.nodeTelur:hover,
+.nodeTelur.creatureNodeActive {
+  filter: drop-shadow(0 4px 12px rgba(244, 114, 182, 0.35));
+}
+
+/* Position 2: ULAT (Right / 3 o'clock) */
+.nodeUlat,
+.nodeUlat:hover,
+.nodeUlat:active,
+.nodeUlat:focus,
+.nodeUlat.creatureNodeActive {
+  top: 50% !important;
+  right: 0px !important;
+  left: auto !important;
+  bottom: auto !important;
+  transform: translate(0, -50%) !important;
+}
+.nodeUlat:hover,
+.nodeUlat.creatureNodeActive {
+  filter: drop-shadow(0 4px 12px rgba(56, 189, 248, 0.35));
+}
+
+/* Position 3: KEPOMPONG (Bottom / 6 o'clock) */
+.nodeKepompong,
+.nodeKepompong:hover,
+.nodeKepompong:active,
+.nodeKepompong:focus,
+.nodeKepompong.creatureNodeActive {
+  bottom: 0px !important;
+  left: 50% !important;
+  top: auto !important;
+  right: auto !important;
+  transform: translate(-50%, 0) !important;
+}
+.nodeKepompong:hover,
+.nodeKepompong.creatureNodeActive {
+  filter: drop-shadow(0 4px 12px rgba(148, 163, 184, 0.35));
+}
+
+/* Position 4: KUPU-KUPU (Left / 9 o'clock) */
+.nodeKupukupu,
+.nodeKupukupu:hover,
+.nodeKupukupu:active,
+.nodeKupukupu:focus,
+.nodeKupukupu.creatureNodeActive {
+  top: 50% !important;
+  left: 0px !important;
+  right: auto !important;
+  bottom: auto !important;
+  transform: translate(0, -50%) !important;
+}
+.nodeKupukupu:hover,
+.nodeKupukupu.creatureNodeActive {
+  filter: drop-shadow(0 4px 12px rgba(250, 204, 21, 0.35));
+}
+
+/* Pill badges matching image colors */
+.pillBadge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 3px;
+  padding: 3px 12px;
+  border-radius: 9999px;
+  font-size: 12px;
+  font-weight: 900;
+  margin-bottom: 2px;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.06);
+  transition: all 0.2s ease;
+  white-space: nowrap;
+}
+
+.pillTelur {
+  background-color: #fdf2f8;
+  border: 1.8px solid #f472b6;
+  color: #be185d;
+}
+
+.pillUlat {
+  background-color: #f0f9ff;
+  border: 1.8px solid #38bdf8;
+  color: #0369a1;
+}
+
+.pillKepompong {
+  background-color: #f8fafc;
+  border: 1.8px solid #94a3b8;
+  color: #334155;
+}
+
+.pillKupukupu {
+  background-color: #fefce8;
+  border: 1.8px solid #facc15;
+  color: #854d0e;
+}
+
+.creatureNodeActive .pillBadge {
+  box-shadow: 0 0 0 2.5px #10b981, 0 4px 12px rgba(16, 185, 129, 0.4);
+}
+
+/* Node Lock & Glow States */
+.nodeLocked {
+  opacity: 0.68 !important;
+  filter: saturate(0.82) brightness(0.95) !important;
+  cursor: pointer !important;
+  transition: all 0.3s ease !important;
+}
+
+.nodeLocked:hover {
+  opacity: 0.88 !important;
+  filter: saturate(0.96) brightness(1) !important;
+}
+
+.lockBadge {
+  position: absolute;
+  top: -2px;
+  right: -2px;
+  background: #475569;
+  color: #ffffff;
+  font-size: 8.5px;
+  font-weight: 900;
+  padding: 1px 5px;
+  border-radius: 9999px;
+  border: 1px solid #ffffff;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.25);
+  line-height: 1.2;
+  z-index: 12;
+}
+
+.activeGlowRing {
+  position: absolute;
+  inset: -8px;
+  border-radius: 50%;
+  border: 2.5px solid #10b981;
+  animation: pulseActiveRing 1.6s infinite ease-in-out;
+  pointer-events: none;
+  z-index: 9;
+}
+
+@keyframes pulseActiveRing {
+  0%, 100% { transform: scale(1); opacity: 0.9; box-shadow: 0 0 10px rgba(16, 185, 129, 0.5); }
+  50% { transform: scale(1.1); opacity: 0.3; box-shadow: 0 0 20px rgba(16, 185, 129, 0.8); }
+}
+
+.completedCheckBadge {
+  position: absolute;
+  top: -2px;
+  right: -2px;
+  background: #10b981;
+  color: #ffffff;
+  font-size: 9px;
+  font-weight: 900;
+  width: 17px;
+  height: 17px;
+  border-radius: 50%;
+  border: 1.5px solid #ffffff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 2px 6px rgba(16, 185, 129, 0.35);
+  z-index: 12;
+}
+
+/* Illustration Box */
+.illustrationBox {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* ==========================================================================
+   4. ANIMATIONS PER CREATURE
+   ========================================================================== */
+
+/* A. KUPU-KUPU (Wing Flapping anchored firmly at body) */
+.butterflySvg {
+  overflow: visible;
+}
+
+.wingLeftWrapper {
+  transform-origin: 0px 0px;
+  animation: flapLeftWing 0.75s ease-in-out infinite alternate;
+}
+
+.wingRightWrapper {
+  transform-origin: 0px 0px;
+  animation: flapRightWing 0.75s ease-in-out infinite alternate;
+}
+
+@keyframes flapLeftWing {
+  0% { transform: scaleX(1) rotate(0deg); }
+  100% { transform: scaleX(0.24) rotate(-4deg) skewY(-5deg); }
+}
+
+@keyframes flapRightWing {
+  0% { transform: scaleX(1) rotate(0deg); }
+  100% { transform: scaleX(0.24) rotate(4deg) skewY(5deg); }
+}
+
+.fastFlap .wingLeftWrapper {
+  animation-duration: 0.22s !important;
+}
+
+.fastFlap .wingRightWrapper {
+  animation-duration: 0.22s !important;
+}
+
+.butterflyFlying {
+  animation: flyHoverInPlace 2.2s ease-in-out forwards;
+}
+
+@keyframes flyHoverInPlace {
+  0%, 100% { transform: translateY(0); }
+  25% { transform: translateY(-10px) rotate(3deg); }
+  50% { transform: translateY(-14px) rotate(-3deg); }
+  75% { transform: translateY(-5px) rotate(2deg); }
+}
+
+/* B. ULAT (Inchworm Crawl & Chew) */
+.caterpillarCrawling {
+  animation: inchwormCrawl 1.5s ease-in-out infinite;
+}
+
+@keyframes inchwormCrawl {
+  0%, 100% { transform: scaleX(1) scaleY(1); }
+  35% { transform: scaleX(0.9) scaleY(1.15) translateY(-3px); }
+  70% { transform: scaleX(1.05) scaleY(0.94) translateY(0); }
+}
+
+.caterpillarChewing {
+  animation: chewVibrate 0.22s ease-in-out infinite alternate;
+}
+
+@keyframes chewVibrate {
+  0% { transform: translateY(0) rotate(0deg); }
+  100% { transform: translateY(-2px) rotate(2.5deg); }
+}
+
+/* C. KEPOMPONG (Swaying & Golden Transformation) */
+.chrysalisSway {
+  transform-origin: 65px 25px;
+  animation: pendulumSway 2.8s ease-in-out infinite alternate;
+}
+
+@keyframes pendulumSway {
+  0% { transform: rotate(-5deg); }
+  100% { transform: rotate(5deg); }
+}
+
+.chrysalisGlowing {
+  animation: chrysalisGoldenThrob 0.5s ease-in-out infinite alternate;
+}
+
+@keyframes chrysalisGoldenThrob {
+  0% { filter: drop-shadow(0 0 3px #eab308); }
+  100% { filter: drop-shadow(0 0 16px #facc15); }
+}
+
+/* D. TELUR (Gleam & Hatching) */
+.eggGleam {
+  animation: eggSparklePulse 2s ease-in-out infinite alternate;
+}
+
+@keyframes eggSparklePulse {
+  0% { filter: drop-shadow(0 0 2px #facc15); }
+  100% { filter: drop-shadow(0 0 7px #fef08a); }
+}
+
+.eggHatching {
+  animation: eggWiggleCrack 0.45s ease-in-out infinite;
+}
+
+@keyframes eggWiggleCrack {
+  0%, 100% { transform: rotate(0deg); }
+  25% { transform: rotate(-4deg); }
+  75% { transform: rotate(4deg); }
+}
+
+/* ==========================================================================
+   5. CURVED RED ARROWS OVERLAY
+   ========================================================================== */
+.arrowsSvg {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  z-index: 4;
+}
+
+.arrowPath {
+  fill: none;
+  stroke: #dc2626;
+  stroke-width: 3.2;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.arrowPathGlowing {
+  stroke: #16a34a !important;
+  stroke-width: 4 !important;
+  stroke-dasharray: 7 5;
+  animation: flowClockwise 0.8s linear infinite;
+}
+
+@keyframes flowClockwise {
+  to { stroke-dashoffset: -24; }
+}
+
+/* ==========================================================================
+   6. CLEAN BOTTOM DOCK
+   ========================================================================== */
+.bottomDock {
+  background: rgba(255, 255, 255, 0.95);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  border: 1.5px solid #a7f3d0;
+  border-radius: 16px;
+  padding: 6px 14px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  flex-shrink: 0;
+  height: 48px;
+  box-sizing: border-box;
+  box-shadow: 0 4px 14px rgba(16, 185, 129, 0.08);
+}
+
+.chipBtn {
+  background: #f8fafc;
+  border: 1.2px solid #cbd5e1;
+  border-radius: 9999px;
+  padding: 6px 14px;
+  font-size: 12px;
+  font-weight: 800;
+  color: #334155;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  white-space: nowrap;
+  transition: all 0.15s ease;
+}
+
+.chipBtn:hover,
+.chipBtn:active {
+  background: #f1f5f9;
+  transform: none !important;
+}
+
+.finishBtn {
+  background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
+  color: #ffffff;
+  border: none;
+  border-radius: 9999px;
+  padding: 6px 12px;
+  font-size: 11.5px;
+  font-weight: 900;
+  cursor: pointer;
+  box-shadow: 0 3px 10px rgba(217, 119, 6, 0.3);
+  transition: all 0.2s ease;
+  white-space: nowrap;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  flex-shrink: 0;
+}
+
+.finishBtn:hover,
+.finishBtn:active {
+  transform: none !important;
+  box-shadow: 0 5px 14px rgba(217, 119, 6, 0.4);
+}
+
+.finishBtnDisabled {
+  background: #cbd5e1 !important;
+  color: #64748b !important;
+  box-shadow: none !important;
+  cursor: not-allowed !important;
+  opacity: 0.8 !important;
+}
+
+.finishBtnUnlocked {
+  animation: pulseGold 1.5s infinite ease-in-out;
+}
+
+@keyframes pulseGold {
+  0%, 100% { box-shadow: 0 3px 12px rgba(217, 119, 6, 0.4); transform: scale(1); }
+  50% { box-shadow: 0 6px 22px rgba(245, 158, 11, 0.85); transform: scale(1.02); }
+}
+
+/* ==========================================================================
+   7. VICTORY OVERLAY
+   ========================================================================== */
+.victoryOverlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(6, 78, 59, 0.7);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 16px;
+  z-index: 1000;
+  animation: fadeIn 0.3s ease;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+.victoryCard {
+  background: #ffffff;
+  border: 2px solid #a7f3d0;
+  border-radius: 24px;
+  padding: 24px 20px;
+  max-width: 400px;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  box-shadow: 0 20px 50px rgba(0, 0, 0, 0.25);
+  animation: zoomIn 0.35s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+@keyframes zoomIn {
+  from { transform: scale(0.85); opacity: 0; }
+  to { transform: scale(1); opacity: 1; }
+}
+
+.victoryIconWrapper {
+  font-size: 52px;
+  line-height: 1;
+  margin-bottom: 8px;
+}
+
+.victoryTitle {
+  font-size: 21px;
+  font-weight: 900;
+  color: #065f46;
+  margin: 0 0 4px 0;
+}
+
+.victorySubtitle {
+  font-size: 13px;
+  color: #475569;
+  line-height: 1.45;
+  margin: 0 0 16px 0;
+}
+
+.rewardsRow {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 14px;
+}
+
+.rewardBadge {
+  background: #f0fdf4;
+  border: 1.5px solid #86efac;
+  border-radius: 9999px;
+  padding: 6px 14px;
+  font-size: 13px;
+  font-weight: 800;
+  color: #065f46;
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+
+.cardDropBadge {
+  background: #fdf2f8;
+  border: 1.5px solid #f472b6;
+  border-radius: 12px;
+  padding: 8px 14px;
+  font-size: 12px;
+  color: #831843;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin-bottom: 18px;
+  width: 100%;
+  justify-content: center;
+}
+
+.victoryActionBtn {
+  background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+  color: #ffffff;
+  border: none;
+  border-radius: 9999px;
+  padding: 12px 28px;
+  font-size: 15px;
+  font-weight: 900;
+  cursor: pointer;
+  box-shadow: 0 6px 20px rgba(16, 185, 129, 0.4);
+  width: 100%;
+}

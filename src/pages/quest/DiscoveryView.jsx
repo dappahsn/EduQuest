@@ -6,15 +6,15 @@ import BottomNavDock from '../../components/navigation/BottomNavDock';
 const DISCOVERY_DATA = {
   'disc-la-1': {
     id: 'disc-la-1',
-    title: 'Keajaiban Penjumlahan Segitiga',
+    title: 'Jembatan Lompatan Perkalian',
     regionName: 'Lembah Angka',
-    category: 'Matematika & Geometri',
+    category: 'Perkalian Cepat',
     gameId: 'mini-nc',
-    conceptEmoji: '📐',
-    factTitle: 'Tahukah Kamu?',
-    factContent: 'Bentuk segitiga adalah salah satu bentuk terkuat di alam semesta. Jembatan rel kereta dan atap rumah selalu memakai struktur segitiga agar kokoh!',
-    funChallenge: 'Coba bayangkan 3 sisi segitiga saling menopang satu sama lain.',
-    rewardPreview: '+120 XP • 1 Kartu Pengetahuan'
+    conceptEmoji: '🔢',
+    factTitle: 'Pola Rahasia Perkalian',
+    factContent: 'Perkalian 7 x 8 = 56. Kamu bisa mengingatnya dengan urutan angka: 5, 6, 7, 8! (56 = 7 x 8). Menarik sekali, kan?',
+    funChallenge: 'Lompati batu sungai dengan jawaban perkalian yang tepat!',
+    rewardPreview: '+120 XP • Kartu Bumi'
   },
   'disc-la-2': {
     id: 'disc-la-2',
@@ -30,27 +30,63 @@ const DISCOVERY_DATA = {
   },
   'disc-la-3': {
     id: 'disc-la-3',
-    title: 'Jembatan Lompatan Perkalian',
+    title: 'Keajaiban Penjumlahan Segitiga',
     regionName: 'Lembah Angka',
-    category: 'Perkalian Cepat',
-    gameId: 'mini-nc',
-    conceptEmoji: '🔢',
-    factTitle: 'Pola Rahasia Perkalian',
-    factContent: 'Perkalian 7 x 8 = 56. Kamu bisa mengingatnya dengan urutan angka: 5, 6, 7, 8! (56 = 7 x 8). Menarik sekali, kan?',
-    funChallenge: 'Lompati batu sungai dengan jawaban perkalian yang tepat!',
-    rewardPreview: '+150 XP • Kartu Bumi'
+    category: 'Matematika & Geometri',
+    gameId: 'mini-mt',
+    conceptEmoji: '📐',
+    factTitle: 'Tahukah Kamu?',
+    factContent: 'Bentuk segitiga adalah salah satu bentuk terkuat di alam semesta. Jembatan rel kereta dan atap rumah selalu memakai struktur segitiga agar kokoh!',
+    funChallenge: 'Coba bayangkan 3 sisi segitiga saling menopang satu sama lain.',
+    rewardPreview: '+160 XP • 1 Kartu Pengetahuan'
+  },
+  'disc-la-boss': {
+    id: 'disc-la-boss',
+    title: 'Misteri Variabel & Gerbang Aljabar',
+    regionName: 'Lembah Angka',
+    category: 'Aljabar & Logika Persamaan',
+    gameId: 'mini-ag',
+    conceptEmoji: '🔮',
+    factTitle: 'Seni Timbangan Aljabar',
+    factContent: 'Aljabar itu seperti timbangan ajaib kuno. Apapun yang kamu kurangkan atau tambahkan di sisi kiri gerbang, harus dilakukan sama persis di sisi kanan agar gerbang tetap seimbang!',
+    funChallenge: 'Jika [Kotak Rahasia x + 15 energi] seimbang dengan 40 energi, berapa energi di dalam Kotak Rahasia x?',
+    rewardPreview: '+300 XP • Mahkota Kristal Angka'
   },
   'disc-hs-1': {
     id: 'disc-hs-1',
     title: 'Misteri Fotosintesis & Klorofil',
     regionName: 'Hutan Sains',
     category: 'Biologi Tumbuhan',
-    gameId: 'mini-nc',
+    gameId: 'mini-ps',
     conceptEmoji: '🌿',
     factTitle: 'Dapur Alami Daun',
     factContent: 'Tumbuhan memasak makanannya sendiri menggunakan bantuan cahaya Matahari, air, dan zat hijau daun yang disebut klorofil!',
     funChallenge: 'Bayangkan daun sebagai panel surya kecil ciptaan alam.',
-    rewardPreview: '+120 XP • Kartu Hutan Hujan'
+    rewardPreview: '+140 XP • Kartu Fotosintesis'
+  },
+  'disc-hs-2': {
+    id: 'disc-hs-2',
+    title: 'Metamorfosis Sempurna Kupu-Kupu',
+    regionName: 'Hutan Sains',
+    category: 'Siklus Hidup Serangga',
+    gameId: 'mini-bm',
+    conceptEmoji: '🦋',
+    factTitle: 'Transformasi Luar Biasa',
+    factContent: 'Kupu-kupu mengalami metamorfosis sempurna 4 tahap: Telur (Ovum), Ulat (Larva), Kepompong (Pupa), hingga Kupu-kupu dewasa (Imago) yang terbang membantu penyerbukan bunga!',
+    funChallenge: 'Urutkan tahapan metamorfosis dan rawat ulat hingga sayapnya mekar sempurna!',
+    rewardPreview: '+140 XP • Kartu Kupu-Kupu Rimba'
+  },
+  'disc-hs-3': {
+    id: 'disc-hs-3',
+    title: 'Keajaiban Flora Langka Nusantara',
+    regionName: 'Hutan Sains',
+    category: 'Adaptasi Tumbuhan Langka',
+    gameId: 'mini-rf',
+    conceptEmoji: '🌺',
+    factTitle: 'Karnivora & Holoparasit Terbesar',
+    factContent: 'Kantong Semar menjebak serangga di kolam enzim asam untuk memperoleh Nitrogen di tanah miskin hara. Sedangkan Padma Raksasa (Rafflesia arnoldii) tidak memiliki daun, batang, atau akar, dan memikat lalat penyerbuk menggunakan aroma khas bangkai!',
+    funChallenge: 'Pancing serangga ke kantong semar dan mekarkan bunga raksasa Rafflesia!',
+    rewardPreview: '+160 XP • Kartu Padma & Kantong Semar'
   },
   'disc-nc-1': {
     id: 'disc-nc-1',
@@ -64,6 +100,30 @@ const DISCOVERY_DATA = {
     funChallenge: 'Susun kata menjadi kalimat yang mengisahkan keberanian Timun Mas.',
     rewardPreview: '+150 XP • Kartu Kepulauan'
   },
+  'disc-nc-2': {
+    id: 'disc-nc-2',
+    title: 'Formula Rahasia SPOK Bahasa',
+    regionName: 'Negeri Cerita',
+    category: 'Tata Bahasa & Sintaksis',
+    gameId: 'mini-sb',
+    conceptEmoji: '✍️',
+    factTitle: 'Pilar Kalimat Bahasa Indonesia',
+    factContent: 'Kalimat yang baik tersusun dari Subjek (S - Siapa), Predikat (P - Melakukan apa), Objek (O - Sasaran tindakan), dan Keterangan (K - Di mana atau kapan). Dengan formula ini, ceritamu menjadi jelas dan memikat pembaca!',
+    funChallenge: 'Identifikasi peran kata dan susun 3 kisah Nusantara yang hebat!',
+    rewardPreview: '+160 XP • Kitab Sastra & Pena Emas'
+  },
+  'disc-nc-3': {
+    id: 'disc-nc-3',
+    title: 'Rahasia Bait & Rima Pantun Nusantara',
+    regionName: 'Negeri Cerita',
+    category: 'Sastra & Bahasa Indonesia',
+    gameId: 'mini-pp',
+    conceptEmoji: '🪶',
+    factTitle: 'Seni Pantun Warisan Budaya Dunia',
+    factContent: 'Pantun adalah karya sastra asli kepulauan Nusantara yang diakui UNESCO sebagai Warisan Budaya Takbenda Dunia! Pantun terdiri dari 4 baris: baris 1 dan 2 adalah "Sampiran" (pembuka berima), sedangkan baris 3 dan 4 adalah "Isi" (pesan moral/nasihat). Pola rima akhirnya selalu bersajak silang a-b-a-b.',
+    funChallenge: 'Lengkapi sampiran dan isi pantun berima serasi, pecahkan teka-teki jenaka, dan jadilah Pujangga Agung!',
+    rewardPreview: '+180 XP • Pena Kencana & Kartu Pantun'
+  },
   'disc-gt-1': {
     id: 'disc-gt-1',
     title: 'Algoritma & Pemrograman Robot',
@@ -75,6 +135,30 @@ const DISCOVERY_DATA = {
     factContent: 'Robot tidak bisa menebak pikiran manusia. Robot hanya bisa menjalankan instruksi langkah-demi-langkah yang runut dan jelas!',
     funChallenge: 'Rancang deretan instruksi terbaik untuk memandu Bot Budi ke baterai kristal.',
     rewardPreview: '+160 XP • Kartu Gunung Berapi'
+  },
+  'disc-gt-2': {
+    id: 'disc-gt-2',
+    title: 'Mekanika Roda Gigi Benteng',
+    regionName: 'Gunung Teka-Teki',
+    category: 'Pemikiran Komputasional & Fisika',
+    gameId: 'mini-gp',
+    conceptEmoji: '⚙️',
+    factTitle: 'Arah Rotasi Roda Gigi',
+    factContent: 'Ketika dua roda gigi bertaut dan bersentuhan, arah putarannya SELALU berlawanan! Jika roda pertama berputar searah jarum jam (kanan), roda kedua pasti berputar berlawanan jarum jam (kiri).',
+    funChallenge: 'Analisis arah putaran dari roda penggerak hingga roda sasaran benteng lava!',
+    rewardPreview: '+180 XP • Kunci Pas Mekanik'
+  },
+  'disc-gt-3': {
+    id: 'disc-gt-3',
+    title: 'Misteri Gerbang Logika Digital',
+    regionName: 'Gunung Teka-Teki',
+    category: 'Pemikiran Komputasional',
+    gameId: 'mini-lg',
+    conceptEmoji: '⚡',
+    factTitle: 'Otak di Balik Robot & Komputer',
+    factContent: 'Semua komputer dan robot di dunia bekerja menggunakan gerbang logika dasar: AND (semua harus Benar), OR (salah satu Benar sudah cukup), dan NOT (membalik Benar jadi Salah, Salah jadi Benar)!',
+    funChallenge: 'Aktifkan kombinasi saklar yang tepat agar arus listrik mengalir membuka pintu ruang harta!',
+    rewardPreview: '+200 XP • Kunci Kristal & Kartu Logika'
   },
   'disc-ap-1': {
     id: 'disc-ap-1',

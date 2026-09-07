@@ -46,9 +46,17 @@ function CharacterAvatar({
   // Dynamic 3D storybook character mapping based on avatar ID or accessories
   const getAvatarImage = () => {
     if (config.avatarImage) return config.avatarImage;
+
+    // Tara Avatars (5 Karakter Cewek)
+    if (config.avatar === 'tara_astronaut') return '/images/tara-astronaut.png';
+    if (config.avatar === 'tara_detective') return '/images/tara-detective.png';
+    if (config.avatar === 'tara_nature') return '/images/tara-nature.png';
+    if (config.avatar === 'tara_casual') return '/images/tara-casual.png';
     if (config.avatar === 'tara_adventurer' || config.avatar === 'girl_tara') {
       return '/images/tara-avatar.png';
     }
+
+    // Raka Avatars (5 Karakter Cowok)
     if (config.avatar === 'raka_astronaut' || config.accessories === 'hat-astronaut' || config.outfit === 'outfit-cyber') {
       return '/images/raka-astronaut.png';
     }

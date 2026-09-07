@@ -63,6 +63,34 @@ export const CATALOG_ITEMS = [
     defaultUnlocked: false,
     bonus: '+15% XP Sains'
   },
+  {
+    id: 'crown-crystal',
+    name: 'Mahkota Kristal Angka',
+    category: 'accessories',
+    slot: 'accessories',
+    tierText: 'Hadiah Bos Lembah Angka',
+    description: 'Mahkota bertatahkan batu kristal aljabar yang memancarkan aura kebijaksanaan matematika kuno.',
+    icon: 'workspace_premium',
+    previewImage: '/images/raka-detective.png',
+    imageUrl: 'https://images.unsplash.com/photo-1534447677768-be436bb09401?w=200&auto=format&fit=crop&q=80',
+    unlockLevel: 4,
+    defaultUnlocked: false,
+    bonus: '+25% XP Matematika'
+  },
+  {
+    id: 'hat-classic',
+    name: 'Topi Petualang Klasik',
+    category: 'accessories',
+    slot: 'accessories',
+    tierText: 'Hadiah Geometri Kristal',
+    description: 'Topi petualang berani pelindung penjelajah gua kristal rahasia.',
+    icon: 'explore',
+    previewImage: '/images/raka-safari.png',
+    imageUrl: 'https://images.unsplash.com/photo-1575424909138-46b05e5919ec?w=200&auto=format&fit=crop&q=80',
+    unlockLevel: 3,
+    defaultUnlocked: false,
+    bonus: '+10% XP Geometri'
+  },
 
   // Outfits / Kostum
   {

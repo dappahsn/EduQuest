@@ -14,6 +14,8 @@ const getStorageKey = (uid) => uid ? `eduquest_save_state_${uid}` : 'eduquest_sa
 
 export const DEFAULT_GAME_STATE = {
   playerName: 'Petualang Cilik',
+  bio: 'Cerdas, berani, dan siap mengungkap misteri kepulauan!',
+  grade: 'Kelas 4 SD',
   xp: 0, // Level 1 starts at 0 XP
   coins: 0,
   energy: 3,
@@ -64,9 +66,8 @@ function loadInitialState(uid) {
     if (saved) {
       const parsed = JSON.parse(saved);
 
-      // Migrasi data uji prototipe lama (XP 2450/2460 atau quest uji lama 'quest-la-1')
+      // Migrasi data uji prototipe lama (hanya jika XP 2450/2460 dan Koin 840)
       const isLegacyPrototypeState = 
-        parsed.completedQuestIds?.includes('quest-la-1') ||
         (parsed.xp === 2450 && parsed.coins === 840) ||
         (parsed.xp === 2460 && parsed.coins === 840);
 
@@ -78,6 +79,16 @@ function loadInitialState(uid) {
         };
         localStorage.setItem(key, JSON.stringify(fresh));
         return fresh;
+      }
+
+      // Migrasi ID misi lama: jika quest-la-3 tercatat selesai tetapi quest-la-2 belum pernah selesai,
+      // artinya itu adalah 'Jembatan Perkalian Kilat' (Misi 01) versi lama. Pindahkan ke 'quest-la-1'.
+      if (parsed.completedQuestIds?.includes('quest-la-3') && !parsed.completedQuestIds?.includes('quest-la-2')) {
+        parsed.completedQuestIds = parsed.completedQuestIds.filter((id) => id !== 'quest-la-3');
+        if (!parsed.completedQuestIds.includes('quest-la-1')) {
+          parsed.completedQuestIds.push('quest-la-1');
+        }
+        localStorage.setItem(key, JSON.stringify(parsed));
       }
 
       if (checkDailyReset(parsed.dailyQuestsDate)) {
@@ -101,6 +112,7 @@ export function GameProvider({ children }) {
   const [levelUpModal, setLevelUpModal] = useState(null);
   const [rewardModal, setRewardModal] = useState(null);
   const [toastMessage, setToastMessage] = useState(null);
+  const [isEnergyModalOpen, setIsEnergyModalOpen] = useState(false);
 
   // User Isolation: When user changes, reset state completely to that user's partition
   useEffect(() => {
@@ -160,10 +172,22 @@ export function GameProvider({ children }) {
         }
 
         if (quests && quests.length > 0) {
-          setGameState((prev) => ({
-            ...prev,
-            completedQuestIds: Array.from(new Set([...prev.completedQuestIds, ...quests.map((q) => q.quest_id)]))
-          }));
+          const rawIds = Array.from(new Set([...quests.map((q) => q.quest_id)]));
+          // Jika ada quest-la-3 tetapi belum ada quest-la-2, berarti quest-la-3 adalah Misi 01 versi lama
+          const normalizedDbIds = rawIds.includes('quest-la-3') && !rawIds.includes('quest-la-2')
+            ? [...rawIds.filter((id) => id !== 'quest-la-3'), 'quest-la-1']
+            : rawIds;
+
+          setGameState((prev) => {
+            const hasPlayedMisi2 = prev.completedQuestIds.includes('quest-la-2') || normalizedDbIds.includes('quest-la-2');
+            const cleanPrev = hasPlayedMisi2 
+              ? prev.completedQuestIds 
+              : prev.completedQuestIds.filter((id) => id !== 'quest-la-3');
+            return {
+              ...prev,
+              completedQuestIds: Array.from(new Set([...cleanPrev, ...normalizedDbIds]))
+            };
+          });
         }
       } catch (err) {
         console.warn('Profile fetch note:', err.message);
@@ -373,6 +397,43 @@ export function GameProvider({ children }) {
     showToast('Kustomisasi karakter berhasil disimpan! ✨');
   }
 
+  async function updateProfile(newProfileData) {
+    setGameState((prev) => {
+      const next = { ...prev };
+      if (newProfileData.playerName !== undefined && newProfileData.playerName.trim()) {
+        next.playerName = newProfileData.playerName.trim();
+      }
+      if (newProfileData.bio !== undefined) {
+        next.bio = newProfileData.bio;
+      }
+      if (newProfileData.grade !== undefined) {
+        next.grade = newProfileData.grade;
+      }
+      if (newProfileData.avatar !== undefined) {
+        next.characterConfig = {
+          ...prev.characterConfig,
+          avatar: newProfileData.avatar,
+          hasCustomized: true
+        };
+      }
+      return next;
+    });
+
+    if (user && isDatabaseActive) {
+      try {
+        await supabase.from('profiles').update({
+          username: newProfileData.playerName || undefined,
+          avatar_id: newProfileData.avatar || undefined,
+          updated_at: new Date().toISOString()
+        }).eq('id', user.id);
+      } catch (e) {
+        console.warn('Sync profile note:', e.message);
+      }
+    }
+
+    showToast('Profil berhasil diperbarui! ✨');
+  }
+
   function equipItem(slot, itemId) {
     setGameState((prev) => ({
       ...prev,
@@ -413,9 +474,9 @@ export function GameProvider({ children }) {
     audioManager.playSfx('coin');
   }
 
-  function claimDailyChest() {
-    if (gameState.dailyChestClaimed) return;
-    if (!isAllDailyQuestsCompleted(gameState.dailyQuests)) return;
+  function claimDailyChest(force = false) {
+    if (gameState.dailyChestClaimed) return false;
+    if (!force && !isAllDailyQuestsCompleted(gameState.dailyQuests)) return false;
 
     setGameState((prev) => ({
       ...prev,
@@ -507,16 +568,67 @@ export function GameProvider({ children }) {
     audioManager.playSfx('item-unlock');
   }
 
+  function openEnergyModal() {
+    setIsEnergyModalOpen(true);
+  }
+
+  function closeEnergyModal() {
+    setIsEnergyModalOpen(false);
+  }
+
+  function refillEnergy(amount = 1) {
+    setGameState((prev) => {
+      const maxE = prev.maxEnergy || 5;
+      const currentE = prev.energy !== undefined ? prev.energy : 3;
+      const nextE = Math.min(maxE, currentE + amount);
+      return {
+        ...prev,
+        energy: nextE
+      };
+    });
+    showToast(`Energi bertambah +${amount}! ❤️`);
+    audioManager.playSfx('achievement');
+  }
+
+  function refillFullEnergy() {
+    setGameState((prev) => ({
+      ...prev,
+      energy: prev.maxEnergy || 5
+    }));
+    showToast('Energi Penuh 5/5! Siap Berpetualang! 🌟');
+    audioManager.playSfx('level-up');
+  }
+
+  function exchangeCoinsForEnergy(costCoins = 50, amount = 2) {
+    const currentCoins = gameState.coins || 0;
+    if (currentCoins < costCoins) {
+      showToast('Koin tidak mencukupi untuk memulihkan energi!');
+      return false;
+    }
+    const currentE = gameState.energy !== undefined ? gameState.energy : 3;
+    const maxE = gameState.maxEnergy || 5;
+    if (currentE >= maxE) {
+      showToast('Energimu sudah penuh!');
+      return false;
+    }
+    setGameState((prev) => ({
+      ...prev,
+      coins: Math.max(0, prev.coins - costCoins),
+      energy: Math.min(maxE, (prev.energy !== undefined ? prev.energy : 3) + amount)
+    }));
+    showToast(`Energi pulih +${amount}! ❤️`);
+    audioManager.playSfx('coin');
+    return true;
+  }
+
   const calculatedLevel = useMemo(() => getLevelFromXp(gameState.xp), [gameState.xp]);
 
   const value = useMemo(() => ({
     ...gameState,
     level: calculatedLevel,
     completeQuest,
-    feedPet,
-    equipPet,
-    unlockPet,
     updateCharacter,
+    updateProfile,
     equipItem,
     unequipItem,
     unlockItem,
@@ -528,13 +640,20 @@ export function GameProvider({ children }) {
     setLevelUpModal,
     rewardModal,
     setRewardModal,
-    toastMessage
+    toastMessage,
+    isEnergyModalOpen,
+    openEnergyModal,
+    closeEnergyModal,
+    refillEnergy,
+    refillFullEnergy,
+    exchangeCoinsForEnergy
   }), [
     gameState,
     calculatedLevel,
     levelUpModal,
     rewardModal,
-    toastMessage
+    toastMessage,
+    isEnergyModalOpen
   ]);
 
   return <GameContext.Provider value={value}>{children}</GameContext.Provider>;

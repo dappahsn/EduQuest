@@ -1,213 +1,265 @@
-import React from 'react';
+import React, { useState } from 'react';
+import { Link } from 'react-router-dom';
 import { useGame } from '../../context/GameContext';
 import GameHeader from '../../components/navigation/GameHeader';
 import BottomNavDock from '../../components/navigation/BottomNavDock';
 import { checkAchievementsProgress } from '../../lib/achievements';
+import styles from './AchievementsView.module.css';
 
 export default function AchievementsView() {
   const game = useGame();
   const achievements = checkAchievementsProgress(game);
 
+  const [activeFilter, setActiveFilter] = useState('all');
+
+  const totalCount = achievements.length;
   const unlockedCount = achievements.filter((a) => a.unlocked).length;
+  const overallPercent = Math.min(100, Math.round((unlockedCount / totalCount) * 100));
+
+  // Tier statistics
+  const bronzeTotal = achievements.filter((a) => a.tier === 'Perunggu').length;
+  const bronzeDone = achievements.filter((a) => a.tier === 'Perunggu' && a.unlocked).length;
+
+  const silverTotal = achievements.filter((a) => a.tier === 'Perak').length;
+  const silverDone = achievements.filter((a) => a.tier === 'Perak' && a.unlocked).length;
+
+  const goldTotal = achievements.filter((a) => a.tier === 'Emas').length;
+  const goldDone = achievements.filter((a) => a.tier === 'Emas' && a.unlocked).length;
+
+  // Filtered list
+  const filteredAchievements = achievements.filter((a) => {
+    if (activeFilter === 'unlocked') return a.unlocked;
+    if (activeFilter === 'locked') return !a.unlocked;
+    return true;
+  });
+
+  const getTierIconClass = (tier, unlocked) => {
+    if (!unlocked) return styles.iconLocked;
+    if (tier === 'Emas') return styles.iconGold;
+    if (tier === 'Perak') return styles.iconSilver;
+    return styles.iconBronze;
+  };
+
+  const getTierTagClass = (tier) => {
+    if (tier === 'Emas') return styles.tierTagGold;
+    if (tier === 'Perak') return styles.tierTagSilver;
+    return styles.tierTagBronze;
+  };
 
   return (
-    <div style={{
-      minHeight: '100vh',
-      backgroundColor: 'var(--color-surface)',
-      paddingTop: '80px',
-      paddingBottom: '96px',
-      display: 'flex',
-      flexDirection: 'column'
-    }}>
+    <div className={styles.container}>
       <GameHeader />
 
-      <main style={{
-        maxWidth: '520px',
-        width: '100%',
-        margin: '0 auto',
-        padding: '0 var(--space-md)',
-        display: 'flex',
-        flexDirection: 'column',
-        gap: 'var(--space-md)'
-      }}>
-        {/* Top Header Card */}
-        <div style={{
-          backgroundColor: 'var(--color-surface-bright)',
-          borderRadius: 'var(--radius-lg)',
-          padding: 'var(--space-md)',
-          boxShadow: 'var(--shadow-card)',
-          border: '2px solid var(--color-primary-fixed)',
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'space-between'
-        }}>
-          <div style={{ display: 'flex', alignItems: 'center', gap: 'var(--space-sm)' }}>
-            <div style={{
-              width: '54px',
-              height: '54px',
-              borderRadius: '50%',
-              backgroundColor: 'var(--color-tertiary-fixed)',
-              color: 'var(--color-tertiary)',
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              fontSize: '28px',
-              boxShadow: '0 4px 12px rgba(153, 65, 0, 0.2)'
-            }}>
+      <main className={styles.main}>
+        {/* =======================================================
+            LEFT COLUMN: TROPHY SHOWCASE & STATS (Desktop Sticky)
+            ======================================================= */}
+        <aside className={styles.leftColumn}>
+          {/* Main Hero Card */}
+          <div className={styles.heroCard}>
+            <div className={styles.heroAmbientAura} />
+
+            <div className={styles.trophyCircle}>
               🏆
             </div>
-            <div>
-              <span style={{ fontSize: '11px', fontWeight: 800, color: 'var(--color-primary)', textTransform: 'uppercase' }}>
-                Lencana Kehormatan
-              </span>
-              <h1 style={{ fontSize: '18px', fontWeight: 800, color: 'var(--color-text-main)', margin: 0 }}>
-                Prestasi Petualang
-              </h1>
-              <p style={{ fontSize: '12px', color: 'var(--color-text-muted)', margin: '2px 0 0' }}>
-                {unlockedCount} dari {achievements.length} Prestasi Terbuka
-              </p>
+
+            <span className={styles.honorBadgeTag}>
+              Lencana Kehormatan
+            </span>
+
+            <h2 className={styles.heroTitle}>
+              Prestasi Petualang
+            </h2>
+
+            <p className={styles.heroDesc}>
+              Kumpulkan seluruh lencana kehormatan untuk membuktikan kehebatanmu dan meraih gelar Legenda EduQuest!
+            </p>
+
+            {/* Overall Progress Bar */}
+            <div className={styles.heroProgressBarContainer}>
+              <div className={styles.heroProgressLabel}>
+                <span>Kemajuan Koleksi</span>
+                <span>{unlockedCount} dari {totalCount} Terbuka ({overallPercent}%)</span>
+              </div>
+              <div className={styles.heroProgressTrack}>
+                <div
+                  className={styles.heroProgressFill}
+                  style={{ width: `${overallPercent}%` }}
+                />
+              </div>
+            </div>
+
+            {/* Tier Stats Breakdown */}
+            <div className={styles.tierStatsGrid}>
+              <div className={styles.tierStatItem}>
+                <span className={styles.tierStatIcon}>🥉</span>
+                <span className={styles.tierStatName}>Perunggu</span>
+                <span className={styles.tierStatCount}>{bronzeDone}/{bronzeTotal}</span>
+              </div>
+              <div className={styles.tierStatItem}>
+                <span className={styles.tierStatIcon}>🥈</span>
+                <span className={styles.tierStatName}>Perak</span>
+                <span className={styles.tierStatCount}>{silverDone}/{silverTotal}</span>
+              </div>
+              <div className={styles.tierStatItem}>
+                <span className={styles.tierStatIcon}>🥇</span>
+                <span className={styles.tierStatName}>Emas</span>
+                <span className={styles.tierStatCount}>{goldDone}/{goldTotal}</span>
+              </div>
+            </div>
+
+            {/* Total Potential Rewards Showcase */}
+            <div className={styles.rewardsShowcaseBox}>
+              <div className={styles.rewardTotalItem} title="Total Poin Pengalaman">
+                <span>🌟</span>
+                <span>+1,630 XP Total</span>
+              </div>
+              <div className={styles.rewardTotalItem} title="Total Permata EduQuest">
+                <span>💎</span>
+                <span>+370 Permata</span>
+              </div>
             </div>
           </div>
 
-          <div style={{
-            backgroundColor: 'var(--color-secondary-container)',
-            color: 'var(--color-on-secondary-container)',
-            padding: '6px 12px',
-            borderRadius: 'var(--radius-full)',
-            fontWeight: 800,
-            fontSize: '12px'
-          }}>
-            {Math.round((unlockedCount / achievements.length) * 100)}%
+          {/* Guide & Exploration Quick Card */}
+          <div className={styles.guideCard}>
+            <div className={styles.guideHeader}>
+              <h3 className={styles.guideTitle}>
+                <span className="material-symbols-outlined" style={{ fontSize: '18px', color: '#f59e0b' }}>
+                  auto_awesome
+                </span>
+                Tips Penakluk Prestasi
+              </h3>
+            </div>
+
+            <p className={styles.guideText}>
+              Jelajahi setiap planet, selesaikan mini game angka, dan bangun kebiasaan belajar harian untuk membuka seluruh lencana!
+            </p>
+
+            <Link to="/world" className={styles.guideActionBtn}>
+              <span className="material-symbols-outlined" style={{ fontSize: '18px' }}>
+                travel_explore
+              </span>
+              <span>Jelajahi Peta Galaksi 🪐</span>
+            </Link>
           </div>
-        </div>
+        </aside>
 
-        {/* List of 7 Achievements */}
-        <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--space-sm)' }}>
-          {achievements.map((ach) => {
-            const isClaimed = game.claimedAchievements.includes(ach.id);
-            const percent = Math.min(100, Math.round((ach.progress / ach.target) * 100));
+        {/* =======================================================
+            RIGHT COLUMN: HEADER, FILTER TABS & ACHIEVEMENTS LIST
+            ======================================================= */}
+        <section className={styles.rightColumn}>
+          {/* Header Bar with Filter Tabs */}
+          <header className={styles.pageHeader}>
+            <div className={styles.headerLeft}>
+              <span className={styles.headerSubtitle}>
+                Galeri Pencapaian
+              </span>
+              <h1 className={styles.headerTitle}>Daftar Prestasi Petualang</h1>
+            </div>
 
-            return (
-              <div
-                key={ach.id}
-                style={{
-                  backgroundColor: 'var(--color-surface-container-lowest)',
-                  borderRadius: 'var(--radius-lg)',
-                  padding: 'var(--space-md)',
-                  boxShadow: 'var(--shadow-card)',
-                  display: 'flex',
-                  flexDirection: 'column',
-                  gap: '8px',
-                  border: ach.unlocked ? '2px solid var(--color-tertiary-fixed)' : '2px solid transparent',
-                  opacity: ach.unlocked ? 1 : 0.75
-                }}
+            {/* Filter Tabs */}
+            <div className={styles.filterTabsGroup}>
+              <button
+                className={`${styles.filterTabBtn} ${activeFilter === 'all' ? styles.filterTabActive : ''}`}
+                onClick={() => setActiveFilter('all')}
               >
-                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                  <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-                    <div style={{
-                      width: '44px',
-                      height: '44px',
-                      borderRadius: 'var(--radius-md)',
-                      backgroundColor: ach.unlocked ? 'var(--color-tertiary-fixed)' : 'var(--color-surface-container-high)',
-                      color: ach.unlocked ? 'var(--color-tertiary)' : 'var(--color-outline)',
-                      display: 'flex',
-                      alignItems: 'center',
-                      justifyContent: 'center'
-                    }}>
-                      <span className="material-symbols-outlined" style={{ fontSize: '24px' }}>
-                        {ach.icon}
-                      </span>
-                    </div>
+                Semua ({totalCount})
+              </button>
+              <button
+                className={`${styles.filterTabBtn} ${activeFilter === 'unlocked' ? styles.filterTabActive : ''}`}
+                onClick={() => setActiveFilter('unlocked')}
+              >
+                Terbuka ({unlockedCount})
+              </button>
+              <button
+                className={`${styles.filterTabBtn} ${activeFilter === 'locked' ? styles.filterTabActive : ''}`}
+                onClick={() => setActiveFilter('locked')}
+              >
+                Belum ({totalCount - unlockedCount})
+              </button>
+            </div>
+          </header>
 
-                    <div>
-                      <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
-                        <h3 style={{ fontSize: '15px', fontWeight: 800, color: 'var(--color-text-main)', margin: 0 }}>
-                          {ach.title}
-                        </h3>
-                        <span style={{
-                          fontSize: '10px',
-                          fontWeight: 800,
-                          backgroundColor: 'var(--color-surface-container-high)',
-                          padding: '1px 6px',
-                          borderRadius: 'var(--radius-full)',
-                          color: 'var(--color-text-muted)'
-                        }}>
-                          {ach.tier}
+          {/* Achievements List */}
+          <div className={styles.achievementsList}>
+            {filteredAchievements.map((ach) => {
+              const isClaimed = game.claimedAchievements.includes(ach.id);
+              const percent = Math.min(100, Math.round((ach.progress / ach.target) * 100));
+
+              return (
+                <div
+                  key={ach.id}
+                  className={`${styles.achievementCard} ${ach.unlocked ? styles.achievementCardUnlocked : ''}`}
+                  style={{ opacity: ach.unlocked ? 1 : 0.8 }}
+                >
+                  {/* Top Row: Icon, Title, Tier, Rewards */}
+                  <div className={styles.achievementTopRow}>
+                    <div className={styles.achievementInfoGroup}>
+                      <div className={`${styles.achievementIconBox} ${getTierIconClass(ach.tier, ach.unlocked)}`}>
+                        <span className="material-symbols-outlined" style={{ fontSize: '24px' }}>
+                          {ach.icon}
                         </span>
                       </div>
-                      <p style={{ fontSize: '12px', color: 'var(--color-text-muted)', margin: '2px 0 0' }}>
-                        {ach.description}
-                      </p>
+
+                      <div className={styles.achievementDetails}>
+                        <div className={styles.achievementHeaderLine}>
+                          <h3 className={styles.achievementCardTitle}>{ach.title}</h3>
+                          <span className={`${styles.tierTag} ${getTierTagClass(ach.tier)}`}>
+                            {ach.tier}
+                          </span>
+                        </div>
+                        <p className={styles.achievementCardDesc}>{ach.description}</p>
+                      </div>
+                    </div>
+
+                    <div className={styles.rewardBadgesGroup}>
+                      <span className={styles.xpBadge}>+{ach.rewardXp} XP</span>
+                      <span className={styles.diamondBadge}>+{ach.rewardCoins} 💎</span>
                     </div>
                   </div>
 
-                  <div style={{ textAlign: 'right' }}>
-                    <span style={{ fontSize: '12px', fontWeight: 800, color: 'var(--color-primary)', display: 'block' }}>
-                      +{ach.rewardXp} XP
-                    </span>
-                    <span style={{ fontSize: '11px', color: 'var(--color-secondary)', fontWeight: 800 }}>
-                      +{ach.rewardCoins} 💎
+                  {/* Progress Row */}
+                  <div className={styles.achievementProgressRow}>
+                    <div className={styles.achievementProgressTrack}>
+                      <div
+                        className={styles.achievementProgressFill}
+                        style={{ width: `${percent}%` }}
+                      />
+                    </div>
+                    <span className={styles.achievementCounterText}>
+                      {ach.progress} / {ach.target}
                     </span>
                   </div>
-                </div>
 
-                {/* Progress bar */}
-                <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-                  <div style={{
-                    flex: 1,
-                    height: '8px',
-                    backgroundColor: 'var(--color-surface-container)',
-                    borderRadius: 'var(--radius-full)',
-                    overflow: 'hidden'
-                  }}>
-                    <div style={{
-                      height: '100%',
-                      backgroundColor: ach.unlocked ? 'var(--color-tertiary)' : 'var(--color-primary)',
-                      width: `${percent}%`,
-                      transition: 'width 0.4s ease'
-                    }} />
+                  {/* Actions Row */}
+                  <div className={styles.achievementActionRow}>
+                    {ach.unlocked && !isClaimed && (
+                      <button
+                        onClick={() => game.claimAchievementReward(ach.id)}
+                        className={`animate-celebrate-pop ${styles.claimAchievementBtn}`}
+                      >
+                        <span className="material-symbols-outlined" style={{ fontSize: '17px' }}>
+                          emoji_events
+                        </span>
+                        <span>Klaim Hadiah Prestasi 🏆</span>
+                      </button>
+                    )}
+
+                    {isClaimed && (
+                      <div className={styles.claimedBadge}>
+                        <span className="material-symbols-outlined" style={{ fontSize: '17px' }}>
+                          check_circle
+                        </span>
+                        <span>Hadiah Sudah Diterima</span>
+                      </div>
+                    )}
                   </div>
-                  <span style={{ fontSize: '12px', fontWeight: 800, color: 'var(--color-text-main)' }}>
-                    {ach.progress} / {ach.target}
-                  </span>
                 </div>
-
-                {/* Claim Button */}
-                {ach.unlocked && !isClaimed && (
-                  <button
-                    onClick={() => game.claimAchievementReward(ach.id)}
-                    style={{
-                      alignSelf: 'flex-end',
-                      backgroundColor: 'var(--color-tertiary)',
-                      color: 'var(--color-on-tertiary)',
-                      padding: '6px 14px',
-                      borderRadius: 'var(--radius-full)',
-                      border: 'none',
-                      fontWeight: 800,
-                      fontSize: '12px',
-                      cursor: 'pointer',
-                      boxShadow: 'var(--shadow-tactile-tertiary)',
-                      marginTop: '4px'
-                    }}
-                  >
-                    Klaim Hadiah Prestasi 🏆
-                  </button>
-                )}
-
-                {isClaimed && (
-                  <span style={{
-                    alignSelf: 'flex-end',
-                    fontSize: '11px',
-                    fontWeight: 800,
-                    color: 'var(--color-secondary)'
-                  }}>
-                    ✓ Hadiah Sudah Diterima
-                  </span>
-                )}
-              </div>
-            );
-          })}
-        </div>
+              );
+            })}
+          </div>
+        </section>
       </main>
 
       <BottomNavDock />

@@ -32,15 +32,9 @@ function GameHeader(props) {
   return (
     <header className={styles.header}>
       <div className={styles.inner}>
-        {/* Left: Brand + Profile Capsule */}
+        {/* Left: Profile Capsule */}
         <div className={styles.leftGroup}>
-          <Link to="/world" className={styles.brandBadge} title="EduQuest Beranda">
-            <span className="material-symbols-outlined" style={{ color: 'var(--color-primary)', fontSize: '24px' }}>
-              explore
-            </span>
-          </Link>
-
-          <Link to="/character" className={styles.profileCapsule} title="Kustomisasi Karakter">
+          <Link to="/profile" className={styles.profileCapsule} title="Profil Petualang">
             <div className={styles.avatarWrapper}>
               <CharacterAvatar config={characterConfig} size="sm" />
               <span className={styles.levelBadge}>{level}</span>
@@ -75,12 +69,21 @@ function GameHeader(props) {
             </span>
           </button>
 
-          <div className={styles.vitalPill} title="Nyawa / Energi Petualang">
+          <button
+            type="button"
+            onClick={() => {
+              playSfx('button-click');
+              if (game?.openEnergyModal) game.openEnergyModal();
+            }}
+            className={`${styles.vitalPill} ${styles.energyBtn}`}
+            title="Isi Ulang Energi / Nyawa Petualang"
+          >
             <span className="material-symbols-outlined" style={{ color: 'var(--color-ruby)', fontSize: '18px' }}>
               favorite
             </span>
             <span className={styles.vitalText}>{lives}</span>
-          </div>
+            <span className={styles.plusBadge}>+</span>
+          </button>
 
           <div className={styles.vitalPill} title="Rentetan Harian (Streak)">
             <span className="material-symbols-outlined" style={{ color: 'var(--color-tertiary)', fontSize: '18px' }}>

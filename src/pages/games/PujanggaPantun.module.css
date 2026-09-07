@@ -1,0 +1,801 @@
+/* ==========================================================================
+   PUJANGGA PANTUN NUSANTARA - SINGLE SCREEN COMPACT LAYOUT
+   100% height, fit-to-screen, zero scrolling required.
+   ========================================================================== */
+
+.gameWrapper {
+  height: 100%;
+  max-height: 100%;
+  width: 100%;
+  max-width: 680px;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  padding: 6px 10px 10px;
+  box-sizing: border-box;
+  overflow: hidden;
+  color: #fff4e5;
+  font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, sans-serif;
+  user-select: none;
+}
+
+/* --------------------------------------------------------------------------
+   Top Bar (Compact, ~36px)
+   -------------------------------------------------------------------------- */
+.topBar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  padding: 4px 6px;
+  flex-shrink: 0;
+}
+
+.roundInfoWrap {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  min-width: 0;
+}
+
+.roundBadge {
+  font-size: 0.72rem;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  color: #fbbf24;
+  background: rgba(245, 158, 11, 0.2);
+  border: 1px solid rgba(245, 158, 11, 0.45);
+  padding: 3px 8px;
+  border-radius: 8px;
+  white-space: nowrap;
+}
+
+.roundTitle {
+  margin: 0;
+  font-size: 0.95rem;
+  font-weight: 800;
+  color: #ffeed8;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.topActions {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  flex-shrink: 0;
+}
+
+.topBtn {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  padding: 4px 10px;
+  background: rgba(255, 255, 255, 0.08);
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  border-radius: 8px;
+  color: #fbd38d;
+  font-size: 0.76rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.topBtn:hover {
+  background: rgba(245, 158, 11, 0.2);
+  color: #ffffff;
+  border-color: #f59e0b;
+}
+
+.topBtnActive {
+  background: rgba(245, 158, 11, 0.3);
+  border-color: #f59e0b;
+  color: #fffbeb;
+}
+
+.btnIconEmoji {
+  font-size: 0.85rem;
+  line-height: 1;
+}
+
+.btnLabel {
+  font-size: 0.76rem;
+}
+
+/* --------------------------------------------------------------------------
+   Instruction / Hint Banner (Ultra-compact, ~28px)
+   -------------------------------------------------------------------------- */
+.instructionBanner {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: rgba(45, 26, 15, 0.7);
+  border: 1px solid rgba(217, 119, 6, 0.35);
+  border-radius: 8px;
+  padding: 4px 10px;
+  font-size: 0.8rem;
+  color: #fef3c7;
+  flex-shrink: 0;
+}
+
+.instructionIcon {
+  font-size: 0.9rem;
+}
+
+.instructionText {
+  font-weight: 600;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.hintBox {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: #fef3c7;
+  border: 1px solid #f59e0b;
+  border-radius: 8px;
+  padding: 4px 10px;
+  color: #78350f;
+  font-size: 0.8rem;
+  font-weight: 700;
+  flex-shrink: 0;
+  animation: fadeIn 0.2s ease;
+}
+
+.hintEmoji {
+  font-size: 0.95rem;
+}
+
+.hintText {
+  flex: 1;
+  line-height: 1.3;
+}
+
+.hintCloseBtn {
+  background: none;
+  border: none;
+  color: #b45309;
+  font-size: 0.9rem;
+  font-weight: 800;
+  cursor: pointer;
+  padding: 2px 4px;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(-3px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* --------------------------------------------------------------------------
+   Pantun Parchment Board (Center Piece, 4 Verse Lines)
+   -------------------------------------------------------------------------- */
+.parchmentBoard {
+  background: #fcf8ee;
+  border: 2px solid #b45309;
+  border-radius: 12px;
+  padding: 8px 10px;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.35), inset 0 0 20px rgba(180, 83, 9, 0.08);
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  flex-shrink: 1;
+  min-height: 0;
+  transition: transform 0.2s ease;
+}
+
+.shakeAnim {
+  animation: shakeEffect 0.45s cubic-bezier(0.36, 0.07, 0.19, 0.97) both;
+}
+
+@keyframes shakeEffect {
+  10%, 90% { transform: translate3d(-3px, 0, 0); }
+  20%, 80% { transform: translate3d(4px, 0, 0); }
+  30%, 50%, 70% { transform: translate3d(-5px, 0, 0); }
+  40%, 60% { transform: translate3d(5px, 0, 0); }
+}
+
+.parchmentHeader {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  color: #92400e;
+}
+
+.parchmentDeco {
+  font-size: 0.7rem;
+  color: #b45309;
+}
+
+.parchmentTitle {
+  font-size: 0.76rem;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  color: #78350f;
+}
+
+.verseRowsContainer {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+/* Individual Verse Line */
+.verseLineFixed, .verseLineSlot {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 8px;
+  border-radius: 8px;
+  min-height: 38px;
+  box-sizing: border-box;
+}
+
+.verseLineFixed {
+  background: rgba(255, 255, 255, 0.85);
+  border: 1px solid rgba(180, 83, 9, 0.2);
+  box-shadow: 0 1px 3px rgba(120, 53, 15, 0.06);
+}
+
+.verseLineSlot {
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.slotVacant {
+  background: rgba(254, 243, 199, 0.5);
+  border: 1.5px dashed #d97706;
+}
+
+.slotVacant:hover {
+  background: rgba(254, 243, 199, 0.85);
+  border-color: #b45309;
+}
+
+.slotOccupied {
+  background: #ffffff;
+  border: 1.5px solid #10b981;
+  box-shadow: 0 2px 8px rgba(16, 185, 129, 0.15);
+}
+
+.slotOccupied:hover {
+  border-color: #ef4444;
+  background: #fef2f2;
+}
+
+/* Left Pill (Number + Role) */
+.lineLeftPill {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  background: #fef3c7;
+  border: 1px solid #fde68a;
+  border-radius: 6px;
+  padding: 2px 6px;
+  flex-shrink: 0;
+}
+
+.lineIndexNumber {
+  font-size: 0.72rem;
+  font-weight: 800;
+  color: #92400e;
+}
+
+.lineRoleText {
+  font-size: 0.65rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  color: #78350f;
+}
+
+/* Verse Text */
+.lineVerseText {
+  flex: 1;
+  font-size: 0.88rem;
+  font-weight: 600;
+  color: #451a03;
+  line-height: 1.25;
+  white-space: normal;
+}
+
+.lineVerseTextOccupied {
+  flex: 1;
+  font-size: 0.88rem;
+  font-weight: 800;
+  color: #1e3a8a;
+  line-height: 1.25;
+  white-space: normal;
+}
+
+.slotVacantPrompt {
+  flex: 1;
+  display: flex;
+  align-items: center;
+}
+
+.promptDashed {
+  font-size: 0.8rem;
+  font-style: italic;
+  font-weight: 600;
+  color: #b45309;
+}
+
+.occupiedRightWrap {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  flex-shrink: 0;
+}
+
+.removePill {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  background: rgba(239, 68, 68, 0.15);
+  color: #dc2626;
+  font-size: 11px;
+  font-weight: 900;
+  transition: all 0.2s ease;
+}
+
+.slotOccupied:hover .removePill {
+  background: #dc2626;
+  color: #ffffff;
+}
+
+/* Rhyme Badge */
+.rhymePill {
+  font-size: 0.68rem;
+  font-weight: 800;
+  padding: 2px 7px;
+  border-radius: 999px;
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+
+.rhymePillSm {
+  font-size: 0.68rem;
+  font-weight: 800;
+  padding: 2px 6px;
+  border-radius: 999px;
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+
+.rhyme_A {
+  background: #fef3c7;
+  color: #b45309;
+  border: 1px solid #fde68a;
+}
+
+.rhyme_B {
+  background: #d1fae5;
+  color: #065f46;
+  border: 1px solid #a7f3d0;
+}
+
+.rhyme_C {
+  background: #e0e7ff;
+  color: #3730a3;
+  border: 1px solid #c7d2fe;
+}
+
+.rhyme_D {
+  background: #fce7f3;
+  color: #9d174d;
+  border: 1px solid #fbcfe8;
+}
+
+.rhyme_E {
+  background: #fed7aa;
+  color: #9a3412;
+  border: 1px solid #fdba74;
+}
+
+/* --------------------------------------------------------------------------
+   Options Pool Section (~100px)
+   -------------------------------------------------------------------------- */
+.optionsSection {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  flex-shrink: 0;
+}
+
+.optionsSectionHeader {
+  display: flex;
+  align-items: center;
+  padding: 0 2px;
+}
+
+.sectionHeaderTitle {
+  font-size: 0.74rem;
+  font-weight: 700;
+  color: #fde68a;
+}
+
+.optionsGrid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 6px;
+}
+
+.optionCardBtn {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 6px;
+  background: linear-gradient(135deg, #381f12 0%, #24140a 100%);
+  border: 1.5px solid rgba(245, 185, 66, 0.4);
+  border-radius: 8px;
+  padding: 7px 10px;
+  cursor: pointer;
+  text-align: left;
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.25);
+  min-height: 38px;
+  box-sizing: border-box;
+}
+
+.optionCardBtn:hover {
+  transform: translateY(-2px);
+  border-color: #f59e0b;
+  background: linear-gradient(135deg, #4d2b19 0%, #331c0e 100%);
+  box-shadow: 0 4px 12px rgba(245, 158, 11, 0.25);
+}
+
+.optionVerseText {
+  font-size: 0.82rem;
+  font-weight: 700;
+  color: #fff4e5;
+  line-height: 1.25;
+  white-space: normal;
+  flex: 1;
+}
+
+.allPlacedMsg {
+  grid-column: 1 / -1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 8px 12px;
+  background: rgba(16, 185, 129, 0.15);
+  border: 1px solid rgba(16, 185, 129, 0.4);
+  border-radius: 8px;
+  color: #6ee7b7;
+  font-size: 0.8rem;
+  font-weight: 700;
+  text-align: center;
+}
+
+/* --------------------------------------------------------------------------
+   Bottom Action Bar (~44px)
+   -------------------------------------------------------------------------- */
+.bottomBar {
+  display: flex;
+  justify-content: center;
+  flex-shrink: 0;
+  padding-top: 4px;
+}
+
+.btnCheckAnswer {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  width: 100%;
+  height: 42px;
+  background: linear-gradient(135deg, #d97706 0%, #b45309 100%);
+  border: 1.5px solid #fcd34d;
+  border-radius: 10px;
+  color: #ffffff;
+  font-size: 0.95rem;
+  font-weight: 800;
+  letter-spacing: 0.3px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  box-shadow: 0 4px 14px rgba(180, 83, 9, 0.4);
+}
+
+.btnCheckAnswer:hover:not(:disabled) {
+  transform: translateY(-2px);
+  background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
+  box-shadow: 0 6px 18px rgba(245, 158, 11, 0.5);
+}
+
+.btnCheckAnswer:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+  transform: none;
+  box-shadow: none;
+}
+
+.btnCheckIcon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.25);
+  font-size: 13px;
+  font-weight: 900;
+}
+
+/* --------------------------------------------------------------------------
+   Modals (Compact Overlay)
+   -------------------------------------------------------------------------- */
+.modalOverlay {
+  position: fixed;
+  inset: 0;
+  z-index: 99;
+  background: rgba(0, 0, 0, 0.82);
+  backdrop-filter: blur(6px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 14px;
+  animation: fadeIn 0.25s ease;
+}
+
+.modalCard {
+  width: 100%;
+  max-width: 440px;
+  background: linear-gradient(180deg, #2a160c 0%, #170c06 100%);
+  border: 2px solid #f59e0b;
+  border-radius: 20px;
+  padding: 20px 18px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.7), 0 0 30px rgba(245, 158, 11, 0.25);
+  animation: popIn 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+@keyframes popIn {
+  from { transform: scale(0.9); opacity: 0; }
+  to { transform: scale(1); opacity: 1; }
+}
+
+.modalHeaderIcon {
+  font-size: 2rem;
+  margin-bottom: 4px;
+}
+
+.modalBadge {
+  font-size: 0.72rem;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 1.5px;
+  color: #10b981;
+  margin-bottom: 2px;
+}
+
+.modalTitle {
+  margin: 0 0 12px;
+  font-size: 1.1rem;
+  font-weight: 800;
+  color: #fffbeb;
+}
+
+.modalPoemBox {
+  width: 100%;
+  background: #fbf5e8;
+  border: 1px solid #b45309;
+  border-radius: 10px;
+  padding: 10px 14px;
+  margin-bottom: 10px;
+  color: #451a03;
+  text-align: left;
+  line-height: 1.4;
+  box-sizing: border-box;
+}
+
+.modalPoemLine {
+  margin: 2px 0;
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: #78350f;
+}
+
+.modalPoemLineHighlight {
+  margin: 2px 0;
+  font-size: 0.88rem;
+  font-weight: 800;
+  color: #1e3a8a;
+}
+
+.modalRiddleBox {
+  width: 100%;
+  background: rgba(59, 130, 246, 0.18);
+  border: 1px solid rgba(59, 130, 246, 0.4);
+  border-radius: 8px;
+  padding: 8px 12px;
+  color: #93c5fd;
+  font-size: 0.85rem;
+  font-weight: 700;
+  margin-bottom: 10px;
+  box-sizing: border-box;
+}
+
+.modalMoralBox {
+  width: 100%;
+  background: rgba(245, 185, 66, 0.1);
+  border: 1px solid rgba(245, 185, 66, 0.25);
+  border-radius: 8px;
+  padding: 8px 12px;
+  color: #fde68a;
+  font-size: 0.8rem;
+  line-height: 1.35;
+  text-align: left;
+  margin-bottom: 16px;
+  box-sizing: border-box;
+}
+
+.modalMoralBox strong {
+  color: #ffffff;
+}
+
+.btnModalContinue {
+  width: 100%;
+  padding: 12px 16px;
+  background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+  border: 1px solid #34d399;
+  border-radius: 12px;
+  color: #ffffff;
+  font-size: 0.95rem;
+  font-weight: 800;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  box-shadow: 0 4px 14px rgba(16, 185, 129, 0.3);
+}
+
+.btnModalContinue:hover {
+  transform: translateY(-2px);
+  background: linear-gradient(135deg, #34d399 0%, #10b981 100%);
+}
+
+/* Complete Modal Card */
+.completeModalCard {
+  width: 100%;
+  max-width: 440px;
+  background: linear-gradient(180deg, #31180b 0%, #180c05 100%);
+  border: 2px solid #fbbf24;
+  border-radius: 22px;
+  padding: 22px 18px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  box-shadow: 0 16px 48px rgba(0, 0, 0, 0.8), 0 0 40px rgba(245, 158, 11, 0.3);
+  animation: popIn 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+.completeTrophy {
+  font-size: 2.5rem;
+  margin-bottom: 4px;
+}
+
+.completeSubtitle {
+  font-size: 0.72rem;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 1.5px;
+  color: #fbbf24;
+  margin-bottom: 2px;
+}
+
+.completeHeading {
+  margin: 0 0 6px;
+  font-size: 1.35rem;
+  font-weight: 900;
+  color: #fffbeb;
+}
+
+.completeDesc {
+  margin: 0 0 14px;
+  font-size: 0.82rem;
+  color: #d1bda9;
+  line-height: 1.4;
+}
+
+.completeRewardGrid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 8px;
+  width: 100%;
+  margin-bottom: 16px;
+}
+
+.completeRewardItem {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  background: rgba(0, 0, 0, 0.4);
+  border: 1px solid rgba(245, 185, 66, 0.3);
+  border-radius: 10px;
+  padding: 8px 4px;
+}
+
+.rewardNum {
+  font-size: 1.1rem;
+  font-weight: 800;
+  color: #fbbf24;
+}
+
+.rewardText {
+  font-size: 0.68rem;
+  font-weight: 600;
+  color: #a89481;
+  margin-top: 2px;
+}
+
+.completeActions {
+  width: 100%;
+}
+
+.btnCompletePrimary {
+  width: 100%;
+  padding: 12px;
+  background: linear-gradient(135deg, #d97706 0%, #b45309 100%);
+  border: 1px solid #fbbf24;
+  border-radius: 12px;
+  color: #ffffff;
+  font-size: 0.95rem;
+  font-weight: 800;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  box-shadow: 0 4px 14px rgba(180, 83, 9, 0.4);
+}
+
+.btnCompletePrimary:hover {
+  transform: translateY(-2px);
+  background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
+}
+
+/* --------------------------------------------------------------------------
+   Small Screen Adjustments (Ultra mobile, e.g. 360px width or 600px height)
+   -------------------------------------------------------------------------- */
+@media (max-height: 680px) {
+  .gameWrapper {
+    padding: 4px 8px 6px;
+  }
+  .topBar {
+    padding: 2px 4px;
+  }
+  .parchmentBoard {
+    padding: 6px 8px;
+    gap: 4px;
+  }
+  .verseLineFixed, .verseLineSlot {
+    min-height: 32px;
+    padding: 4px 6px;
+  }
+  .lineVerseText, .lineVerseTextOccupied {
+    font-size: 0.82rem;
+  }
+  .optionsGrid {
+    gap: 4px;
+  }
+  .optionCardBtn {
+    min-height: 32px;
+    padding: 5px 8px;
+  }
+  .optionVerseText {
+    font-size: 0.76rem;
+  }
+  .btnCheckAnswer {
+    height: 38px;
+    font-size: 0.88rem;
+  }
+}

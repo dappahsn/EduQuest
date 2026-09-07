@@ -1,0 +1,891 @@
+/* =======================================================
+   NUMBER CATCHER: JEMBATAN PERKALIAN INTERACTIVE GAME UI
+   ======================================================= */
+
+.container {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  gap: 16px;
+  animation: fadeIn 0.3s ease-out;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(8px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* 1. Header Info Bar */
+.infoBar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 10px;
+}
+
+.realmChip {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  background-color: #ffffff;
+  padding: 6px 14px;
+  border-radius: 9999px;
+  box-shadow: 0 2px 8px rgba(15, 23, 42, 0.05), 0 0 0 1px #e2e8f0;
+}
+
+.streakChip {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  background: linear-gradient(135deg, #fff7ed 0%, #ffedd5 100%);
+  border: 1px solid #fed7aa;
+  padding: 6px 14px;
+  border-radius: 9999px;
+  box-shadow: 0 2px 8px rgba(249, 115, 22, 0.12);
+  transition: transform 0.2s ease;
+}
+
+.streakChipActive {
+  animation: firePulse 1s infinite alternate;
+}
+
+@keyframes firePulse {
+  from { transform: scale(1); box-shadow: 0 2px 8px rgba(249, 115, 22, 0.2); }
+  to { transform: scale(1.05); box-shadow: 0 4px 16px rgba(249, 115, 22, 0.45); }
+}
+
+/* 2. Challenge Formula Banner */
+.challengeBanner {
+  background: linear-gradient(135deg, #0284c7 0%, #0369a1 50%, #075985 100%);
+  color: #ffffff;
+  padding: 16px 20px;
+  border-radius: 24px;
+  box-shadow: 0 10px 25px -5px rgba(2, 132, 199, 0.35);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  position: relative;
+  overflow: hidden;
+}
+
+.challengeBanner::after {
+  content: '';
+  position: absolute;
+  top: -50%;
+  right: -20%;
+  width: 250px;
+  height: 250px;
+  background: radial-gradient(circle, rgba(255, 255, 255, 0.15) 0%, transparent 70%);
+  pointer-events: none;
+}
+
+.bannerLeft {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  z-index: 1;
+}
+
+.bannerIconWrap {
+  width: 48px;
+  height: 48px;
+  border-radius: 16px;
+  background: rgba(255, 255, 255, 0.2);
+  backdrop-filter: blur(8px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 26px;
+  flex-shrink: 0;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.bannerPretitle {
+  font-size: 11px;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: #bae6fd;
+  margin: 0;
+}
+
+.bannerTitle {
+  font-size: 16px;
+  font-weight: 800;
+  color: #ffffff;
+  margin: 2px 0 0 0;
+  line-height: 1.3;
+}
+
+.mathFormulaBadge {
+  background-color: #ffffff;
+  color: #0369a1;
+  padding: 10px 20px;
+  border-radius: 9999px;
+  font-size: 24px;
+  font-weight: 900;
+  letter-spacing: 0.02em;
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.15);
+  z-index: 1;
+  white-space: nowrap;
+  animation: formulaGlow 2s infinite ease-in-out;
+}
+
+@keyframes formulaGlow {
+  0%, 100% { transform: scale(1); box-shadow: 0 6px 18px rgba(0, 0, 0, 0.15); }
+  50% { transform: scale(1.03); box-shadow: 0 8px 24px rgba(255, 255, 255, 0.35); }
+}
+
+/* 3. Interactive 3D River Stage */
+.riverStageCard {
+  position: relative;
+  width: 100%;
+  border-radius: 28px;
+  overflow: hidden;
+  box-shadow: 0 20px 45px -10px rgba(2, 132, 199, 0.35), 0 0 0 3px #0284c7;
+  background: radial-gradient(ellipse at 50% 10%, #38bdf8 0%, #0284c7 40%, #075985 75%, #0f172a 100%);
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  min-height: 440px;
+  padding: 20px;
+}
+
+/* Animated Flowing Water Waves Background */
+.waterWavesContainer {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  pointer-events: none;
+}
+
+.waterWaveLayer1,
+.waterWaveLayer2 {
+  position: absolute;
+  width: 200%;
+  height: 100%;
+  top: 0;
+  left: 0;
+  background-repeat: repeat-x;
+}
+
+.waterWaveLayer1 {
+  background: radial-gradient(ellipse at 50% 20%, rgba(255, 255, 255, 0.25) 0%, transparent 60%);
+  opacity: 0.7;
+  animation: waveScroll 8s linear infinite;
+}
+
+.waterWaveLayer2 {
+  background: radial-gradient(circle at 30% 70%, rgba(56, 189, 248, 0.3) 0%, transparent 50%),
+              radial-gradient(circle at 80% 40%, rgba(20, 184, 166, 0.3) 0%, transparent 50%);
+  animation: waveScrollReverse 12s linear infinite;
+}
+
+@keyframes waveScroll {
+  0% { transform: translateX(0); }
+  100% { transform: translateX(-50%); }
+}
+
+@keyframes waveScrollReverse {
+  0% { transform: translateX(-50%); }
+  100% { transform: translateX(0); }
+}
+
+/* River Foam Surface Overlay */
+.riverFoamOverlay {
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(circle at 20% 40%, rgba(255, 255, 255, 0.15) 0%, transparent 20%),
+              radial-gradient(circle at 75% 65%, rgba(255, 255, 255, 0.12) 0%, transparent 25%),
+              radial-gradient(circle at 45% 85%, rgba(255, 255, 255, 0.1) 0%, transparent 20%);
+  opacity: 0.8;
+  pointer-events: none;
+  animation: foamDrift 10s ease-in-out infinite alternate;
+}
+
+@keyframes foamDrift {
+  0% { transform: translateY(0) scale(1); }
+  100% { transform: translateY(8px) scale(1.03); }
+}
+
+/* River Floating Particles (lotus leaves & ripples) */
+.lotus1 {
+  position: absolute;
+  top: 22%;
+  left: 6%;
+  font-size: 24px;
+  opacity: 0.85;
+  animation: floatBob 3.5s infinite ease-in-out;
+}
+
+.lotus2 {
+  position: absolute;
+  bottom: 22%;
+  right: 8%;
+  font-size: 26px;
+  opacity: 0.85;
+  animation: floatBob 4.2s infinite ease-in-out 1s;
+}
+
+.lotus3 {
+  position: absolute;
+  top: 68%;
+  left: 4%;
+  font-size: 20px;
+  opacity: 0.75;
+  animation: floatBob 4.8s infinite ease-in-out 1.5s;
+}
+
+.lotus4 {
+  position: absolute;
+  top: 15%;
+  right: 15%;
+  font-size: 20px;
+  opacity: 0.75;
+  animation: floatBob 3.8s infinite ease-in-out 0.5s;
+}
+
+@keyframes floatBob {
+  0%, 100% { transform: translateY(0) rotate(0deg); }
+  50% { transform: translateY(-8px) rotate(4deg); }
+}
+
+/* Top Stage HUD */
+.stageTopHud {
+  position: relative;
+  z-index: 10;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.explorerBadge {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background-color: rgba(255, 255, 255, 0.92);
+  backdrop-filter: blur(8px);
+  padding: 5px 14px 5px 6px;
+  border-radius: 9999px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  border: 1.5px solid rgba(255, 255, 255, 0.8);
+}
+
+.explorerAvatarCircle {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  overflow: hidden;
+  border: 2px solid #0284c7;
+}
+
+.explorerAvatarImg {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.explorerNameText {
+  font-size: 13px;
+  font-weight: 800;
+  color: #0f172a;
+}
+
+.feedbackBadge {
+  padding: 6px 14px;
+  border-radius: 9999px;
+  font-size: 13px;
+  font-weight: 800;
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.15);
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  animation: popBounce 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+.feedbackCorrect {
+  background-color: #10b981;
+  color: #ffffff;
+}
+
+.feedbackWrong {
+  background-color: #ef4444;
+  color: #ffffff;
+}
+
+@keyframes popBounce {
+  from { transform: scale(0.6); opacity: 0; }
+  to { transform: scale(1); opacity: 1; }
+}
+
+/* 4. Realistic River Stepping Stones Bridge Visualization */
+.bridgeGorgeContainer {
+  position: relative;
+  z-index: 10;
+  margin: 10px 0 6px;
+  padding: 6px 2px;
+}
+
+/* Suspension Ropes across the river */
+.bridgeRopeTop,
+.bridgeRopeBottom {
+  position: absolute;
+  left: 24px;
+  right: 24px;
+  height: 22px;
+  border-bottom: 2.5px dashed rgba(253, 224, 71, 0.8);
+  border-radius: 50% / 14px;
+  pointer-events: none;
+  filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.4));
+  z-index: 2;
+}
+
+.bridgeRopeTop {
+  top: 10px;
+}
+
+.bridgeRopeBottom {
+  bottom: 24px;
+}
+
+.steppingStonesVisualizer {
+  position: relative;
+  z-index: 3;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 14px 18px;
+  background: rgba(15, 23, 42, 0.45);
+  backdrop-filter: blur(10px);
+  border-radius: 24px;
+  border: 1.5px solid rgba(56, 189, 248, 0.35);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.2), 0 8px 24px rgba(0, 0, 0, 0.25);
+}
+
+.bridgeBankStart,
+.bridgeBankGoal {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 5px;
+  z-index: 4;
+}
+
+.bridgeBankIcon,
+.bridgeBankGoalIcon {
+  width: 48px;
+  height: 48px;
+  border-radius: 16px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 24px;
+  box-shadow: 0 6px 14px rgba(0, 0, 0, 0.3);
+  position: relative;
+  transition: transform 0.25s ease;
+}
+
+.bridgeBankStart .bridgeBankIcon {
+  background: linear-gradient(135deg, #15803d 0%, #166534 100%);
+  border: 2px solid #86efac;
+  box-shadow: 0 4px 12px rgba(21, 128, 61, 0.5);
+}
+
+.bridgeBankGoalIcon {
+  background: linear-gradient(135deg, #f59e0b 0%, #b45309 100%);
+  border: 2px solid #fef08a;
+  box-shadow: 0 0 18px rgba(245, 158, 11, 0.65);
+  animation: treasureGlow 2.5s infinite alternate ease-in-out;
+}
+
+@keyframes treasureGlow {
+  0% { transform: scale(1); filter: drop-shadow(0 0 4px #fbbf24); }
+  100% { transform: scale(1.06); filter: drop-shadow(0 0 12px #f59e0b); }
+}
+
+.bankLabel {
+  font-size: 11px;
+  font-weight: 800;
+  color: #e2e8f0;
+  text-shadow: 0 1px 3px rgba(0, 0, 0, 0.8);
+  letter-spacing: 0.02em;
+}
+
+.bridgePillarStep {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 5px;
+  z-index: 4;
+}
+
+.bridgeStoneNode {
+  width: 50px;
+  height: 50px;
+  border-radius: 42% 58% 46% 54% / 54% 46% 56% 44%;
+  background: radial-gradient(circle at 35% 30%, #78716c 0%, #57534e 55%, #292524 100%);
+  border: 2px solid #a8a29e;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 16px;
+  font-weight: 900;
+  color: #f8fafc;
+  box-shadow: inset 0 2px 0 rgba(255, 255, 255, 0.45), 0 5px 0 #1c1917, 0 8px 16px rgba(0, 0, 0, 0.5);
+  transition: all 0.35s cubic-bezier(0.34, 1.56, 0.64, 1);
+  position: relative;
+}
+
+.miniStoneMoss {
+  position: absolute;
+  top: -4px;
+  right: -2px;
+  font-size: 12px;
+}
+
+.bridgeStonePassed {
+  background: radial-gradient(circle at 35% 30%, #34d399 0%, #059669 60%, #064e3b 100%);
+  border-color: #a7f3d0;
+  color: #ffffff;
+  box-shadow: inset 0 2px 0 rgba(255, 255, 255, 0.5), 0 5px 0 #064e3b, 0 0 18px rgba(52, 211, 153, 0.7);
+}
+
+.bridgeStoneCurrent {
+  background: radial-gradient(circle at 35% 30%, #fbbf24 0%, #d97706 60%, #78350f 100%);
+  border-color: #fef08a;
+  color: #ffffff;
+  box-shadow: inset 0 2px 0 rgba(255, 255, 255, 0.6), 0 6px 0 #78350f, 0 0 22px rgba(245, 158, 11, 0.85);
+  transform: scale(1.15);
+}
+
+/* Connecting wooden planks along suspension bridge */
+.bridgeWoodPlankPath {
+  display: flex;
+  gap: 3px;
+  align-items: center;
+  z-index: 3;
+}
+
+.woodPlank {
+  width: 8px;
+  height: 22px;
+  background: linear-gradient(180deg, #92400e 0%, #713f12 100%);
+  border-radius: 3px;
+  border: 1px solid #b45309;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.4);
+}
+
+.stoneStepLabel {
+  font-size: 11px;
+  font-weight: 800;
+  color: #f1f5f9;
+  text-shadow: 0 1px 3px rgba(0, 0, 0, 0.9);
+}
+
+/* Character Leaping Figure on Current Stone */
+.heroJumperWrap {
+  position: absolute;
+  top: -52px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  z-index: 25;
+  animation: heroIdle 2.2s infinite ease-in-out;
+}
+
+@keyframes heroIdle {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-7px); }
+}
+
+.heroLeaping {
+  animation: heroJumpArc 0.75s cubic-bezier(0.25, 1, 0.5, 1) forwards !important;
+}
+
+@keyframes heroJumpArc {
+  0% { transform: translateY(0) scale(1); }
+  40% { transform: translateY(-44px) scale(1.25) rotate(16deg); }
+  75% { transform: translateY(-8px) scale(0.95); }
+  100% { transform: translateY(0) scale(1); }
+}
+
+.heroWobbling {
+  animation: heroWobbleShake 0.65s ease-in-out !important;
+}
+
+@keyframes heroWobbleShake {
+  0%, 100% { transform: rotate(0deg); }
+  20% { transform: rotate(-20deg) scale(0.95); }
+  40% { transform: rotate(20deg) scale(1.05); }
+  60% { transform: rotate(-12deg); }
+  80% { transform: rotate(12deg); }
+}
+
+.heroJumperAvatar {
+  width: 46px;
+  height: 46px;
+  border-radius: 50%;
+  overflow: hidden;
+  border: 3px solid #ffffff;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.45);
+  background-color: #ffffff;
+}
+
+.heroWaterShadow {
+  width: 32px;
+  height: 8px;
+  background: rgba(0, 0, 0, 0.35);
+  border-radius: 50%;
+  margin-top: 4px;
+  filter: blur(2px);
+}
+
+/* River Crossing Instruction Banner */
+.crossingInstruction {
+  position: relative;
+  z-index: 10;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  background: rgba(15, 23, 42, 0.65);
+  backdrop-filter: blur(8px);
+  border: 1px solid rgba(56, 189, 248, 0.35);
+  border-radius: 9999px;
+  padding: 8px 18px;
+  margin: 6px 0;
+  font-size: 12.5px;
+  font-weight: 700;
+  color: #f1f5f9;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.8);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+}
+
+/* 5. 4 Interactive Handcrafted 3D Natural River Stepping Stones */
+.optionsGrid {
+  position: relative;
+  z-index: 10;
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 16px;
+  margin: 10px 0 6px;
+}
+
+.realStoneOptionBtn {
+  position: relative;
+  background: transparent;
+  border: none;
+  padding: 0;
+  cursor: pointer;
+  outline: none;
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: transform 0.22s cubic-bezier(0.34, 1.56, 0.64, 1), filter 0.22s ease;
+  filter: drop-shadow(0 12px 18px rgba(0, 0, 0, 0.55));
+  overflow: visible;
+}
+
+.realStoneOptionBtn:hover:not(:disabled) {
+  transform: translateY(-8px) scale(1.04);
+  filter: drop-shadow(0 18px 26px rgba(56, 189, 248, 0.45));
+}
+
+.realStoneOptionBtn:active:not(:disabled) {
+  transform: translateY(2px) scale(0.98);
+  filter: drop-shadow(0 6px 12px rgba(0, 0, 0, 0.45));
+}
+
+.realStoneOptionBtn:disabled {
+  cursor: not-allowed;
+}
+
+.realStoneOptionBtn:disabled:not(.stoneBtnCorrect):not(.stoneBtnWrong) {
+  opacity: 0.5;
+  filter: grayscale(0.5) drop-shadow(0 6px 12px rgba(0, 0, 0, 0.3));
+}
+
+.stoneBtnCorrect {
+  transform: translateY(-6px) scale(1.06) !important;
+  filter: drop-shadow(0 0 30px rgba(52, 211, 153, 0.85)) !important;
+}
+
+.stoneBtnWrong {
+  animation: stoneWobble 0.65s ease-in-out !important;
+  filter: drop-shadow(0 0 28px rgba(239, 68, 68, 0.8)) !important;
+}
+
+.stoneSvgGraphic {
+  width: 100%;
+  height: auto;
+  display: block;
+  overflow: visible;
+}
+
+/* Wooden Signpost Plaque on Top of Stone */
+.stoneWoodSign {
+  position: absolute;
+  top: 6%;
+  background: linear-gradient(180deg, #92400e 0%, #713f12 100%);
+  border: 1.5px solid #d97706;
+  border-radius: 6px;
+  padding: 2px 12px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  box-shadow: 0 3px 8px rgba(0, 0, 0, 0.5);
+  z-index: 5;
+  pointer-events: none;
+}
+
+.stoneSignNail {
+  font-size: 8px;
+  color: #e2e8f0;
+  opacity: 0.8;
+}
+
+.stoneSignText {
+  font-size: 11px;
+  font-weight: 900;
+  color: #fef3c7;
+  letter-spacing: 0.05em;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.8);
+}
+
+/* Deep Chiseled Glowing Rune Number */
+.stoneNumberOverlay {
+  position: absolute;
+  top: 48%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  pointer-events: none;
+  z-index: 5;
+}
+
+.stoneChiseledNumber {
+  font-family: 'Outfit', sans-serif, system-ui;
+  font-size: 38px;
+  font-weight: 900;
+  color: #ffffff;
+  letter-spacing: -0.02em;
+  text-shadow: 0 -1px 2px #0f172a,
+               0 3px 0 #1c1917,
+               0 6px 12px rgba(0, 0, 0, 0.9),
+               0 0 16px rgba(56, 189, 248, 0.65);
+}
+
+.stoneBtnCorrect .stoneChiseledNumber {
+  color: #ecfdf5 !important;
+  text-shadow: 0 0 24px #34d399, 0 3px 0 #064e3b, 0 6px 12px rgba(0, 0, 0, 0.9) !important;
+}
+
+.stoneBtnWrong .stoneChiseledNumber {
+  color: #fff1f2 !important;
+  text-shadow: 0 0 20px #ef4444, 0 3px 0 #7f1d1d, 0 6px 12px rgba(0, 0, 0, 0.9) !important;
+}
+
+/* Bobbing Floating Animation */
+.stoneFloatDelay0 {
+  animation: riverStoneBob 3.6s infinite ease-in-out;
+}
+
+.stoneFloatDelay1 {
+  animation: riverStoneBob 4.1s infinite ease-in-out 0.4s;
+}
+
+.stoneFloatDelay2 {
+  animation: riverStoneBob 3.8s infinite ease-in-out 0.8s;
+}
+
+.stoneFloatDelay3 {
+  animation: riverStoneBob 4.3s infinite ease-in-out 1.2s;
+}
+
+@keyframes riverStoneBob {
+  0%, 100% { transform: translateY(0) rotate(0deg); }
+  50% { transform: translateY(-5px) rotate(1deg); }
+}
+
+@keyframes stoneWobble {
+  0%, 100% { transform: rotate(0deg) translateY(0); }
+  20% { transform: rotate(-8deg) translateY(4px); }
+  40% { transform: rotate(8deg) translateY(-2px); }
+  60% { transform: rotate(-4deg) translateY(2px); }
+  80% { transform: rotate(4deg) translateY(-1px); }
+}
+
+.correctBannerBadge {
+  position: absolute;
+  top: -16px;
+  background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+  color: #ffffff;
+  padding: 4px 14px;
+  border-radius: 9999px;
+  font-size: 11.5px;
+  font-weight: 900;
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  box-shadow: 0 4px 16px rgba(16, 185, 129, 0.6);
+  border: 1.5px solid #a7f3d0;
+  z-index: 15;
+  animation: popIn 0.25s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+.wrongBannerBadge {
+  position: absolute;
+  top: -16px;
+  background: linear-gradient(135deg, #ef4444 0%, #b91c1c 100%);
+  color: #ffffff;
+  padding: 4px 14px;
+  border-radius: 9999px;
+  font-size: 11.5px;
+  font-weight: 900;
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  box-shadow: 0 4px 16px rgba(239, 68, 68, 0.6);
+  border: 1.5px solid #fecaca;
+  z-index: 15;
+  animation: popIn 0.25s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+.waterSplashEmoji {
+  position: absolute;
+  bottom: -16px;
+  font-size: 26px;
+  animation: splashPop 0.5s ease-out forwards;
+  pointer-events: none;
+  z-index: 10;
+}
+
+@keyframes splashPop {
+  0% { transform: scale(0.4) translateY(0); opacity: 1; }
+  60% { transform: scale(1.3) translateY(-16px); opacity: 0.9; }
+  100% { transform: scale(1.5) translateY(-24px); opacity: 0; }
+}
+
+/* Bottom Progress Pill */
+.bottomProgressPill {
+  position: relative;
+  z-index: 10;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background-color: rgba(255, 255, 255, 0.95);
+  backdrop-filter: blur(8px);
+  border-radius: 16px;
+  padding: 8px 16px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+}
+
+.bottomProgressLeft {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 12.5px;
+  font-weight: 800;
+  color: #0f172a;
+}
+
+.bottomDotsGroup {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.bottomDot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  transition: all 0.25s ease;
+}
+
+.bottomDotActive {
+  background-color: #10b981;
+  box-shadow: 0 0 8px #10b981;
+  transform: scale(1.2);
+}
+
+.bottomDotPending {
+  background-color: #cbd5e1;
+}
+
+/* 6. Action Footer (Hint, Restart, Next) */
+.actionFooter {
+  display: flex;
+  gap: 12px;
+}
+
+.utilityBtn {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  background-color: #ffffff;
+  color: #334155;
+  padding: 12px 16px;
+  border-radius: 9999px;
+  border: 1.5px solid #e2e8f0;
+  font-weight: 800;
+  font-size: 13.5px;
+  cursor: pointer;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.04);
+  transition: all 0.15s ease;
+}
+
+.utilityBtn:hover {
+  background-color: #f8fafc;
+  border-color: #cbd5e1;
+  transform: translateY(-1px);
+}
+
+.hintCard {
+  background: linear-gradient(135deg, #e0f2fe 0%, #f0f9ff 100%);
+  border: 1.5px solid #bae6fd;
+  padding: 14px 18px;
+  border-radius: 20px;
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  box-shadow: 0 6px 16px rgba(2, 132, 199, 0.1);
+  animation: slideDown 0.25s ease-out;
+}
+
+@keyframes slideDown {
+  from { opacity: 0; transform: translateY(-8px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.nextQuestionBtn {
+  width: 100%;
+  padding: 15px;
+  border-radius: 9999px;
+  background: linear-gradient(135deg, #f97316 0%, #ea580c 100%);
+  color: #ffffff;
+  font-weight: 900;
+  font-size: 15.5px;
+  border: none;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  box-shadow: 0 8px 20px rgba(234, 88, 12, 0.4), 0 3px 0 #9a3412;
+  transition: all 0.2s cubic-bezier(0.34, 1.56, 0.64, 1);
+  animation: popIn 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+.nextQuestionBtn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 12px 26px rgba(234, 88, 12, 0.55), 0 4px 0 #9a3412;
+}
+
+.nextQuestionBtn:active {
+  transform: translateY(2px);
+  box-shadow: 0 3px 8px rgba(234, 88, 12, 0.3), 0 1px 0 #9a3412;
+}

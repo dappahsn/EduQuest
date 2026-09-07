@@ -185,7 +185,7 @@ export default function CollectionView() {
                       {item.name}
                     </h3>
                     <span style={{ fontSize: '11px', color: isUnlocked ? 'var(--color-secondary)' : 'var(--color-text-muted)', fontWeight: 700 }}>
-                      {isUnlocked ? item.bonus : `Buka di Lv. ${item.unlockLevel}`}
+                      {isUnlocked ? (item.tierText || 'Tersedia') : `Buka di Lv. ${item.unlockLevel}`}
                     </span>
                   </div>
                 </div>
@@ -249,7 +249,7 @@ export default function CollectionView() {
                       {pet.name}
                     </h3>
                     <span style={{ fontSize: '11px', color: 'var(--color-secondary)', fontWeight: 700 }}>
-                      {pet.baseBonus}
+                      {pet.specialty || pet.title}
                     </span>
                   </div>
                 </div>

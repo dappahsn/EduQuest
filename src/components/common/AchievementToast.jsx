@@ -10,28 +10,38 @@ export default function AchievementToast() {
     <div
       style={{
         position: 'fixed',
-        bottom: '100px',
+        top: '72px',
         left: '50%',
         transform: 'translateX(-50%)',
-        zIndex: 90,
-        backgroundColor: 'var(--color-text-main)',
-        color: 'var(--color-surface-bright)',
-        padding: '10px 20px',
-        borderRadius: 'var(--radius-full)',
-        boxShadow: '0 8px 24px rgba(18, 26, 52, 0.25)',
-        display: 'flex',
+        zIndex: 9999,
+        backgroundColor: 'rgba(15, 23, 42, 0.94)',
+        backdropFilter: 'blur(16px)',
+        WebkitBackdropFilter: 'blur(16px)',
+        color: '#ffffff',
+        padding: '9px 18px',
+        borderRadius: '9999px',
+        border: '1.5px solid rgba(52, 211, 153, 0.45)',
+        boxShadow: '0 12px 32px rgba(0, 0, 0, 0.5), 0 0 16px rgba(16, 185, 129, 0.25)',
+        display: 'inline-flex',
         alignItems: 'center',
+        justifyContent: 'center',
         gap: '8px',
-        fontSize: '14px',
+        fontSize: '12.5px',
         fontWeight: 700,
+        maxWidth: 'calc(100vw - 32px)',
+        boxSizing: 'border-box',
+        textAlign: 'center',
+        lineHeight: 1.35,
         pointerEvents: 'none',
-        animation: 'popIn 0.3s cubic-bezier(0.34, 1.56, 0.64, 1)'
+        animation: 'toastSlideDown 0.35s cubic-bezier(0.34, 1.56, 0.64, 1) forwards'
       }}
     >
-      <span className="material-symbols-outlined" style={{ fontSize: '20px', color: 'var(--color-secondary-fixed)' }}>
+      <span className="material-symbols-outlined" style={{ fontSize: '18px', color: '#10b981', flexShrink: 0 }}>
         check_circle
       </span>
-      <span>{toastMessage}</span>
+      <span style={{ color: '#f8fafc', letterSpacing: '0.01em', wordBreak: 'break-word' }}>
+        {toastMessage}
+      </span>
     </div>
   );
 }

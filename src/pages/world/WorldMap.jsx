@@ -1,727 +1,611 @@
-import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo, useEffect, useRef } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import GameHeader from '../../components/navigation/GameHeader';
 import BottomNavDock from '../../components/navigation/BottomNavDock';
 import CharacterAvatar from '../../components/character/CharacterAvatar';
 import { useGame } from '../../context/GameContext';
 import { audioManager } from '../../lib/audioManager';
-import { QUESTS } from '../../data/seedData';
+import { 
+  REGION_QUESTS, 
+  isQuestDone, 
+  getRegionProgress, 
+  isPlanetCompleted 
+} from '../../data/worldData';
+import './WorldMap.css';
 
 const REGION_DATA = {
   angka: {
     id: 'lembah-angka',
-    title: 'Lembah Angka',
-    subtitle: 'Matematika & Geometri Ajaib',
+    title: 'Planet Lembah Angka',
+    subtitle: 'Dunia Aljabar & Geometri Ajaib',
     icon: 'calculate',
     tier: 'Tingkat 1',
     progress: 0,
     locked: false,
-    level: 1,
+    prevPlanetName: null,
     nextQuest: 'Jembatan Perkalian Kilat',
     xp: '+120 XP',
-    color: 'var(--color-primary)'
+    color: '#0284c7',
+    biomeImage: '/images/biome-angka.jpg',
+    islandImage: '/images/planet-angka.png',
+    themeClass: 'selected',
+    themeColor: '#0284c7',
+    bgLight: '#f0f9ff',
+    lore: 'Planet 3D kristal safir dengan riam angka bercahaya dan cincin orbit matematika ajaib.'
   },
   sains: {
     id: 'hutan-sains',
-    title: 'Hutan Sains',
-    subtitle: 'Ekosistem & Flora Misterius',
+    title: 'Planet Hutan Sains',
+    subtitle: 'Biosfer Flora & Ekosistem Galaksi',
     icon: 'biotech',
-    tier: 'Tingkat 3',
+    tier: 'Tingkat 2',
     progress: 0,
     locked: true,
-    level: 3,
+    prevPlanetName: 'Planet Lembah Angka',
     nextQuest: 'Misteri Fotosintesis Daun',
-    xp: '+120 XP',
-    color: 'var(--color-secondary)'
+    xp: '+140 XP',
+    color: '#10b981',
+    biomeImage: '/images/biome-sains.jpg',
+    islandImage: '/images/planet-sains.png',
+    themeClass: 'selected-forest',
+    themeColor: '#10b981',
+    bgLight: '#ecfdf5',
+    lore: 'Planet 3D rimba zamrud penuh tanaman bercahaya, laboratorium pohon, dan biosfer kosmik.'
   },
   cerita: {
     id: 'negeri-cerita',
-    title: 'Negeri Cerita',
-    subtitle: 'Literasi & Dongeng Nusantara',
+    title: 'Planet Negeri Cerita',
+    subtitle: 'Dunia Dongeng & Aksara Bintang',
     icon: 'auto_stories',
-    tier: 'Tingkat 6',
+    tier: 'Tingkat 3',
     progress: 0,
     locked: true,
-    level: 6,
-    nextQuest: 'Rantai Kata Pertama',
-    xp: '+100 XP',
-    color: 'var(--color-tertiary)'
+    prevPlanetName: 'Planet Hutan Sains',
+    nextQuest: 'Dongeng Timun Mas',
+    xp: '+150 XP',
+    color: '#f97316',
+    biomeImage: '/images/biome-cerita.jpg',
+    islandImage: '/images/planet-cerita.png',
+    themeClass: 'selected-cerita',
+    themeColor: '#f97316',
+    bgLight: '#fff7ed',
+    lore: 'Planet 3D kastel buku megah berlatar senja keemasan dengan cincin aksara bintang melayang.'
   },
   tekateki: {
     id: 'gunung-teka-teki',
-    title: 'Gunung Teka-Teki',
-    subtitle: 'Benteng Logika & Roda Gigi',
+    title: 'Planet Gunung Teka-Teki',
+    subtitle: 'Benteng Logika & Roda Gigi Kosmik',
     icon: 'extension',
-    tier: 'Tingkat 14',
+    tier: 'Tingkat 4',
     progress: 0,
     locked: true,
-    level: 14,
-    nextQuest: 'Kode Algoritma Roda Gigi',
-    xp: '+180 XP',
-    color: 'var(--color-outline)'
+    prevPlanetName: 'Planet Negeri Cerita',
+    nextQuest: 'Misi Robot Penyelamat',
+    xp: '+160 XP',
+    color: '#8b5cf6',
+    biomeImage: '/images/biome-tekateki.jpg',
+    islandImage: '/images/planet-tekateki.png',
+    themeClass: 'selected-tekateki',
+    themeColor: '#8b5cf6',
+    bgLight: '#f5f3ff',
+    lore: 'Planet 3D asteroid mekanik dengan gerbang roda gigi raksasa dan labirin teka-teki kristal.'
   },
   angkasa: {
     id: 'angkasa-pengetahuan',
-    title: 'Angkasa Pengetahuan',
-    subtitle: 'Sains & Astronomi Kosmik',
+    title: 'Planet Angkasa Pengetahuan',
+    subtitle: 'Pusat Observatorium Inti Galaksi',
     icon: 'rocket_launch',
-    tier: 'Tingkat 16',
+    tier: 'Tingkat 5',
     progress: 0,
     locked: true,
-    level: 16,
-    nextQuest: 'Pusat Tata Surya',
-    xp: '+200 XP',
-    color: 'var(--color-outline)'
+    prevPlanetName: 'Planet Gunung Teka-Teki',
+    nextQuest: 'Penyusun Tata Surya Kosmik',
+    xp: '+160 XP',
+    color: '#6366f1',
+    biomeImage: '/images/biome-angkasa.jpg',
+    islandImage: '/images/planet-angkasa.png',
+    themeClass: 'selected-angkasa',
+    themeColor: '#6366f1',
+    bgLight: '#eef2ff',
+    lore: 'Pusat tata surya 3D dengan kubah observatorium emas dan cincin starlight nebula megah.'
   }
 };
 
 export default function WorldMap() {
   const navigate = useNavigate();
-  const { characterConfig, claimDailyChest, setRewardModal, level, completedQuestIds = [] } = useGame();
+  const pageRef = useRef(null);
+  const { 
+    characterConfig, 
+    claimDailyChest, 
+    completedQuestIds = [],
+    dailyQuests = [],
+    dailyChestClaimed = false,
+    showToast
+  } = useGame();
   const [selectedRegionKey, setSelectedRegionKey] = useState('angka');
+  const [hoveredIslandKey, setHoveredIslandKey] = useState(null);
 
-  const currentLevel = level || 1;
+  const completedDailyCount = (dailyQuests || []).filter((q) => q.completed).length;
+  const totalDailyCount = (dailyQuests || []).length || 3;
+  const allDailyCompleted = totalDailyCount > 0 && completedDailyCount >= totalDailyCount;
 
-  const getRegionProgress = (regionId) => {
-    const list = QUESTS.filter((q) => q.regionId === regionId);
-    if (!list.length) return 0;
-    const done = list.filter((q) => (completedQuestIds || []).includes(q.id)).length;
-    return Math.round((done / list.length) * 100);
+  const handleDailyChestClick = () => {
+    if (dailyChestClaimed) {
+      if (showToast) {
+        showToast('Hadiah hari ini sudah diklaim! Datang lagi besok ya 🌟');
+      }
+      return;
+    }
+    // Klaim hadiah harian
+    claimDailyChest(true);
   };
 
   const getNextQuestInfo = (regionId) => {
-    const list = QUESTS.filter((q) => q.regionId === regionId).sort((a, b) => a.orderIndex - b.orderIndex);
-    const next = list.find((q) => !(completedQuestIds || []).includes(q.id));
+    const list = REGION_QUESTS[regionId] || [];
+    const next = list.find((q) => !isQuestDone(q.id, completedQuestIds));
     if (next) {
-      return { title: next.title, xp: `+${next.xpReward} XP`, id: next.id };
+      return { title: next.title, xp: `+${next.xp} XP`, id: next.id };
     }
     return { title: 'Semua Misi Selesai!', xp: '⭐⭐⭐', id: null };
   };
 
+  const getCompletedCount = (regionId) => {
+    const list = REGION_QUESTS[regionId] || [];
+    const done = list.filter((q) => isQuestDone(q.id, completedQuestIds)).length;
+    return { done, total: list.length || 3 };
+  };
+
   const regions = useMemo(() => {
-    const isSainsLocked = currentLevel < 3 || !(completedQuestIds || []).includes('angka-01');
-    const isCeritaLocked = currentLevel < 6 || !(completedQuestIds || []).includes('sains-01');
-    const isTekatekiLocked = currentLevel < 14 || !(completedQuestIds || []).includes('cerita-03');
-    const isAngkasaLocked = currentLevel < 16 || !(completedQuestIds || []).includes('tekateki-03');
+    // Unlocking is strictly based on completing the preceding planet in sequence:
+    // Planet 1: Lembah Angka (always unlocked)
+    // Planet 2: Hutan Sains (unlocked after completing Planet Lembah Angka)
+    // Planet 3: Negeri Cerita (unlocked after completing Planet Hutan Sains)
+    // Planet 4: Gunung Teka-Teki (unlocked after completing Planet Negeri Cerita)
+    // Planet 5: Angkasa Pengetahuan (unlocked after completing Planet Gunung Teka-Teki)
+    const isAngkaDone = isPlanetCompleted('angka', completedQuestIds);
+    const isSainsDone = isPlanetCompleted('sains', completedQuestIds);
+    const isCeritaDone = isPlanetCompleted('cerita', completedQuestIds);
+    const isTekatekiDone = isPlanetCompleted('tekateki', completedQuestIds);
+
+    const isSainsLocked = !isAngkaDone;
+    const isCeritaLocked = !isSainsDone;
+    const isTekatekiLocked = !isCeritaDone;
+    const isAngkasaLocked = !isTekatekiDone;
 
     return {
       angka: {
         ...REGION_DATA.angka,
-        progress: getRegionProgress('lembah-angka'),
+        progress: getRegionProgress('lembah-angka', completedQuestIds),
         locked: false,
         tier: 'Tingkat 1',
         nextQuest: getNextQuestInfo('lembah-angka').title,
-        xp: getNextQuestInfo('lembah-angka').xp
+        xp: getNextQuestInfo('lembah-angka').xp,
+        counts: getCompletedCount('lembah-angka')
       },
       sains: {
         ...REGION_DATA.sains,
-        progress: getRegionProgress('hutan-sains'),
+        progress: getRegionProgress('hutan-sains', completedQuestIds),
         locked: isSainsLocked,
-        tier: 'Tingkat 3',
+        tier: 'Tingkat 2',
+        prevPlanetName: 'Planet Lembah Angka',
         nextQuest: getNextQuestInfo('hutan-sains').title,
-        xp: getNextQuestInfo('hutan-sains').xp
+        xp: getNextQuestInfo('hutan-sains').xp,
+        counts: getCompletedCount('hutan-sains')
       },
       cerita: {
         ...REGION_DATA.cerita,
-        progress: getRegionProgress('negeri-cerita'),
+        progress: getRegionProgress('negeri-cerita', completedQuestIds),
         locked: isCeritaLocked,
-        tier: 'Tingkat 6',
+        tier: 'Tingkat 3',
+        prevPlanetName: 'Planet Hutan Sains',
         nextQuest: getNextQuestInfo('negeri-cerita').title,
-        xp: getNextQuestInfo('negeri-cerita').xp
+        xp: getNextQuestInfo('negeri-cerita').xp,
+        counts: getCompletedCount('negeri-cerita')
       },
       tekateki: {
         ...REGION_DATA.tekateki,
-        progress: getRegionProgress('gunung-teka-teki'),
+        progress: getRegionProgress('gunung-teka-teki', completedQuestIds),
         locked: isTekatekiLocked,
-        tier: 'Tingkat 14',
+        tier: 'Tingkat 4',
+        prevPlanetName: 'Planet Negeri Cerita',
         nextQuest: getNextQuestInfo('gunung-teka-teki').title,
-        xp: getNextQuestInfo('gunung-teka-teki').xp
+        xp: getNextQuestInfo('gunung-teka-teki').xp,
+        counts: getCompletedCount('gunung-teka-teki')
       },
       angkasa: {
         ...REGION_DATA.angkasa,
-        progress: getRegionProgress('angkasa-pengetahuan'),
+        progress: getRegionProgress('angkasa-pengetahuan', completedQuestIds),
         locked: isAngkasaLocked,
-        tier: 'Tingkat 16',
+        tier: 'Tingkat 5',
+        prevPlanetName: 'Planet Gunung Teka-Teki',
         nextQuest: getNextQuestInfo('angkasa-pengetahuan').title,
-        xp: getNextQuestInfo('angkasa-pengetahuan').xp
+        xp: getNextQuestInfo('angkasa-pengetahuan').xp,
+        counts: getCompletedCount('angkasa-pengetahuan')
       }
     };
-  }, [currentLevel, completedQuestIds]);
+  }, [completedQuestIds]);
+
+  const playerActiveRegionKey = useMemo(() => {
+    if (regions.angka.progress < 100) return 'angka';
+    if (!regions.sains.locked && regions.sains.progress < 100) return 'sains';
+    if (!regions.cerita.locked && regions.cerita.progress < 100) return 'cerita';
+    if (!regions.tekateki.locked && regions.tekateki.progress < 100) return 'tekateki';
+    if (!regions.angkasa.locked && regions.angkasa.progress < 100) return 'angkasa';
+    return 'angka';
+  }, [regions]);
 
   const selectedRegion = regions[selectedRegionKey] || regions.angka;
 
+  // Synchronize initial selection to player's active progression planet
+  useEffect(() => {
+    if (playerActiveRegionKey) {
+      setSelectedRegionKey(playerActiveRegionKey);
+    }
+  }, [playerActiveRegionKey]);
+
+  const handleSelectRegion = (key) => {
+    const reg = regions[key];
+    // If user clicks a planet that is already selected and unlocked, launch it directly!
+    if (selectedRegionKey === key && !reg.locked) {
+      audioManager.playSfx('game-start');
+      navigate(`/world/${reg.id}`);
+      return;
+    }
+    setSelectedRegionKey(key);
+    audioManager.playSfx('button-click');
+  };
+
+
+
+  // Helper renderer for avatar pin
+  const renderAvatarPin = (speechText) => (
+    <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+      <div className="avatar-speech-bubble">
+        <span className="material-symbols-outlined" style={{ fontSize: '14px', color: '#0284c7' }}>explore</span>
+        <span style={{ fontSize: '11px', fontWeight: 800, color: '#0f172a' }}>{speechText}</span>
+        <div className="speech-triangle" />
+      </div>
+      <div className="player-avatar-pin">
+        <div className="player-avatar-halo" />
+        <div className="player-avatar-frame">
+          <CharacterAvatar config={characterConfig} size="md" />
+        </div>
+      </div>
+    </div>
+  );
+
+  // Helper renderer for a 3D interactive floating island with elevation on hover
+  const renderIslandUnit = (key) => {
+    const reg = regions[key];
+    const isSelected = selectedRegionKey === key;
+    const isHovered = hoveredIslandKey === key;
+    const isAvatarHere = selectedRegionKey === key;
+
+    const speechText = reg.locked
+      ? `Terkunci (Selesaikan ${reg.prevPlanetName || 'planet sebelumnya'})`
+      : key === 'angka' ? 'Mendarat di Planet Lembah Angka!'
+      : key === 'sains' ? 'Eksplorasi Planet Hutan Sains!'
+      : key === 'cerita' ? 'Jelajahi Planet Negeri Cerita!'
+      : key === 'tekateki' ? 'Aktifkan Planet Gunung Teka-Teki!'
+      : 'Pusat Planet Angkasa Pengetahuan!';
+
+    return (
+      <div
+        key={key}
+        className={`island-interactive-unit island-unit-${key} ${isSelected ? 'selected-island' : ''} ${isHovered ? 'hovered-island' : ''} ${reg.locked ? 'island-locked' : ''}`}
+        onMouseEnter={() => {
+          setHoveredIslandKey(key);
+          audioManager.playSfx('button-hover');
+        }}
+        onMouseLeave={() => setHoveredIslandKey(null)}
+        onClick={() => handleSelectRegion(key)}
+      >
+        {/* Active Player Avatar Pin (standing on top of currently selected planet) */}
+        {isAvatarHere && (
+          <div className="island-avatar-wrapper">
+            {renderAvatarPin(speechText)}
+          </div>
+        )}
+
+        {/* 3D Floating Planet Body with Spherical Atmosphere */}
+        <div className="island-body-3d">
+          {/* Luminous Atmospheric Halo Glow Behind Planet */}
+          <div className="planet-atmosphere-halo" style={{ '--planet-color': reg.themeColor }} />
+
+          {/* High-definition 3D Planet Diorama */}
+          <img
+            src={reg.islandImage}
+            alt={reg.title}
+            className="island-3d-img"
+            draggable={false}
+          />
+
+          {/* 3D Spherical Fresnel Lighting Sphere */}
+          <div className="planet-fresnel-sphere" style={{ '--planet-color': reg.themeColor }} />
+        </div>
+
+        {/* Cosmic Space Gravity Well */}
+        <div className="planet-space-base">
+          <div className="planet-space-gravity-shadow" />
+        </div>
+
+        {/* Floating Planet Name Badge (Positioned Below the Planet) */}
+        <div className="island-floating-badge">
+          <div className="island-badge-icon" style={{ backgroundColor: `${reg.themeColor}22`, color: reg.themeColor }}>
+            <span className="material-symbols-outlined" style={{ fontSize: '15px' }}>{reg.icon}</span>
+          </div>
+          <div className="island-badge-text">
+            <span className="island-badge-name">{reg.title}</span>
+            <div className="island-badge-sub">
+              <span className="island-badge-tier" style={{ color: reg.themeColor }}>{reg.tier}</span>
+              <span className="island-badge-prog" style={{ backgroundColor: reg.locked ? '#e2e8f0' : `${reg.themeColor}22`, color: reg.locked ? '#64748b' : reg.themeColor }}>
+                {reg.locked ? (
+                  <>
+                    <span className="material-symbols-outlined" style={{ fontSize: '11px' }}>lock</span> Terkunci
+                  </>
+                ) : (
+                  `${reg.progress}%`
+                )}
+              </span>
+            </div>
+          </div>
+        </div>
+      </div>
+    );
+  };
+
   return (
-    <div style={{
-      minHeight: '100vh',
-      backgroundColor: 'var(--color-surface)',
-      paddingTop: '80px',
-      paddingBottom: '100px',
-      display: 'flex',
-      flexDirection: 'column'
-    }}>
+    <div className="worldmap-page" ref={pageRef}>
       <GameHeader />
 
-      <main style={{
-        maxWidth: '520px',
-        width: '100%',
-        margin: '0 auto',
-        padding: '0 var(--space-md)',
-        display: 'flex',
-        flexDirection: 'column',
-        gap: 'var(--space-md)'
-      }}>
-        {/* Top Active Island Banner (Sesuai Stitch) */}
-        <div style={{
-          position: 'relative',
-          overflow: 'hidden',
-          borderRadius: 'var(--radius-lg)',
-          backgroundColor: 'var(--color-surface-container-high)',
-          padding: 'var(--space-sm) var(--space-md)',
-          boxShadow: 'var(--shadow-card)',
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'space-between'
-        }}>
-          <div style={{ display: 'flex', alignItems: 'center', gap: 'var(--space-sm)' }}>
-            <div style={{
-              width: '40px',
-              height: '40px',
-              borderRadius: '50%',
-              backgroundColor: 'var(--color-secondary-container)',
-              color: 'var(--color-on-secondary-container)',
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              boxShadow: 'var(--shadow-card)'
-            }}>
-              <span className="material-symbols-outlined" style={{ fontSize: '24px' }}>map</span>
-            </div>
-            <div style={{ display: 'flex', flexDirection: 'column' }}>
-              <span style={{ fontSize: '11px', fontWeight: 800, color: 'var(--color-secondary)', textTransform: 'uppercase' }}>
-                Benua EduQuest
-              </span>
-              <h2 style={{ fontSize: '16px', fontWeight: 800, color: 'var(--color-text-main)', margin: 0 }}>
-                Jalur Petualangan Raka
-              </h2>
-            </div>
+      <main className="worldmap-layout">
+        {/* MAP CANVAS (Dual-Mode: 16:9 Landscape on Desktop, 9:16 Full-Bleed on Mobile) */}
+        <div className="worldmap-canvas">
+          {/* Floating Canvas Top HUD */}
+          <div className="canvas-top-hud">
+            <button
+              className={`canvas-hud-gift-btn ${
+                dailyChestClaimed
+                  ? 'claimed'
+                  : allDailyCompleted
+                  ? 'ready-to-claim'
+                  : 'in-progress'
+              }`}
+              onClick={handleDailyChestClick}
+              title={
+                dailyChestClaimed
+                  ? 'Hadiah harian sudah kamu klaim hari ini'
+                  : allDailyCompleted
+                  ? 'Semua misi selesai! Klik untuk klaim hadiah harian'
+                  : `Misi harian: ${completedDailyCount}/${totalDailyCount}. Klik untuk klaim hadiah`
+              }
+            >
+              {dailyChestClaimed ? (
+                <>
+                  <span className="material-symbols-outlined">check_circle</span>
+                  <span>Terklaim ✓</span>
+                </>
+              ) : allDailyCompleted ? (
+                <>
+                  <span className="material-symbols-outlined">card_giftcard</span>
+                  <span>Klaim 3/3!</span>
+                </>
+              ) : (
+                <>
+                  <span className="material-symbols-outlined">card_giftcard</span>
+                  <span>{completedDailyCount}/{totalDailyCount} Hadiah</span>
+                </>
+              )}
+            </button>
           </div>
 
-          <button
-            onClick={() => {
-              claimDailyChest();
-              setRewardModal({
-                title: 'Peti Harian Dibuka!',
-                xp: 150,
-                coins: 50
-              });
-            }}
-            style={{
-              display: 'flex',
-              alignItems: 'center',
-              gap: '4px',
-              backgroundColor: 'var(--color-tertiary)',
-              color: 'var(--color-on-tertiary)',
-              padding: '6px 14px',
-              borderRadius: 'var(--radius-full)',
-              border: 'none',
-              cursor: 'pointer',
-              fontSize: '12px',
-              fontWeight: 800,
-              boxShadow: 'var(--shadow-tactile-tertiary)'
-            }}
-          >
-            <span className="material-symbols-outlined" style={{ fontSize: '16px' }}>card_giftcard</span>
-            <span>3/3 Hadiah</span>
-          </button>
-        </div>
+          {/* Clean 3D Luminous Starlight Hyperlane (No Clutter, Pure Cosmic Conduit) */}
+          <svg className="sea-routes-layer desktop-galaxy-hyperlane" viewBox="0 0 1440 760" preserveAspectRatio="none" fill="none">
+            <defs>
+              <filter id="hyperlaneGlow" x="-30%" y="-30%" width="160%" height="160%">
+                <feGaussianBlur stdDeviation="8" result="blur1" />
+                <feGaussianBlur stdDeviation="3" result="blur2" />
+                <feMerge>
+                  <feMergeNode in="blur1" />
+                  <feMergeNode in="blur2" />
+                  <feMergeNode in="SourceGraphic" />
+                </feMerge>
+              </filter>
+              <linearGradient id="cosmicHyperlaneGrad" x1="0%" y1="100%" x2="100%" y2="0%">
+                <stop offset="0%" stopColor="#0284c7" />
+                <stop offset="25%" stopColor="#10b981" />
+                <stop offset="50%" stopColor="#f97316" />
+                <stop offset="75%" stopColor="#8b5cf6" />
+                <stop offset="100%" stopColor="#6366f1" />
+              </linearGradient>
+            </defs>
 
-        {/* Winding Trail Map Canvas (Sesuai Stitch) */}
-        <div style={{
-          position: 'relative',
-          width: '100%',
-          borderRadius: 'var(--radius-lg)',
-          background: 'linear-gradient(180deg, var(--color-surface-container-low) 0%, var(--color-surface-container) 50%, var(--color-surface-container-high) 100%)',
-          padding: 'var(--space-sm)',
-          boxShadow: '0 12px 28px rgba(18, 26, 52, 0.08)',
-          overflow: 'hidden',
-          minHeight: '760px',
-          display: 'flex',
-          flexDirection: 'column',
-          justifyContent: 'space-between'
-        }}>
-          {/* Background Grid Dots Pattern */}
-          <div style={{ position: 'absolute', inset: 0, opacity: 0.15, pointerEvents: 'none' }}>
-            <svg style={{ width: '100%', height: '100%' }}>
-              <defs>
-                <pattern id="grid-dots" width="24" height="24" patternUnits="userSpaceOnUse">
-                  <circle cx="2" cy="2" r="1.5" fill="#006194" />
-                </pattern>
-              </defs>
-              <rect width="100%" height="100%" fill="url(#grid-dots)" />
-            </svg>
-          </div>
+            {/* Outer Volumetric Cosmic Aura */}
+            <path
+              className="route-glow-ribbon"
+              d="M 187 584 C 250 430, 340 300, 412 262 C 500 230, 620 320, 720 373 C 820 420, 940 230, 1032 262 C 1110 280, 1190 245, 1262 257"
+              stroke="url(#cosmicHyperlaneGrad)"
+              fill="none"
+              filter="url(#hyperlaneGlow)"
+            />
 
-          {/* Dual Winding SVG Trail */}
-          <svg
-            style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', pointerEvents: 'none' }}
-            fill="none"
-            preserveAspectRatio="none"
-            viewBox="0 0 360 760"
-          >
+            {/* Core Focused Laser Conduit */}
             <path
-              d="M 180 80 Q 260 140 190 220 T 110 370 T 250 510 T 170 660"
-              opacity="0.6"
-              stroke="#93ccff"
-              strokeDasharray="10 10"
-              strokeLinecap="round"
-              strokeWidth="8"
+              className="route-core-laser"
+              d="M 187 584 C 250 430, 340 300, 412 262 C 500 230, 620 320, 720 373 C 820 420, 940 230, 1032 262 C 1110 280, 1190 245, 1262 257"
+              stroke="url(#cosmicHyperlaneGrad)"
+              fill="none"
             />
-            <path
-              d="M 180 80 Q 260 140 190 220 T 110 370 T 250 510 T 170 660"
-              stroke="#006194"
-              strokeDasharray="8 8"
-              strokeLinecap="round"
-              strokeWidth="3"
-            />
+
+            {/* Traveling Starlight Photons */}
+            <circle r="4.5" fill="#ffffff" filter="url(#hyperlaneGlow)">
+              <animateMotion
+                dur="7s"
+                repeatCount="indefinite"
+                path="M 187 584 C 250 430, 340 300, 412 262 C 500 230, 620 320, 720 373 C 820 420, 940 230, 1032 262 C 1110 280, 1190 245, 1262 257"
+              />
+            </circle>
+            <circle r="3" fill="#bae6fd" filter="url(#hyperlaneGlow)">
+              <animateMotion
+                dur="7s"
+                begin="-3.5s"
+                repeatCount="indefinite"
+                path="M 187 584 C 250 430, 340 300, 412 262 C 500 230, 620 320, 720 373 C 820 420, 940 230, 1032 262 C 1110 280, 1190 245, 1262 257"
+              />
+            </circle>
           </svg>
 
-          {/* Wilayah 5: Angkasa Pengetahuan */}
-          <div style={{ position: 'relative', zIndex: 10, display: 'flex', flexDirection: 'column', alignItems: 'center', paddingTop: '8px' }}>
-            <div
-              onClick={() => { setSelectedRegionKey('angkasa'); audioManager.playSfx('button-click'); }}
-              style={{
-                width: '100%',
-                maxWidth: '300px',
-                backgroundColor: regions.angkasa.locked ? 'rgba(255, 255, 255, 0.8)' : 'var(--color-surface-container-lowest)',
-                backdropFilter: 'blur(8px)',
-                borderRadius: 'var(--radius-lg)',
-                padding: 'var(--space-xs)',
-                boxShadow: 'var(--shadow-card)',
-                display: 'flex',
-                alignItems: 'center',
-                gap: '10px',
-                opacity: regions.angkasa.locked ? 0.65 : 1,
-                cursor: 'pointer',
-                border: selectedRegionKey === 'angkasa' ? '2px solid var(--color-primary)' : '2px solid transparent'
-              }}
-            >
-              <div style={{
-                width: '52px',
-                height: '52px',
-                borderRadius: 'var(--radius-md)',
-                backgroundColor: regions.angkasa.locked ? 'var(--color-surface-variant)' : 'var(--color-primary-container)',
-                color: regions.angkasa.locked ? 'var(--color-outline)' : 'var(--color-on-primary-container)',
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                flexShrink: 0
-              }}>
-                <span className="material-symbols-outlined" style={{ fontSize: '26px' }}>rocket_launch</span>
+          {/* -------------------------------------------------------------
+              A. DESKTOP 3D COSMIC PLANETS SOLAR SYSTEM
+              ------------------------------------------------------------- */}
+          <div className="desktop-archipelago-container">
+            {['angka', 'sains', 'cerita', 'tekateki', 'angkasa'].map(key => renderIslandUnit(key))}
+          </div>
+
+          {/* Desktop Bottom-Center Start Launch Bar */}
+          <div className="desktop-bottom-start-bar">
+            <div className="start-bar-planet-preview">
+              <div
+                className="start-bar-planet-icon"
+                style={{
+                  backgroundColor: selectedRegion.themeColor,
+                  boxShadow: `0 0 16px ${selectedRegion.themeColor}aa`
+                }}
+              >
+                <span className="material-symbols-outlined">{selectedRegion.icon}</span>
               </div>
-              <div style={{ flex: 1, minWidth: 0 }}>
-                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                  <span style={{ fontSize: '11px', fontWeight: 800, color: regions.angkasa.locked ? 'var(--color-outline)' : 'var(--color-primary)' }}>Wilayah 5</span>
-                  <span style={{ fontSize: '10px', fontWeight: 700, backgroundColor: regions.angkasa.locked ? 'var(--color-surface-variant)' : 'var(--color-secondary-container)', color: regions.angkasa.locked ? 'inherit' : 'var(--color-on-secondary-container)', padding: '2px 8px', borderRadius: 'var(--radius-full)', display: 'flex', alignItems: 'center', gap: '2px' }}>
-                    {regions.angkasa.locked ? (
-                      <>
-                        <span className="material-symbols-outlined" style={{ fontSize: '12px' }}>lock</span> Lv. 16
-                      </>
-                    ) : (
-                      'Terbuka • Lv. 16'
-                    )}
+              <div className="start-bar-planet-text">
+                <div className="start-bar-tag">
+                  <span className="start-bar-tier" style={{ color: selectedRegion.themeColor }}>
+                    {selectedRegion.tier}
+                  </span>
+                  <span className="start-bar-divider">•</span>
+                  <span className="start-bar-progress">
+                    {selectedRegion.locked
+                      ? `Selesaikan ${selectedRegion.prevPlanetName || 'Planet Sebelumnya'}`
+                      : `${selectedRegion.progress}% Selesai`}
                   </span>
                 </div>
-                <h3 style={{ fontSize: '15px', fontWeight: 800, color: 'var(--color-text-main)', margin: '2px 0 0', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
-                  Angkasa Pengetahuan
-                </h3>
-                <p style={{ fontSize: '12px', color: 'var(--color-text-muted)', margin: 0 }}>Sains & Astronomi Kosmik</p>
+                <h3 className="start-bar-title">{selectedRegion.title}</h3>
               </div>
             </div>
-          </div>
-
-          {/* Wilayah 4: Gunung Teka-Teki */}
-          <div style={{ position: 'relative', zIndex: 10, display: 'flex', flexDirection: 'column', alignItems: 'flex-start', paddingLeft: '8px' }}>
-            <div
-              onClick={() => { setSelectedRegionKey('tekateki'); audioManager.playSfx('button-click'); }}
-              style={{
-                width: '100%',
-                maxWidth: '300px',
-                backgroundColor: regions.tekateki.locked ? 'rgba(255, 255, 255, 0.8)' : 'var(--color-surface-container-lowest)',
-                backdropFilter: 'blur(8px)',
-                borderRadius: 'var(--radius-lg)',
-                padding: 'var(--space-xs)',
-                boxShadow: 'var(--shadow-card)',
-                display: 'flex',
-                alignItems: 'center',
-                gap: '10px',
-                opacity: regions.tekateki.locked ? 0.65 : 1,
-                cursor: 'pointer',
-                border: selectedRegionKey === 'tekateki' ? '2px solid var(--color-primary)' : '2px solid transparent'
-              }}
-            >
-              <div style={{
-                width: '52px',
-                height: '52px',
-                borderRadius: 'var(--radius-md)',
-                backgroundColor: regions.tekateki.locked ? 'var(--color-surface-variant)' : 'var(--color-primary-container)',
-                color: regions.tekateki.locked ? 'var(--color-outline)' : 'var(--color-on-primary-container)',
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                flexShrink: 0
-              }}>
-                <span className="material-symbols-outlined" style={{ fontSize: '26px' }}>extension</span>
-              </div>
-              <div style={{ flex: 1, minWidth: 0 }}>
-                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                  <span style={{ fontSize: '11px', fontWeight: 800, color: regions.tekateki.locked ? 'var(--color-outline)' : 'var(--color-primary)' }}>Wilayah 4</span>
-                  <span style={{ fontSize: '10px', fontWeight: 700, backgroundColor: regions.tekateki.locked ? 'var(--color-surface-variant)' : 'var(--color-secondary-container)', color: regions.tekateki.locked ? 'inherit' : 'var(--color-on-secondary-container)', padding: '2px 8px', borderRadius: 'var(--radius-full)', display: 'flex', alignItems: 'center', gap: '2px' }}>
-                    {regions.tekateki.locked ? (
-                      <>
-                        <span className="material-symbols-outlined" style={{ fontSize: '12px' }}>lock</span> Lv. 14
-                      </>
-                    ) : (
-                      'Terbuka • Lv. 14'
-                    )}
-                  </span>
-                </div>
-                <h3 style={{ fontSize: '15px', fontWeight: 800, color: 'var(--color-text-main)', margin: '2px 0 0' }}>
-                  Gunung Teka-Teki
-                </h3>
-                <p style={{ fontSize: '12px', color: 'var(--color-text-muted)', margin: 0 }}>Benteng Logika & Roda Gigi</p>
-              </div>
-            </div>
-          </div>
-
-          {/* Wilayah 3: Negeri Cerita */}
-          <div style={{ position: 'relative', zIndex: 10, display: 'flex', flexDirection: 'column', alignItems: 'flex-end', paddingRight: '8px' }}>
-            <div
-              onClick={() => { setSelectedRegionKey('cerita'); audioManager.playSfx('button-click'); }}
-              style={{
-                width: '100%',
-                maxWidth: '300px',
-                backgroundColor: regions.cerita.locked ? 'rgba(255, 255, 255, 0.85)' : 'var(--color-surface-container-lowest)',
-                backdropFilter: 'blur(8px)',
-                borderRadius: 'var(--radius-lg)',
-                padding: 'var(--space-xs)',
-                boxShadow: 'var(--shadow-card)',
-                cursor: 'pointer',
-                opacity: regions.cerita.locked ? 0.7 : 1,
-                border: selectedRegionKey === 'cerita' ? '2px solid var(--color-tertiary)' : '2px solid transparent'
-              }}
-            >
-              <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-                <div style={{
-                  width: '52px',
-                  height: '52px',
-                  borderRadius: 'var(--radius-md)',
-                  backgroundColor: regions.cerita.locked ? 'var(--color-surface-variant)' : 'var(--color-tertiary-fixed)',
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  flexShrink: 0
-                }}>
-                  <span className="material-symbols-outlined" style={{ fontSize: '26px', color: regions.cerita.locked ? 'var(--color-outline)' : 'var(--color-tertiary)' }}>auto_stories</span>
-                </div>
-                <div style={{ flex: 1, minWidth: 0 }}>
-                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                    <span style={{ fontSize: '11px', fontWeight: 800, color: regions.cerita.locked ? 'var(--color-outline)' : 'var(--color-tertiary)' }}>Wilayah 3</span>
-                    <span style={{ fontSize: '10px', fontWeight: 800, backgroundColor: regions.cerita.locked ? 'var(--color-surface-variant)' : 'var(--color-tertiary-fixed)', color: regions.cerita.locked ? 'inherit' : 'var(--color-on-tertiary-fixed)', padding: '2px 8px', borderRadius: 'var(--radius-full)', display: 'flex', alignItems: 'center', gap: '2px' }}>
-                      {regions.cerita.locked ? (
-                        <>
-                          <span className="material-symbols-outlined" style={{ fontSize: '12px' }}>lock</span> Lv. 6
-                        </>
-                      ) : (
-                        `${regions.cerita.progress}%`
-                      )}
-                    </span>
-                  </div>
-                  <h3 style={{ fontSize: '15px', fontWeight: 800, color: 'var(--color-text-main)', margin: '2px 0 0' }}>
-                    Negeri Cerita
-                  </h3>
-                  <div style={{ width: '100%', height: '6px', backgroundColor: 'var(--color-surface-variant)', borderRadius: 'var(--radius-full)', overflow: 'hidden', marginTop: '4px' }}>
-                    <div style={{ width: `${regions.cerita.progress}%`, height: '100%', backgroundColor: 'var(--color-tertiary)', borderRadius: 'var(--radius-full)' }} />
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-
-          {/* Wilayah 2: Hutan Sains */}
-          <div style={{ position: 'relative', zIndex: 10, display: 'flex', flexDirection: 'column', alignItems: 'flex-start', paddingLeft: '8px' }}>
-            <div
-              onClick={() => { setSelectedRegionKey('sains'); audioManager.playSfx('button-click'); }}
-              style={{
-                width: '100%',
-                maxWidth: '300px',
-                backgroundColor: regions.sains.locked ? 'rgba(255, 255, 255, 0.85)' : 'var(--color-surface-container-lowest)',
-                backdropFilter: 'blur(8px)',
-                borderRadius: 'var(--radius-lg)',
-                padding: 'var(--space-xs)',
-                boxShadow: 'var(--shadow-card)',
-                cursor: 'pointer',
-                opacity: regions.sains.locked ? 0.7 : 1,
-                border: selectedRegionKey === 'sains' ? '2px solid var(--color-secondary)' : '2px solid transparent'
-              }}
-            >
-              <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-                <div style={{
-                  width: '52px',
-                  height: '52px',
-                  borderRadius: 'var(--radius-md)',
-                  backgroundColor: regions.sains.locked ? 'var(--color-surface-variant)' : 'var(--color-secondary-container)',
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  flexShrink: 0
-                }}>
-                  <span className="material-symbols-outlined" style={{ fontSize: '26px', color: regions.sains.locked ? 'var(--color-outline)' : 'var(--color-secondary)' }}>park</span>
-                </div>
-                <div style={{ flex: 1, minWidth: 0 }}>
-                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                    <span style={{ fontSize: '11px', fontWeight: 800, color: regions.sains.locked ? 'var(--color-outline)' : 'var(--color-secondary)' }}>Wilayah 2</span>
-                    <span style={{ fontSize: '10px', fontWeight: 800, backgroundColor: regions.sains.locked ? 'var(--color-surface-variant)' : 'var(--color-secondary-container)', color: regions.sains.locked ? 'inherit' : 'var(--color-on-secondary-container)', padding: '2px 8px', borderRadius: 'var(--radius-full)', display: 'flex', alignItems: 'center', gap: '2px' }}>
-                      {regions.sains.locked ? (
-                        <>
-                          <span className="material-symbols-outlined" style={{ fontSize: '12px' }}>lock</span> Lv. 3
-                        </>
-                      ) : (
-                        `${regions.sains.progress}%`
-                      )}
-                    </span>
-                  </div>
-                  <h3 style={{ fontSize: '15px', fontWeight: 800, color: 'var(--color-text-main)', margin: '2px 0 0' }}>
-                    Hutan Sains
-                  </h3>
-                  <div style={{ width: '100%', height: '6px', backgroundColor: 'var(--color-surface-variant)', borderRadius: 'var(--radius-full)', overflow: 'hidden', marginTop: '4px' }}>
-                    <div style={{ width: `${regions.sains.progress}%`, height: '100%', backgroundColor: 'var(--color-secondary)', borderRadius: 'var(--radius-full)' }} />
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-
-          {/* Bottom Active Pin & Speech Bubble (Wilayah 1: Lembah Angka) */}
-          <div style={{ position: 'relative', zIndex: 10, display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
-            {/* Speech bubble */}
-            <div style={{ marginBottom: '8px', display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
-              <div style={{
-                backgroundColor: 'var(--color-surface-container-lowest)',
-                padding: '6px 14px',
-                borderRadius: 'var(--radius-full)',
-                boxShadow: 'var(--shadow-card)',
-                display: 'flex',
-                alignItems: 'center',
-                gap: '6px'
-              }}>
-                <span className="material-symbols-outlined" style={{ fontSize: '16px', color: 'var(--color-primary)' }}>chat</span>
-                <span style={{ fontSize: '12px', fontWeight: 800, color: 'var(--color-text-main)' }}>
-                  {regions.angka.progress === 0 
-                    ? 'Ayo mulai petualangan di Lembah Angka!' 
-                    : regions.angka.progress === 100 
-                    ? 'Lembah Angka tuntas! Hebat!' 
-                    : 'Ayo selesaikan Lembah Angka!'}
-                </span>
-              </div>
-              <div style={{ width: '10px', height: '10px', backgroundColor: 'var(--color-surface-container-lowest)', transform: 'rotate(45deg)', marginTop: '-5px' }} />
-            </div>
-
-            {/* Avatar Pin with Pulsing Flare */}
-            <div
-              onClick={() => { setSelectedRegionKey('angka'); audioManager.playSfx('button-click'); }}
-              style={{ position: 'relative', display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer' }}
-            >
-              <div style={{
-                position: 'absolute',
-                width: '76px',
-                height: '76px',
-                borderRadius: '50%',
-                backgroundColor: 'var(--color-primary-fixed-dim)',
-                opacity: 0.4
-              }} />
-              <div style={{
-                width: '60px',
-                height: '60px',
-                borderRadius: '50%',
-                backgroundColor: 'var(--color-primary-container)',
-                padding: '3px',
-                boxShadow: '0 8px 20px rgba(0, 97, 148, 0.4)',
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                position: 'relative',
-                zIndex: 10
-              }}>
-                <CharacterAvatar config={characterConfig} size="md" />
-              </div>
-            </div>
-
-            {/* Lembah Angka Dynamic Card */}
-            <div
-              onClick={() => { setSelectedRegionKey('angka'); audioManager.playSfx('button-click'); }}
-              style={{
-                marginTop: '10px',
-                width: '100%',
-                maxWidth: '320px',
-                backgroundColor: 'var(--color-surface-container-lowest)',
-                borderRadius: 'var(--radius-lg)',
-                padding: 'var(--space-sm)',
-                boxShadow: 'var(--shadow-card)',
-                cursor: 'pointer',
-                border: selectedRegionKey === 'angka' ? '2px solid var(--color-primary)' : '2px solid transparent'
-              }}
-            >
-              <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-                <div style={{
-                  width: '56px',
-                  height: '56px',
-                  borderRadius: 'var(--radius-md)',
-                  backgroundColor: 'var(--color-primary-fixed)',
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  flexShrink: 0
-                }}>
-                  <span className="material-symbols-outlined" style={{ fontSize: '32px', color: 'var(--color-primary)' }}>calculate</span>
-                </div>
-                <div style={{ flex: 1, minWidth: 0 }}>
-                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                    <span style={{ fontSize: '11px', fontWeight: 800, color: 'var(--color-primary)', textTransform: 'uppercase' }}>
-                      {regions.angka.progress === 100 ? 'Selesai' : 'Misi Aktif'}
-                    </span>
-                    <span style={{ fontSize: '10px', fontWeight: 800, backgroundColor: 'var(--color-primary-fixed)', color: 'var(--color-on-primary-fixed)', padding: '2px 8px', borderRadius: 'var(--radius-full)' }}>
-                      {regions.angka.progress}%
-                    </span>
-                  </div>
-                  <h3 style={{ fontSize: '16px', fontWeight: 800, color: 'var(--color-text-main)', margin: '2px 0 0' }}>
-                    Lembah Angka
-                  </h3>
-                  <p style={{ fontSize: '12px', color: 'var(--color-text-muted)', margin: '2px 0' }}>
-                    Matematika & Geometri Ajaib
-                  </p>
-                  <div style={{ width: '100%', height: '8px', backgroundColor: 'var(--color-surface-variant)', borderRadius: 'var(--radius-full)', overflow: 'hidden', marginTop: '4px' }}>
-                    <div style={{ width: `${regions.angka.progress}%`, height: '100%', backgroundColor: 'var(--color-primary)', borderRadius: 'var(--radius-full)' }} />
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        {/* Region Detail Bottom Drawer (Sesuai Stitch) */}
-        {/* Dynamic Island Detail Bottom Sheet */}
-        <div
-          key={selectedRegionKey}
-          className="animate-pop-in"
-          style={{
-            backgroundColor: 'var(--color-surface-container-lowest)',
-            borderRadius: 'var(--radius-lg)',
-            padding: 'var(--space-md)',
-            boxShadow: 'var(--shadow-card)',
-            display: 'flex',
-            flexDirection: 'column',
-            gap: 'var(--space-sm)'
-          }}
-        >
-          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-            <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-              <div style={{
-                width: '44px',
-                height: '44px',
-                borderRadius: 'var(--radius-md)',
-                backgroundColor: 'var(--color-primary-container)',
-                color: 'var(--color-on-primary-container)',
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center'
-              }}>
-                <span className="material-symbols-outlined" style={{ fontSize: '26px' }}>{selectedRegion.icon}</span>
-              </div>
-              <div>
-                <span style={{ fontSize: '11px', fontWeight: 800, color: 'var(--color-primary)', textTransform: 'uppercase' }}>
-                  Fokus Saat Ini
-                </span>
-                <h3 style={{ fontSize: '18px', fontWeight: 800, color: 'var(--color-text-main)', margin: 0 }}>
-                  {selectedRegion.title}
-                </h3>
-              </div>
-            </div>
-            <span style={{
-              backgroundColor: 'var(--color-secondary-container)',
-              color: 'var(--color-on-secondary-container)',
-              fontSize: '11px',
-              fontWeight: 800,
-              padding: '4px 10px',
-              borderRadius: 'var(--radius-full)'
-            }}>
-              {selectedRegion.tier}
-            </span>
-          </div>
-
-          <div style={{
-            backgroundColor: 'var(--color-surface-container-low)',
-            borderRadius: 'var(--radius-md)',
-            padding: 'var(--space-xs) var(--space-sm)',
-            display: 'flex',
-            alignItems: 'center',
-            gap: '10px'
-          }}>
-            <span className="material-symbols-outlined" style={{ color: 'var(--color-tertiary)', fontSize: '22px' }}>flag</span>
-            <div style={{ flex: 1, minWidth: 0 }}>
-              <span style={{ fontSize: '11px', color: 'var(--color-text-muted)', display: 'block' }}>Tantangan Berikutnya:</span>
-              <p style={{ fontSize: '13px', fontWeight: 800, color: 'var(--color-text-main)', margin: 0, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
-                {selectedRegion.nextQuest}
-              </p>
-            </div>
-            <div style={{ display: 'flex', alignItems: 'center', gap: '2px', color: 'var(--color-primary)', fontWeight: 800, fontSize: '12px' }}>
-              <span className="material-symbols-outlined" style={{ fontSize: '16px' }}>diamond</span>
-              <span>{selectedRegion.xp}</span>
-            </div>
-          </div>
-
-          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 'var(--space-xs)', paddingTop: '4px' }}>
-            <button
-              onClick={() => { navigate('/collection'); audioManager.playSfx('button-click'); }}
-              style={{
-                padding: '12px',
-                backgroundColor: 'var(--color-surface-variant)',
-                color: 'var(--color-text-main)',
-                fontWeight: 800,
-                fontSize: '13px',
-                borderRadius: 'var(--radius-full)',
-                border: 'none',
-                cursor: 'pointer',
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                gap: '6px'
-              }}
-            >
-              <span className="material-symbols-outlined" style={{ fontSize: '18px' }}>inventory_2</span>
-              <span>Peti Hadiah</span>
-            </button>
 
             <Link
               to={`/world/${selectedRegion.id}`}
+              className={`start-bar-launch-btn ${selectedRegion.locked ? 'btn-locked' : ''}`}
               style={{
-                padding: '12px',
-                backgroundColor: selectedRegion.locked ? 'var(--color-outline)' : 'var(--color-primary)',
-                color: 'var(--color-on-primary)',
-                fontWeight: 800,
-                fontSize: '13px',
-                borderRadius: 'var(--radius-full)',
-                textDecoration: 'none',
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                gap: '6px',
-                boxShadow: selectedRegion.locked ? 'none' : 'var(--shadow-tactile-primary)',
-                pointerEvents: selectedRegion.locked ? 'none' : 'auto'
+                background: selectedRegion.locked
+                  ? '#334155'
+                  : `linear-gradient(135deg, ${selectedRegion.themeColor} 0%, #0284c7 100%)`,
+                boxShadow: selectedRegion.locked
+                  ? 'none'
+                  : `0 6px 20px ${selectedRegion.themeColor}66, inset 0 1px 0 rgba(255,255,255,0.3)`
+              }}
+              onClick={(e) => {
+                if (selectedRegion.locked) {
+                  e.preventDefault();
+                  audioManager.playSfx('button-click');
+                  if (showToast) {
+                    showToast(`Selesaikan ${selectedRegion.prevPlanetName || 'planet sebelumnya'} terlebih dahulu untuk membuka planet ini! 🚀`);
+                  }
+                } else {
+                  audioManager.playSfx('game-start');
+                }
               }}
             >
-              <span>{selectedRegion.locked ? 'Terkunci' : 'Masuk Wilayah'}</span>
-              <span className="material-symbols-outlined" style={{ fontSize: '18px' }}>arrow_forward</span>
+              <span className="material-symbols-outlined start-btn-icon">
+                {selectedRegion.locked ? 'lock' : 'rocket_launch'}
+              </span>
+              <span className="start-btn-label">
+                {selectedRegion.locked
+                  ? `Terkunci (Selesaikan ${selectedRegion.prevPlanetName || 'Planet Sebelumnya'})`
+                  : `Mulai Petualangan`}
+              </span>
+              {!selectedRegion.locked && (
+                <span className="material-symbols-outlined start-btn-arrow">
+                  arrow_forward
+                </span>
+              )}
             </Link>
+          </div>
+
+          {/* -------------------------------------------------------------
+              B. MOBILE 3D COSMIC GALAXY (Ascending upward / ke atas)
+              ------------------------------------------------------------- */}
+          <div className="mobile-galaxy-container">
+            {/* Ascending Starlight Hyperlane */}
+            <svg
+              className="mobile-hyperlane-svg"
+              viewBox="0 0 400 800"
+              preserveAspectRatio="none"
+              fill="none"
+            >
+              <defs>
+                <linearGradient id="mobileHyperlaneGrad" x1="0%" y1="100%" x2="0%" y2="0%">
+                  <stop offset="0%" stopColor="#0284c7" />
+                  <stop offset="25%" stopColor="#10b981" />
+                  <stop offset="50%" stopColor="#f97316" />
+                  <stop offset="75%" stopColor="#8b5cf6" />
+                  <stop offset="100%" stopColor="#6366f1" />
+                </linearGradient>
+                <filter id="mobileGlow" x="-20%" y="-20%" width="140%" height="140%">
+                  <feGaussianBlur stdDeviation="8" result="blur1" />
+                  <feGaussianBlur stdDeviation="16" result="blur2" />
+                  <feMerge>
+                    <feMergeNode in="blur2" />
+                    <feMergeNode in="blur1" />
+                    <feMergeNode in="SourceGraphic" />
+                  </feMerge>
+                </filter>
+              </defs>
+              {/* Outer Glow Ribbon */}
+              <path
+                d="M 104 616 C 130 546, 270 554, 296 488 C 310 420, 120 428, 104 360 C 90 290, 280 298, 296 232 C 300 164, 210 172, 200 104"
+                stroke="url(#mobileHyperlaneGrad)"
+                strokeWidth="12"
+                strokeLinecap="round"
+                fill="none"
+                opacity="0.35"
+                filter="url(#mobileGlow)"
+              />
+              {/* Middle Luminous Conduit */}
+              <path
+                d="M 104 616 C 130 546, 270 554, 296 488 C 310 420, 120 428, 104 360 C 90 290, 280 298, 296 232 C 300 164, 210 172, 200 104"
+                stroke="url(#mobileHyperlaneGrad)"
+                strokeWidth="3.5"
+                strokeLinecap="round"
+                fill="none"
+                opacity="0.85"
+              />
+              {/* Core Laser Starlight */}
+              <path
+                d="M 104 616 C 130 546, 270 554, 296 488 C 310 420, 120 428, 104 360 C 90 290, 280 298, 296 232 C 300 164, 210 172, 200 104"
+                stroke="#ffffff"
+                strokeWidth="1.2"
+                strokeLinecap="round"
+                fill="none"
+                opacity="0.9"
+              />
+              {/* Ascending Photon Pulses */}
+              <circle r="3" fill="#ffffff" filter="url(#mobileGlow)">
+                <animateMotion
+                  dur="6s"
+                  repeatCount="indefinite"
+                  path="M 104 616 C 130 546, 270 554, 296 488 C 310 420, 120 428, 104 360 C 90 290, 280 298, 296 232 C 300 164, 210 172, 200 104"
+                />
+              </circle>
+              <circle r="2" fill="#bae6fd" filter="url(#mobileGlow)">
+                <animateMotion
+                  dur="6s"
+                  begin="-3s"
+                  repeatCount="indefinite"
+                  path="M 104 616 C 130 546, 270 554, 296 488 C 310 420, 120 428, 104 360 C 90 290, 280 298, 296 232 C 300 164, 210 172, 200 104"
+                />
+              </circle>
+            </svg>
+
+            {/* 5 Ascending 3D Planet Nodes */}
+            {['angka', 'sains', 'cerita', 'tekateki', 'angkasa'].map(key => renderIslandUnit(key))}
           </div>
         </div>
       </main>

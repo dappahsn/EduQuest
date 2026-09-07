@@ -1,0 +1,1170 @@
+/* RareFloraExplorer.module.css */
+/* ==========================================================================
+   PENJELAJAH FLORA LANGKA - 100% SINGLE SCREEN FULL VIEW (NO SCROLL)
+   Fits entirely inside 100dvh viewport without double scroll or awkward cuts.
+   Strict rule: ZERO displacement / translation on hover.
+   ========================================================================== */
+
+.gameContainer {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  height: 100%;
+  max-height: 100%;
+  width: 100%;
+  max-width: 720px;
+  margin: 0 auto;
+  position: relative;
+  user-select: none;
+  overflow: hidden;
+  box-sizing: border-box;
+  padding: 2px 8px 6px;
+  gap: 6px;
+}
+
+/* ==========================================================================
+   1. COMPACT TOP BAR
+   ========================================================================== */
+.topBar {
+  background: rgba(255, 255, 255, 0.96);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1.5px solid #a7f3d0;
+  border-radius: 14px;
+  padding: 6px 12px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  box-shadow: 0 4px 14px rgba(6, 78, 59, 0.08);
+  flex-shrink: 0;
+  height: 46px;
+  box-sizing: border-box;
+}
+
+.topBarLeft {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  min-width: 0;
+  flex: 1;
+}
+
+.badgeIcon {
+  width: 32px;
+  height: 32px;
+  border-radius: 9px;
+  background: linear-gradient(135deg, #059669 0%, #064e3b 100%);
+  color: #ffffff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 17px;
+  flex-shrink: 0;
+  box-shadow: 0 2px 6px rgba(5, 150, 105, 0.25);
+}
+
+.titleGroup {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  flex: 1;
+}
+
+.tagline {
+  font-size: 9px;
+  font-weight: 800;
+  color: #059669;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  line-height: 1;
+  white-space: nowrap;
+}
+
+.mainTitle {
+  font-size: clamp(12px, 3.4vw, 14px);
+  font-weight: 900;
+  color: #064e3b;
+  margin: 0;
+  line-height: 1.2;
+  white-space: nowrap;
+}
+
+.topBarRight {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  flex-shrink: 0;
+}
+
+.helpBtn {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  padding: 3px 8px;
+  border-radius: 9999px;
+  background: #ecfdf5;
+  border: 1.2px solid #6ee7b7;
+  color: #047857;
+  font-weight: 800;
+  font-size: 11px;
+  cursor: pointer;
+  transform: none !important;
+  transition: background 0.15s ease, border-color 0.15s ease;
+}
+
+.helpBtn:hover {
+  background: #d1fae5;
+  border-color: #10b981;
+}
+
+.scorePill {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  padding: 3px 9px;
+  border-radius: 9999px;
+  background: #fffbeb;
+  border: 1.2px solid #fde68a;
+  color: #b45309;
+  font-weight: 900;
+  font-size: 11.5px;
+}
+
+/* ==========================================================================
+   2. EXPEDITION TABS & STEP TRACKER
+   ========================================================================== */
+.tabsContainer {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  flex-shrink: 0;
+  height: 36px;
+}
+
+.tabBtn {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  padding: 4px 6px;
+  border-radius: 10px;
+  background: rgba(255, 255, 255, 0.9);
+  border: 1.5px solid #d1fae5;
+  color: #065f46;
+  font-size: clamp(10px, 2.7vw, 11.5px);
+  font-weight: 800;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: background 0.18s ease, border-color 0.18s ease, color 0.18s ease, box-shadow 0.18s ease;
+  height: 100%;
+  box-sizing: border-box;
+  transform: none !important;
+}
+
+.tabBtn span {
+  color: inherit;
+}
+
+.tabBtn:hover:not(.tabBtnActive):not(.tabBtnLocked) {
+  background: #f0fdf4;
+  border-color: #34d399;
+  color: #047857;
+}
+
+.tabBtnActive,
+.tabBtnActive:hover {
+  background: linear-gradient(135deg, #059669 0%, #047857 100%) !important;
+  border-color: #047857 !important;
+  color: #ffffff !important;
+  box-shadow: 0 3px 10px rgba(5, 150, 105, 0.25);
+}
+
+.tabBtnActive:hover {
+  filter: brightness(1.06);
+}
+
+.tabBtnCompleted:not(.tabBtnActive) {
+  background: #ecfdf5;
+  border-color: #10b981;
+  color: #047857;
+}
+
+.tabBtnCompleted:not(.tabBtnActive):hover {
+  background: #d1fae5;
+  border-color: #059669;
+  color: #064e3b;
+}
+
+.tabBtnLocked,
+.tabBtnLocked:hover {
+  background: rgba(248, 250, 252, 0.75) !important;
+  border-color: #e2e8f0 !important;
+  color: #94a3b8 !important;
+  cursor: not-allowed !important;
+  opacity: 0.75;
+}
+
+.tabCheck {
+  font-size: 11px;
+  font-weight: 900;
+  color: #10b981;
+  margin-left: 1px;
+}
+
+.tabLockIcon {
+  font-size: 10px;
+  margin-left: 2px;
+  opacity: 0.85;
+}
+
+/* FLOATING LOCK TOAST */
+.lockToast {
+  position: absolute;
+  top: 10px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: rgba(15, 23, 42, 0.94);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  border: 1.5px solid #f87171;
+  color: #ffffff;
+  padding: 6px 14px;
+  border-radius: 9999px;
+  font-size: 11.5px;
+  font-weight: 800;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.28);
+  z-index: 50;
+  white-space: nowrap;
+  animation: popToast 0.22s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  pointer-events: none;
+  max-width: 90%;
+  text-align: center;
+}
+
+@keyframes popToast {
+  0% {
+    transform: translate(-50%, -12px) scale(0.92);
+    opacity: 0;
+  }
+  100% {
+    transform: translate(-50%, 0) scale(1);
+    opacity: 1;
+  }
+}
+
+/* FLOATING MINIMALIST PROMPT BADGE */
+.floatingPromptBadge {
+  position: absolute;
+  top: 10px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: rgba(255, 255, 255, 0.96);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  border: 1.5px solid #a7f3d0;
+  border-radius: 9999px;
+  padding: 4px 12px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  box-shadow: 0 4px 14px rgba(6, 78, 59, 0.1);
+  font-size: clamp(10.5px, 2.7vw, 12px);
+  font-weight: 800;
+  color: #064e3b;
+  white-space: nowrap;
+  max-width: 94%;
+  box-sizing: border-box;
+  z-index: 12;
+  pointer-events: auto;
+}
+
+.floatingNextBtn {
+  background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+  color: #ffffff;
+  border: none;
+  border-radius: 9999px;
+  padding: 4px 12px;
+  font-size: 11px;
+  font-weight: 900;
+  cursor: pointer;
+  box-shadow: 0 2px 6px rgba(5, 150, 105, 0.3);
+  margin-left: 4px;
+  transform: none !important;
+}
+
+.floatingNextBtn:hover {
+  filter: brightness(1.08);
+}
+
+/* ==========================================================================
+   2B. MISSION BRIEFING MODAL (PANDUAN MISI)
+   ========================================================================== */
+.modalOverlay {
+  position: absolute;
+  inset: 0;
+  background: rgba(6, 78, 59, 0.65);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 60;
+  padding: 12px;
+}
+
+.modalCard {
+  background: #ffffff;
+  border: 2px solid #34d399;
+  border-radius: 18px;
+  width: 100%;
+  max-width: 460px;
+  padding: 16px 18px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  box-shadow: 0 16px 36px rgba(0, 0, 0, 0.22);
+  box-sizing: border-box;
+}
+
+.modalHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.modalTitle {
+  font-size: 16px;
+  font-weight: 900;
+  color: #064e3b;
+  margin: 0;
+}
+
+.modalCloseIcon {
+  background: #ecfdf5;
+  border: 1px solid #a7f3d0;
+  color: #065f46;
+  border-radius: 50%;
+  width: 26px;
+  height: 26px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 13px;
+  font-weight: 900;
+  cursor: pointer;
+}
+
+.targetChecklist {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.targetCard {
+  background: #f0fdf4;
+  border: 1.2px solid #a7f3d0;
+  border-radius: 12px;
+  padding: 8px 12px;
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+}
+
+.targetCardDone {
+  background: #ecfdf5;
+  border-color: #10b981;
+}
+
+.targetNumCircle {
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  background: #10b981;
+  color: #ffffff;
+  font-size: 11.5px;
+  font-weight: 900;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.targetTextGroup {
+  display: flex;
+  flex-direction: column;
+}
+
+.targetTitle {
+  font-size: 12.5px;
+  font-weight: 900;
+  color: #064e3b;
+  margin: 0;
+}
+
+.targetDesc {
+  font-size: 11px;
+  font-weight: 600;
+  color: #047857;
+  margin: 2px 0 0;
+  line-height: 1.3;
+}
+
+.modalCloseBtn {
+  width: 100%;
+  height: 40px;
+  border-radius: 12px;
+  background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+  border: 1.2px solid #047857;
+  color: #ffffff;
+  font-size: 13px;
+  font-weight: 900;
+  cursor: pointer;
+  box-shadow: 0 3px 10px rgba(5, 150, 105, 0.3);
+  margin-top: 4px;
+}
+
+/* ==========================================================================
+   3. CENTRAL STAGE (BOTANICAL SHOWCASE)
+   ========================================================================== */
+.stageCanvasCard {
+  flex: 1;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  background: radial-gradient(circle at 50% 35%, #f0fdf4 0%, #e6f7ec 45%, #d1fae5 100%);
+  border: 2px solid #a7f3d0;
+  border-radius: 18px;
+  box-shadow: 0 6px 20px rgba(6, 78, 59, 0.07), inset 0 1px 0 rgba(255, 255, 255, 0.8);
+  overflow: hidden;
+  box-sizing: border-box;
+  padding: 6px 12px;
+}
+
+/* Botanical SVG Canvas Container */
+.svgIllustrationWrap {
+  width: 100%;
+  height: 100%;
+  max-height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  overflow: visible;
+}
+
+.svgIllustrationWrap svg {
+  max-width: 100%;
+  max-height: 100%;
+  object-fit: contain;
+  filter: drop-shadow(0 6px 16px rgba(6, 78, 59, 0.16));
+}
+
+/* ==========================================================================
+   INTERACTIVE MINI-GAME OVERLAYS & CONTROLS
+   ========================================================================== */
+
+/* 1. Nectar Target Hotspots on Peristome */
+.nectarSpotsOverlay {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  z-index: 15;
+}
+
+.interactiveSpot {
+  position: absolute;
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  background: rgba(254, 240, 138, 0.7);
+  border: 2px dashed #ca8a04;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 15px;
+  cursor: pointer;
+  pointer-events: auto;
+  box-shadow: 0 0 12px rgba(234, 179, 8, 0.6);
+  animation: pulseSpot 1.5s infinite ease-in-out;
+  transform: translate(-50%, -50%);
+  transition: transform 0.15s ease, background 0.15s ease;
+}
+
+.interactiveSpot:hover {
+  background: #fef08a;
+  transform: translate(-50%, -50%) scale(1.12);
+}
+
+.interactiveSpotDone {
+  background: #22c55e !important;
+  border-color: #15803d !important;
+  color: #ffffff;
+  font-size: 13px;
+  font-weight: 900;
+  animation: none !important;
+  box-shadow: 0 0 8px rgba(34, 197, 94, 0.5);
+}
+
+@keyframes pulseSpot {
+  0%, 100% { transform: translate(-50%, -50%) scale(1); opacity: 0.85; }
+  50% { transform: translate(-50%, -50%) scale(1.15); opacity: 1; }
+}
+
+/* 2. Floating Nitrogen (+N) Catching Bubbles */
+.floatingBubblesLayer {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  z-index: 20;
+}
+
+.clickableNitrogenBubble {
+  position: absolute;
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  background: radial-gradient(circle at 30% 26%, #86efac 0%, #22c55e 32%, #16a34a 68%, #14532d 100%);
+  border: 2.2px solid #ffffff;
+  box-shadow: 0 0 16px rgba(34, 197, 94, 0.85), 0 4px 10px rgba(0, 0, 0, 0.22), inset 0 2px 4px rgba(255, 255, 255, 0.75);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  pointer-events: auto;
+  user-select: none;
+  animation: bubbleFloat 2.2s infinite ease-in-out alternate;
+  transform: none !important;
+  transition: opacity 0.2s ease, filter 0.15s ease, transform 0.15s ease;
+}
+
+.clickableNitrogenBubble span {
+  color: #ffffff;
+  font-size: 13px;
+  font-weight: 900;
+  letter-spacing: 0.5px;
+  line-height: 1;
+  text-shadow: 
+    0 1px 2px rgba(0, 0, 0, 0.95),
+    0 0 4px #052e16,
+    0 0 8px #14532d;
+  pointer-events: none;
+}
+
+.clickableNitrogenBubble:hover {
+  filter: brightness(1.18) saturate(1.1);
+  box-shadow: 0 0 20px rgba(34, 197, 94, 0.95), 0 6px 14px rgba(0, 0, 0, 0.3), inset 0 2px 5px rgba(255, 255, 255, 0.9);
+}
+
+.clickableNitrogenBubble:active {
+  transform: scale(0.92) !important;
+}
+
+@keyframes bubbleFloat {
+  0% { transform: translateY(0px) rotate(0deg); }
+  100% { transform: translateY(-16px) rotate(6deg); }
+}
+
+/* 3. Interactive Petal Unfolding Badges for Rafflesia */
+.petalBadgeBtn {
+  position: absolute;
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #ef4444 0%, #991b1b 100%);
+  border: 2.2px solid #ffffff;
+  color: #ffffff;
+  font-size: 13px;
+  font-weight: 900;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  pointer-events: auto;
+  box-shadow: 0 4px 12px rgba(185, 28, 28, 0.45);
+  animation: pulseSpot 1.6s infinite ease-in-out;
+  transform: translate(-50%, -50%);
+  z-index: 20;
+}
+
+.petalBadgeBtnDone {
+  background: #10b981 !important;
+  border-color: #ffffff !important;
+  animation: none !important;
+  box-shadow: 0 2px 8px rgba(16, 185, 129, 0.4);
+}
+
+/* 4. Interactive Fly Pollen Targets */
+.flyTargetSpot {
+  position: absolute;
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  background: rgba(254, 240, 138, 0.85);
+  border: 2px dashed #b45309;
+  color: #78350f;
+  font-size: 12px;
+  font-weight: 900;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  pointer-events: auto;
+  box-shadow: 0 0 10px rgba(245, 158, 11, 0.6);
+  animation: pulseSpot 1.4s infinite ease-in-out;
+  transform: translate(-50%, -50%);
+  z-index: 22;
+}
+
+.flyTargetSpotDone {
+  background: #22c55e !important;
+  border-color: #ffffff !important;
+  color: #ffffff !important;
+  animation: none !important;
+}
+
+/* 5. Mini Interactive Timing / Action Bar */
+.miniActionStrip {
+  position: absolute;
+  bottom: 8px;
+  left: 12px;
+  right: 12px;
+  background: rgba(255, 255, 255, 0.95);
+  backdrop-filter: blur(10px);
+  border: 1.5px solid #6ee7b7;
+  border-radius: 12px;
+  padding: 6px 12px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  box-shadow: 0 4px 14px rgba(6, 78, 59, 0.12);
+  z-index: 25;
+}
+
+.stripPromptText {
+  font-size: 11.5px;
+  font-weight: 800;
+  color: #064e3b;
+  margin: 0;
+  flex: 1;
+}
+
+.stripActionBtn {
+  background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+  color: #ffffff;
+  border: 1.2px solid #047857;
+  border-radius: 9px;
+  padding: 5px 14px;
+  font-size: 11.5px;
+  font-weight: 900;
+  cursor: pointer;
+  white-space: nowrap;
+  box-shadow: 0 2px 8px rgba(5, 150, 105, 0.28);
+  transform: none !important;
+}
+
+.stripActionBtn:hover {
+  filter: brightness(1.06);
+}
+
+/* 6. Plant Direct Tap Pumping (Rafflesia Step 1 - Click Plant Instead of Button) */
+.plantPumpOverlay {
+  position: absolute;
+  inset: 0;
+  cursor: pointer;
+  z-index: 20;
+  user-select: none;
+  touch-action: manipulation;
+  outline: none;
+}
+
+.plantPumpHotspot {
+  position: absolute;
+  top: 55%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 78px;
+  height: 78px;
+  border-radius: 50%;
+  border: 2.2px dashed rgba(244, 63, 94, 0.95);
+  background: radial-gradient(circle, rgba(168, 85, 247, 0.45) 0%, rgba(244, 63, 94, 0.22) 65%, transparent 100%);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  animation: pulsePumpAura 1.4s infinite ease-in-out;
+  box-shadow: 0 0 22px rgba(168, 85, 247, 0.5);
+  pointer-events: none;
+}
+
+.plantPumpIcon {
+  font-size: 22px;
+  filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.6));
+  animation: floatPuff 1.4s infinite ease-in-out alternate;
+}
+
+.plantPumpHint {
+  font-size: 10px;
+  font-weight: 900;
+  color: #fef08a;
+  text-shadow: 0 1px 3px rgba(0, 0, 0, 0.9);
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
+}
+
+@keyframes pulsePumpAura {
+  0%, 100% {
+    transform: translate(-50%, -50%) scale(1);
+    box-shadow: 0 0 14px rgba(168, 85, 247, 0.35);
+    border-color: rgba(244, 63, 94, 0.85);
+  }
+  50% {
+    transform: translate(-50%, -50%) scale(1.12);
+    box-shadow: 0 0 28px rgba(168, 85, 247, 0.7), 0 0 12px rgba(244, 63, 94, 0.5);
+    border-color: #f43f5e;
+  }
+}
+
+@keyframes floatPuff {
+  0% { transform: translateY(0px) scale(1); }
+  100% { transform: translateY(-4px) scale(1.15); }
+}
+
+.pumpingFlowerBounce {
+  animation: flowerPumpSquish 0.28s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+@keyframes flowerPumpSquish {
+  0% { transform: translate(120px, 115px) scale(1); }
+  35% { transform: translate(120px, 115px) scale(0.91, 0.88); }
+  70% { transform: translate(120px, 115px) scale(1.05, 1.04); }
+  100% { transform: translate(120px, 115px) scale(1); }
+}
+
+.scentProgressBadge {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  flex-shrink: 0;
+}
+
+.scentProgressPill {
+  background: linear-gradient(135deg, #a855f7 0%, #7e22ce 100%);
+  color: #ffffff;
+  border: 1.2px solid #c084fc;
+  border-radius: 9999px;
+  padding: 5px 13px;
+  font-size: 12px;
+  font-weight: 900;
+  white-space: nowrap;
+  box-shadow: 0 2px 8px rgba(126, 34, 206, 0.35);
+  letter-spacing: 0.5px;
+}
+
+/* ==========================================================================
+   4. BOTTOM CONTROLS & INTERACTION DOCK
+   ========================================================================== */
+.bottomDock {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  flex-shrink: 0;
+  padding: 4px 6px 6px;
+}
+
+/* Progress bar inside dock */
+.progressTrack {
+  height: 6px;
+  width: 100%;
+  background: #e2e8f0;
+  border-radius: 9999px;
+  overflow: hidden;
+  position: relative;
+}
+
+.progressFill {
+  height: 100%;
+  background: linear-gradient(90deg, #10b981 0%, #f59e0b 100%);
+  border-radius: 9999px;
+  transition: width 0.35s ease;
+}
+
+/* ==========================================================================
+   5. QUIZ STAGE (EXPEDITION FIELD NOTES)
+   ========================================================================= */
+.quizCard {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: stretch;
+  gap: 7px;
+  padding: 4px 2px 2px;
+  box-sizing: border-box;
+}
+
+.quizHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 5px 12px;
+  background: rgba(255, 255, 255, 0.94);
+  border-radius: 10px;
+  border: 1.2px solid #a7f3d0;
+  flex-shrink: 0;
+}
+
+.quizTag {
+  font-size: 11px;
+  font-weight: 800;
+  color: #059669;
+}
+
+.quizCount {
+  font-size: 11px;
+  font-weight: 800;
+  color: #064e3b;
+}
+
+/* Botanical Illustration Container - Fills all available vertical whitespace */
+.quizIllustrationWrapper {
+  width: 100%;
+  flex: 1;
+  min-height: 160px;
+  position: relative;
+  border-radius: 14px;
+  overflow: hidden;
+  border: 1.5px solid #a7f3d0;
+  box-shadow: 0 4px 16px rgba(6, 78, 59, 0.12);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #022c22;
+  box-sizing: border-box;
+}
+
+.quizImage {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center;
+  display: block;
+}
+
+.quizImageTag {
+  position: absolute;
+  bottom: 8px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: rgba(6, 78, 59, 0.9);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  border: 1px solid rgba(255, 255, 255, 0.4);
+  color: #ffffff;
+  padding: 3px 12px;
+  border-radius: 9999px;
+  font-size: clamp(10px, 2.6vw, 11px);
+  font-weight: 800;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+  pointer-events: none;
+  white-space: nowrap;
+  max-width: 90%;
+  text-align: center;
+}
+
+.questionBox {
+  background: rgba(255, 255, 255, 0.97);
+  border: 1.5px solid #a7f3d0;
+  border-radius: 12px;
+  padding: 8px 14px;
+  text-align: center;
+  box-shadow: 0 3px 10px rgba(6, 78, 59, 0.05);
+  flex-shrink: 0;
+}
+
+.questionText {
+  font-size: clamp(12px, 3.1vw, 13.5px);
+  font-weight: 800;
+  color: #064e3b;
+  margin: 0;
+  line-height: 1.45;
+  letter-spacing: 0.1px;
+}
+
+.optionsGrid {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  width: 100%;
+  flex-shrink: 0;
+}
+
+.optionBtn {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 7px 12px;
+  border-radius: 11px;
+  background: rgba(255, 255, 255, 0.96);
+  border: 1.5px solid #d1fae5;
+  color: #1e293b;
+  cursor: pointer;
+  text-align: left;
+  transition: background 0.15s ease, border-color 0.15s ease, color 0.15s ease;
+  transform: none !important;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.optionBtn:hover:not(:disabled) {
+  background: #f0fdf4;
+  border-color: #34d399;
+}
+
+.optionBtnCorrect {
+  background: #dcfce7 !important;
+  border-color: #22c55e !important;
+  color: #15803d !important;
+  font-weight: 900 !important;
+}
+
+.optionBtnWrong {
+  background: #fee2e2 !important;
+  border-color: #ef4444 !important;
+  color: #b91c1c !important;
+}
+
+.optionLetter {
+  width: 24px;
+  height: 24px;
+  border-radius: 7px;
+  background: #ecfdf5;
+  border: 1.2px solid #a7f3d0;
+  color: #059669;
+  font-size: 11px;
+  font-weight: 900;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.optionText {
+  flex: 1;
+  min-width: 0;
+  font-size: clamp(11px, 2.7vw, 12px);
+  font-weight: 700;
+  line-height: 1.38;
+  color: #1e293b;
+  word-break: break-word;
+}
+
+/* ==========================================================================
+   6. VICTORY MODAL & CLAIM REWARDS
+   ========================================================================== */
+.victoryOverlay {
+  position: absolute;
+  inset: 0;
+  background: rgba(6, 78, 59, 0.65);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 50;
+  padding: 12px;
+}
+
+.victoryCard {
+  background: #ffffff;
+  border: 2px solid #34d399;
+  border-radius: 20px;
+  width: 100%;
+  max-width: 440px;
+  padding: 18px 16px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+  box-shadow: 0 16px 36px rgba(0, 0, 0, 0.22);
+  text-align: center;
+  box-sizing: border-box;
+}
+
+.victoryStars {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 26px;
+}
+
+.victoryTitle {
+  font-size: 18px;
+  font-weight: 900;
+  color: #064e3b;
+  margin: 0;
+  line-height: 1.2;
+}
+
+.victorySubtitle {
+  font-size: 12px;
+  font-weight: 600;
+  color: #047857;
+  margin: 0;
+  line-height: 1.4;
+}
+
+.rewardsRow {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  width: 100%;
+  justify-content: center;
+}
+
+.rewardItem {
+  flex: 1;
+  background: #f0fdf4;
+  border: 1.2px solid #a7f3d0;
+  border-radius: 12px;
+  padding: 8px 6px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+}
+
+.rewardIcon {
+  font-size: 20px;
+}
+
+.rewardLabel {
+  font-size: 10px;
+  font-weight: 700;
+  color: #64748b;
+  text-transform: uppercase;
+}
+
+.rewardValue {
+  font-size: 13px;
+  font-weight: 900;
+  color: #065f46;
+}
+
+.cardPreviewBox {
+  width: 100%;
+  background: linear-gradient(135deg, #fef2f2 0%, #fff7ed 100%);
+  border: 1.5px dashed #f87171;
+  border-radius: 12px;
+  padding: 8px 12px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  text-align: left;
+}
+
+.cardIconCircle {
+  width: 38px;
+  height: 38px;
+  border-radius: 10px;
+  background: #ef4444;
+  color: #ffffff;
+  font-size: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.cardTitle {
+  font-size: 12.5px;
+  font-weight: 900;
+  color: #991b1b;
+  margin: 0;
+}
+
+.cardDesc {
+  font-size: 10.5px;
+  font-weight: 600;
+  color: #7f1d1d;
+  margin: 0;
+}
+
+.claimBtn {
+  width: 100%;
+  height: 46px;
+  border-radius: 14px;
+  background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+  border: 1.5px solid #047857;
+  color: #ffffff;
+  font-size: 14px;
+  font-weight: 900;
+  cursor: pointer;
+  box-shadow: 0 4px 14px rgba(5, 150, 105, 0.35);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  transform: none !important;
+  transition: filter 0.18s ease;
+}
+
+.claimBtn:hover {
+  filter: brightness(1.05);
+}
+
+/* ==========================================================================
+   7. ANIMATIONS
+   ========================================================================== */
+@keyframes antCrawl {
+  0% { transform: translate(18px, 12px) rotate(-15deg); }
+  35% { transform: translate(45px, 22px) rotate(5deg); }
+  60% { transform: translate(72px, 32px) rotate(25deg); }
+  75% { transform: translate(82px, 48px) rotate(65deg); opacity: 1; }
+  100% { transform: translate(84px, 115px) rotate(90deg); opacity: 0; }
+}
+
+@keyframes bubbleRise {
+  0% { transform: translateY(0) scale(0.6); opacity: 0; }
+  50% { opacity: 0.8; }
+  100% { transform: translateY(-35px) scale(1.1); opacity: 0; }
+}
+
+@keyframes flyHover {
+  0% { transform: translate(0, 0) rotate(-5deg); }
+  25% { transform: translate(8px, -12px) rotate(8deg); }
+  50% { transform: translate(-6px, -18px) rotate(-8deg); }
+  75% { transform: translate(10px, -6px) rotate(12deg); }
+  100% { transform: translate(0, 0) rotate(-5deg); }
+}
+
+@keyframes scentWave {
+  0% { transform: scale(0.85); opacity: 0.15; }
+  50% { transform: scale(1.12); opacity: 0.55; }
+  100% { transform: scale(1.35); opacity: 0; }
+}
+
+.antWalking {
+  animation: antCrawl 2.8s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+}
+
+.bubbleAnim1 {
+  animation: bubbleRise 2s infinite ease-out;
+}
+
+.bubbleAnim2 {
+  animation: bubbleRise 2.4s infinite ease-out 0.8s;
+}
+
+.flyBuzzing {
+  animation: flyHover 2.2s infinite ease-in-out;
+}
+
+.scentPulse {
+  animation: scentWave 2s infinite ease-out;
+}
